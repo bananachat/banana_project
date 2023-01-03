@@ -18,8 +18,16 @@ repositories {
 
 dependencies {
     // Use JUnit Jupiter for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
-
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    // 오라클 회사가 제공하는 드라이버 클래스 찾기 - ClassNotFoundException
+    // 한글처리
+    // https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc8
+    implementation 'com.oracle.database.jdbc:ojdbc8:21.8.0.0'
+    // https://mvnrepository.com/artifact/com.oracle.database.nls/orai18n
+    implementation 'com.oracle.database.nls:orai18n:21.8.0.0'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:30.1.1-jre'
 }
