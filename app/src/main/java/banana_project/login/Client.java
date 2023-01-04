@@ -23,7 +23,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Client extends JFrame implements ActionListener {
+public class Client extends JFrame implements ActionListener, MouseListener {
   // 서버 연결부 선언
   Socket socket = null;
   ObjectOutputStream oos = null;// 말하기
@@ -120,22 +120,8 @@ public class Client extends JFrame implements ActionListener {
     jlb_findPw.setFont(fP);
     jlb_findId.setBounds(100, 460, 200, 20);
     jlb_findPw.setBounds(220, 460, 200, 20);
-    jlb_findId.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mousePressed(MouseEvent e) {
-        super.mousePressed(e);
-        IdFind idFind = new IdFind();
-        idFind.initDisplay();
-      }
-    });
-    jlb_findPw.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mousePressed(MouseEvent e) {
-        super.mousePressed(e);
-        PwFind pwFind = new PwFind();
-        pwFind.initDisplay();
-      }
-    });
+    jlb_findId.addMouseListener(this);
+    jlb_findPw.addMouseListener(this);
 
     // 바나나 이미지 정의
     jbtn_main.setBackground(new Color(255, 230, 120));
@@ -176,5 +162,42 @@ public class Client extends JFrame implements ActionListener {
       }
     } else if (jbtn_join == obj) {
     }
+  }
+
+  @Override
+  public void mouseClicked(MouseEvent e) {
+    Object obj = e.getSource();
+    // 아이디찾기 라벨 눌렀을 때
+    if (jlb_findId == obj) {
+      IdFind idFind = new IdFind(this);
+      idFind.initDisplay();
+    } else if (jlb_findPw == obj) {
+
+    }
+
+  }
+
+  @Override
+  public void mousePressed(MouseEvent e) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void mouseReleased(MouseEvent e) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void mouseEntered(MouseEvent e) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void mouseExited(MouseEvent e) {
+    // TODO Auto-generated method stub
+
   }
 }
