@@ -23,10 +23,16 @@ public class Main extends JFrame implements ActionListener {
 
     // CENTER
     JLabel jlb_secChan = new JLabel("채팅 목록");    // 친구 | 채팅 목록
-    JPanel jp_secChan = new JPanel();   // TODO: 중앙 패널 <- 리스트
-    JButton jbtn_list = null;    // TODO: 친구 | 채팅 리스트
-    JScrollPane jsp_display = new JScrollPane(jp_secChan, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+    JPanel jp_center = new JPanel();   // TODO: 중앙 패널 <- 리스트
+    JScrollPane jsp_display = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);    // TODO: 리스트를 스크롤
+    // 리스트를 버튼으로
+    JButton jbtn_list = null;    // TODO: 친구 | 채팅 리스트
+
+    // 리스트를 JList 사용
+    DefaultListModel<String> dlm = new DefaultListModel<String>();
+    JList<String> jl_list = null;
+
 
     // SOUTH
     JPanel jp_south = new JPanel();
@@ -35,11 +41,17 @@ public class Main extends JFrame implements ActionListener {
 
 
     public Main() {
-        for (int i=0; i<20; i++) {
-            jbtn_list = new JButton(Integer.toString(i));
-            vList.add(jbtn_list);
+//        // JButton 생성
+//        for (int i=0; i<20; i++) {
+//            jbtn_list = new JButton(Integer.toString(i));
+//            vList.add(jbtn_list);
+//        }
+        // JList 생성
+        for (int i=0; i<100; i++) {
+            dlm.addElement(Integer.toString(i));
         }
-    } // end of ChatListView()
+        jl_list = new JList(dlm);
+    } // end of Main()
 
     public void initDisplay() {
         this.setLayout(null);
@@ -56,18 +68,23 @@ public class Main extends JFrame implements ActionListener {
         // [center]
         jlb_secChan.setBounds(10, 60, 330, 20);
         this.add(jlb_secChan);
+
         // 중앙 리스트 출력, TODO: 스크롤바로 나올 수 있게 해야함
         jsp_display.setBounds(5, 85, 375, 420);
-        jp_secChan.setLayout(new GridLayout(vList.size(), 1));
-
-        // 버튼을 벡터에 삽입
-        for (int i=0; i<vList.size(); i++) {
-            jp_secChan.add(vList.get(i));
-            vList.get(i).addActionListener(this);
-        }
-
-//        this.add(jp_secChan);
+        jsp_display.getVerticalScrollBar().setUnitIncrement(16);
+        jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
+        jp_center.add(jl_list);
         this.add(jsp_display);
+//        //////////////////// 버튼으로
+//        jp_secChan.setLayout(new GridLayout(vList.size(), 1));
+        // 버튼을 벡터에 삽입
+//        for (int i=0; i<vList.size(); i++) {
+//            jp_secChan.add(vList.get(i));
+//            vList.get(i).addActionListener(this);
+//        }
+//        this.add(jp_center);
+
+//        jp_center.setLayout(new GridLayout(dlm.getSize(), 1));
 
 
         // [south]

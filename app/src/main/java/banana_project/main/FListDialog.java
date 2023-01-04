@@ -12,18 +12,23 @@ public class FListDialog implements ActionListener {
     Main main = null;
     Vector<JButton> vList = new Vector<JButton>();
 
-
+    // NORTH
     JPanel jp_north = new JPanel();
+//    JLabel jlb_friends = new JLabel("친구 이름를 입력하세요");
     JTextField jtf_search = new JTextField("친구를 검색", 28);
     JButton jbtn_search = new JButton("검색");
 
-
+    // CENTER
     JPanel jp_center = new JPanel();
     JScrollPane jsp_display = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);    // TODO: 리스트를 스크롤
-    //    JTextArea jta_display = new JTextArea("테스트");
+    // 리스트를 버튼으로
     JButton jbtn_list = null;    // TODO: 친구 | 채팅 리스트
+    // 리스트를 JList로
+    DefaultListModel<String> dlm = new DefaultListModel<String>();
+    JList<String> jl_list = null;
 
+    // SOUTH
     JPanel jp_south = new JPanel();
     JButton jbtn_add = new JButton("추가");
 
@@ -41,14 +46,26 @@ public class FListDialog implements ActionListener {
         jdg.setVisible(false);
     }
 
-    // 버튼 리스트 출력
+
+//    public void createList() {
+//
+//    } // end of createList()
+
+    // 친구리스트(JList) 생성
     public void createList() {
         for (int i=0; i<10; i++) {
-            jbtn_list = new JButton(Integer.toString(i));
-            jbtn_list.addActionListener(this);
-            vList.add(jbtn_list);
+            dlm.addElement(Integer.toString(i));
         }
+        jl_list = new JList(dlm);
+//////////////////////////////////////// 버튼 리스트 출력
+//        for (int i=0; i<10; i++) {
+//            jbtn_list = new JButton(Integer.toString(i));
+//            jbtn_list.addActionListener(this);
+//            vList.add(jbtn_list);
+//        }
+
     } // end of createList()
+
 
     // [메소드]
     public void setDialog(String title, boolean isView) {
@@ -56,6 +73,9 @@ public class FListDialog implements ActionListener {
         jp_north.setLayout(new BorderLayout());
         jp_north.setBounds(30, 30, 340, 50);
         jp_north.setBorder(BorderFactory.createEmptyBorder(5 , 5, 5 , 5));
+
+//        jlb_friends.setForeground(Color.GRAY);
+//        jtf_search.add(jlb_friends);
         jtf_search.addActionListener(this);
         jp_north.add("West",jtf_search);
 
@@ -64,13 +84,16 @@ public class FListDialog implements ActionListener {
         jp_north.add("East", jbtn_search);
 
         // [Center]
-        jp_center.setLayout(new GridLayout(vList.size(), 1));
         jsp_display.setBorder(BorderFactory.createEmptyBorder(5 , 5, 5 , 5));
-        // 버튼을 벡터에 삽입
+        jsp_display.getVerticalScrollBar().setUnitIncrement(16);
         createList();
-        for (int i=0; i<vList.size(); i++) {
-            jp_center.add(vList.get(i));
-        }
+        jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
+        // 버튼을 벡터에 삽입
+//        for (int i=0; i<vList.size(); i++) {
+//            jp_center.add(vList.get(i));
+//        }
+        // 리스트로 출력
+        jp_center.add(jl_list);
 
 
         // [South]
@@ -114,22 +137,27 @@ public class FListDialog implements ActionListener {
                 // TODO: 새 채팅 로직
             }
         } else if (obj == jbtn_search || obj == jtf_search) {
+            // search 이벤트 호출
             System.out.println("search 이벤트 호출");
             System.out.println("입력값 : \"" + jtf_search.getText() + "\"");
 
         } else if (obj == jbtn_add) {
+            // jbtn_add 클릭
             System.out.println("jbtn_add 클릭");
-            JOptionPane.showMessageDialog(jdg, "추가합니다.","info",JOptionPane.INFORMATION_MESSAGE);
+            String num = jl_list.getSelectedValue();
+            String msg = num + "을 추가합니다";
+            System.out.println(msg);
+            JOptionPane.showMessageDialog(jdg, msg,"info",JOptionPane.INFORMATION_MESSAGE);
             jdg.dispose();
             System.out.println("친구검색 다이얼로그 종료");
         }
 
-        // 친구 목록버튼 클릭
-        for (int i=0; i<vList.size(); i++) {
-            if (obj == vList.get(i)) {
-                System.out.println("jbtn_list(" + vList.get(i).getText() +") 클릭");
-            }
-        }
+//        /////////////////// 친구 목록버튼 클릭
+//        for (int i=0; i<vList.size(); i++) {
+//            if (obj == vList.get(i)) {
+//                System.out.println("jbtn_list(" + vList.get(i).getText() +") 클릭");
+//            }
+//        }
 
     }
 }
