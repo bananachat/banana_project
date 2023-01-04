@@ -1,4 +1,4 @@
-package banana_project.util.dbTable;
+package banana_project.server.vo;
 
 import lombok.Builder;
 import lombok.Data;
