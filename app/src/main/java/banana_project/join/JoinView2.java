@@ -1,4 +1,4 @@
-package dev_java1.week5;
+package banana_project.join;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 //회원가입 UI
 public class JoinView2 extends JDialog implements ActionListener {
    boolean isIdCheck = false;
-   String imgPath = "C:\\VsCode-Java2022\\junit5-2022\\dev_java1\\app\\src\\main\\java\\dev_java1\\images\\banana\\";
+   String imgPath = "D:\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
    JDialog jdl_join = new JDialog(); // 회원가입 프레임
    JPanel jp_join = new JPanel(null); // 회원가입 도화지
    JLabel jlb_name = new JLabel("이름");
