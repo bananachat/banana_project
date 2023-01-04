@@ -1,4 +1,5 @@
-package banana_project.util;
+package banana_project.server.util;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
