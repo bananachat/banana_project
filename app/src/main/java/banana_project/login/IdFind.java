@@ -102,8 +102,8 @@ public class IdFind extends JFrame implements ActionListener, MouseListener {
     client.jf_login.setVisible(true);
 
     // 테스트용
-    client.jf_login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    client.jf_login.setLocationRelativeTo(null);// 창 가운데서 띄우기
+    // client.jf_login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    // client.jf_login.setLocationRelativeTo(null);// 창 가운데서 띄우기
   }
 
   @Override
@@ -151,8 +151,8 @@ public class IdFind extends JFrame implements ActionListener, MouseListener {
 
   // // 테스트용메인
   // public static void main(String[] args) {
-  //   Client c = new Client();
-  //   IdFind i = new IdFind(c);
-  //   i.initDisplay();
+  // Client c = new Client();
+  // IdFind i = new IdFind(c);
+  // i.initDisplay();
   // }
 }

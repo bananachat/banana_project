@@ -141,6 +141,9 @@ public class Client extends JFrame implements ActionListener, MouseListener {
     jf_login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     jf_login.setLocationRelativeTo(null);// 창 가운데서 띄우기
     jf_login.setVisible(true);
+    // jlb테스트
+    jlb_idText.revalidate();
+    jlb_pwText.repaint();
   }
 
   public static void main(String[] args) {
