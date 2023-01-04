@@ -28,30 +28,30 @@ public class Client extends JFrame implements ActionListener {
   Socket socket = null;
   ObjectOutputStream oos = null;// 말하기
   ObjectInputStream ois = null;// 듣기
-  String jtf_userId = null;
-  String jtf_userPw = null;
+  String userId = null;
+  String userPw = null;
 
   // 화면부 선언
   JFrame jf_login = new JFrame(); // 메인프레임
   JPanel jp_login = new JPanel(null);
   // 아이디, 비밀번호 입력을 위한 JTextField (테두리선을 지우기위해 클래스 재정의)
-  JTextField jtf_id = new JTextField() {
+  JTextField jtf_userId = new JTextField() {
     @Override
     public void setBorder(Border border) {
     }
   };
-  JPasswordField jtf_pw = new JPasswordField() {
+  JPasswordField jtf_userPw = new JPasswordField() {
     @Override
     public void setBorder(Border border) {
     }
   };
-  JLabel jlb_idtext = new JLabel("  example@email.com");
-  JLabel jlb_pwtext = new JLabel("  password");
+  JLabel jlb_idText = new JLabel("  example@email.com");
+  JLabel jlb_pwText = new JLabel("  password");
   JLabel jlb_findId = new JLabel(); // 아이디찾기 라벨
   JLabel jlb_findPw = new JLabel(); // 비밀번호 찾기 라벨
   Font fP = new Font("맑은 고딕", Font.PLAIN, 12);
   Font fB = new Font("맑은 고딕", Font.BOLD, 12);
-  String imgPath = "D:\\vscode_project\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
+  String imgPath = "D:\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
   ImageIcon img_main = new ImageIcon(imgPath + "bananaMain.png"); // 메인 로고 이미지
   ImageIcon img_login = new ImageIcon(imgPath + ""); // 로그인 이미지
   ImageIcon img_join = new ImageIcon(imgPath + ""); // 회원가입 이미지
@@ -65,24 +65,24 @@ public class Client extends JFrame implements ActionListener {
     jbtn_login.addActionListener(this);
     jbtn_join.addActionListener(this);
     // 로그인, 패스워드 라벨 설정
-    jlb_idtext.setForeground(Color.GRAY);
-    jlb_pwtext.setForeground(Color.GRAY);
-    jlb_idtext.setBounds(60, 300, 270, 45);
-    jlb_pwtext.setBounds(60, 340, 270, 45);
-    jp_login.add(jlb_idtext);
-    jp_login.add(jlb_pwtext);
+    jlb_idText.setForeground(Color.GRAY);
+    jlb_pwText.setForeground(Color.GRAY);
+    jlb_idText.setBounds(60, 300, 270, 45);
+    jlb_pwText.setBounds(60, 340, 270, 45);
+    jp_login.add(jlb_idText);
+    jp_login.add(jlb_pwText);
     // JTextField(ip,pw입력), JLabel(분실정보찾기), JButton(바나나이미지, 로그인, 가입버튼) 붙임
-    jp_login.add(jtf_id);
-    jp_login.add(jtf_pw);
+    jp_login.add(jtf_userId);
+    jp_login.add(jtf_userPw);
     jp_login.add(jbtn_login);
     jp_login.add(jbtn_join);
     jp_login.add(jlb_findId);
     jp_login.add(jlb_findPw);
     jp_login.add(jbtn_main);
     // 아이디 비밀번호 입력창 고정 및 비밀번호 암호 *로 표시
-    jtf_id.setBounds(60, 300, 270, 45);
-    jtf_pw.setBounds(60, 340, 270, 45);
-    jtf_pw.setEchoChar('*');
+    jtf_userId.setBounds(60, 300, 270, 45);
+    jtf_userPw.setBounds(60, 340, 270, 45);
+    jtf_userPw.setEchoChar('*');
 
     // 로그인 버튼 정의
     jbtn_login.setBorderPainted(false);
@@ -124,16 +124,16 @@ public class Client extends JFrame implements ActionListener {
       @Override
       public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
-        // IdFind idFind = new IdFind();
-        // idFind.initDisplay();
+        IdFind idFind = new IdFind();
+        idFind.initDisplay();
       }
     });
     jlb_findPw.addMouseListener(new MouseAdapter() {
       @Override
       public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
-        // PwFind pwFind = new PwFind();
-        // pwFind.initDisplay();
+        PwFind pwFind = new PwFind();
+        pwFind.initDisplay();
       }
     });
 
@@ -161,15 +161,14 @@ public class Client extends JFrame implements ActionListener {
   public void actionPerformed(ActionEvent e) {
     Object obj = e.getSource();
     if (jbtn_login == obj) {
-      jtf_userId = jtf_id.getText();
-      jtf_userPw = jtf_pw.getText();
+      userId = jtf_userId.getText();
+      userPw = jtf_userPw.getText();
       try {
         socket = new Socket("127.0.0.1", 3000);
         oos = new ObjectOutputStream(socket.getOutputStream());
         ois = new ObjectInputStream(socket.getInputStream());
         // 101#아이디#패스워드
-        // oos.writeObject(Protocol.TALK_IN + Protocol.seperator + jtf_userId +
-        // jtf_userPw);
+        // oos.writeObject(Protocol.TALK_IN + Protocol.seperator + userId + userPw);
         // ClientThread clientThread = new ClientThread(this);
         // clientThread.start();
       } catch (Exception e1) {
