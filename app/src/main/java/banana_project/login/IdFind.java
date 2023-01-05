@@ -17,6 +17,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.ObjectInputStream;
@@ -100,10 +102,6 @@ public class IdFind extends JFrame implements ActionListener, MouseListener {
     jp_idFind.setBackground(new Color(255, 230, 120)); // 패널색 노란색
     client.jf_login.setSize(400, 600);
     client.jf_login.setVisible(true);
-
-    // 테스트용
-    // client.jf_login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    // client.jf_login.setLocationRelativeTo(null);// 창 가운데서 띄우기
   }
 
   @Override
@@ -111,6 +109,19 @@ public class IdFind extends JFrame implements ActionListener, MouseListener {
     Object obj = e.getSource();
     if (jbtn_back == obj) {
       client.initDisplay();
+    }
+
+
+    else if (jtf_userName == obj) {
+      jtf_userName.setForeground(Color.gray);
+      if ("".equals(jtf_userName.getText())) {
+        jtf_userName.setText("  이름");
+      }
+    } else if (jtf_userHp == obj) {
+      jtf_userHp.setForeground(Color.gray);
+      if ("".equals(jtf_userHp.getText())) {
+        jtf_userHp.setText("  핸드폰 번호");
+      }
     }
   }
 
@@ -122,12 +133,15 @@ public class IdFind extends JFrame implements ActionListener, MouseListener {
   @Override
   public void mousePressed(MouseEvent e) {
     Object obj = e.getSource();
+    // 이름 jtf를 클릭했을 때
     if (jtf_userName == obj) {
       jtf_userName.setForeground(Color.black);
       if ("  이름".equals(jtf_userName.getText())) {
         jtf_userName.setText("");
       }
-    } else if (jtf_userHp == obj) {
+    }
+    // 핸드폰번호 jtf를 클릭했을 때
+    else if (jtf_userHp == obj) {
       jtf_userHp.setForeground(Color.black);
       if ("  핸드폰 번호".equals(jtf_userHp.getText())) {
         jtf_userHp.setText("");
@@ -147,12 +161,15 @@ public class IdFind extends JFrame implements ActionListener, MouseListener {
 
   @Override
   public void mouseExited(MouseEvent e) {
+  
   }
 
-  // // 테스트용메인
-  // public static void main(String[] args) {
-  // Client c = new Client();
-  // IdFind i = new IdFind(c);
-  // i.initDisplay();
-  // }
+  // 테스트용메인
+  public static void main(String[] args) {
+    Client c = new Client();
+    IdFind i = new IdFind(c);
+    i.initDisplay();
+    i.client.jf_login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    i.client.jf_login.setLocationRelativeTo(null);
+  }
 }

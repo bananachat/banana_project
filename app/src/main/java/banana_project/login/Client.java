@@ -11,6 +11,8 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.plaf.ColorUIResource;
 
+import com.google.gson.stream.MalformedJsonException;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -29,37 +31,38 @@ public class Client extends JFrame implements ActionListener, MouseListener {
   Socket socket = null;
   ObjectOutputStream oos = null;// 말하기
   ObjectInputStream ois = null;// 듣기
-  String userId = null;
-  String userPw = null;
+  String userId = null; // 유저가입력한 아이디
+  String userPw = null; // 유저가 입력한 비밀번호
 
   // 화면부 선언
-  JFrame jf_login = new JFrame(); // 메인프레임
-  JPanel jp_login = new JPanel(null);
-  // 아이디, 비밀번호 입력을 위한 JTextField (테두리선을 지우기위해 클래스 재정의)
-  JTextField jtf_userId = new JTextField() {
-    @Override
-    public void setBorder(Border border) {
-    }
-  };
-  JPasswordField jtf_userPw = new JPasswordField() {
-    @Override
-    public void setBorder(Border border) {
-    }
-  };
-  JLabel jlb_idText = new JLabel("  example@email.com");
-  JLabel jlb_pwText = new JLabel("  password");
+  JFrame jf_login = new JFrame(); // 메인 프레임
+  JPanel jp_login = new JPanel(null); // 메인 패널
+  JLabel jlb_idText = new JLabel("  example@email.com"); // jtf위에 표시될 jlb
+  JLabel jlb_pwText = new JLabel("  password"); // jtf위에 표시될 jlb
   JLabel jlb_findId = new JLabel(); // 아이디찾기 라벨
   JLabel jlb_findPw = new JLabel(); // 비밀번호 찾기 라벨
-  Font fPlain = new Font("맑은 고딕", Font.PLAIN, 12);
-  Font fBold = new Font("맑은 고딕", Font.BOLD, 12);
+
+  // 아이디, 비밀번호 입력을 위한 JTextField (테두리선을 지우기위해 클래스 재정의)
+  JTextField jtf_userId = new JTextField() { // 아이디 입력창
+    @Override
+    public void setBorder(Border border) {
+    }
+  };
+  JPasswordField jtf_userPw = new JPasswordField() { // 비밀번호 입력창
+    @Override
+    public void setBorder(Border border) {
+    }
+  };
+  Font fPlain = new Font("맑은 고딕", Font.PLAIN, 12); // 보통 폰트
+  Font fBold = new Font("맑은 고딕", Font.BOLD, 12); // 볼드 폰트
   String imgPath = "D:\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
   ImageIcon img_main = new ImageIcon(imgPath + "banana_main.png"); // 메인 로고 이미지
   ImageIcon img_title = new ImageIcon(imgPath + "banana_title.png"); // 타이틀창 이미지
-  ImageIcon img_login = new ImageIcon(imgPath + ""); // 로그인 이미지
-  ImageIcon img_join = new ImageIcon(imgPath + ""); // 회원가입 이미지
-  JButton jbtn_login = new JButton("로그인");
-  JButton jbtn_join = new JButton("회원가입");
-  JButton jbtn_main = new JButton(img_main); // 메인 로고 이미지 붙이기
+  ImageIcon img_login = new ImageIcon(imgPath + ""); // 로그인 버튼 이미지
+  ImageIcon img_join = new ImageIcon(imgPath + ""); // 회원가입 버튼 이미지
+  JButton jbtn_login = new JButton("로그인"); // 로그인 버튼
+  JButton jbtn_join = new JButton("회원가입"); // 회원가입 버튼
+  JButton jbtn_main = new JButton(img_main); // 메인 로고 이미지 붙이기용 버튼
 
   // 화면부 메소드
   public void initDisplay() {
@@ -141,19 +144,21 @@ public class Client extends JFrame implements ActionListener, MouseListener {
     jf_login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     jf_login.setLocationRelativeTo(null);// 창 가운데서 띄우기
     jf_login.setVisible(true);
-    // jlb테스트
-    jlb_idText.revalidate();
-    jlb_pwText.repaint();
   }
 
   public static void main(String[] args) {
     Client client = new Client();
+    client.jp_login.add(client.jlb_idText);
+    client.jp_login.add(client.jlb_pwText);
     client.initDisplay();
+    client.jp_login.add(client.jlb_idText);
+    client.jp_login.add(client.jlb_pwText);
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
     Object obj = e.getSource();
+    // 로그인 버튼을 눌렀을 때
     if (jbtn_login == obj) {
       userId = jtf_userId.getText();
       userPw = jtf_userPw.getText();
@@ -168,26 +173,34 @@ public class Client extends JFrame implements ActionListener, MouseListener {
       } catch (Exception e1) {
         System.out.println(e1.toString());
       }
-    } else if (jbtn_join == obj) {
+    }
+
+    // 회원가입 버튼을 눌렀을 때
+    else if (jbtn_join == obj) {
+      // Memjoin memjoin = new Memjoin(this);
+      // memjoin.initDisplay();
     }
   }
 
   @Override
   public void mouseClicked(MouseEvent e) {
+
+  }
+
+  @Override
+  public void mousePressed(MouseEvent e) {
     Object obj = e.getSource();
     // 아이디찾기 라벨 눌렀을 때
     if (jlb_findId == obj) {
       IdFind idFind = new IdFind(this);
       idFind.initDisplay();
     }
+
     // 비밀번호찾기 라벨 눌렀을 때
     else if (jlb_findPw == obj) {
+      PwFind pwFind = new PwFind(this);
+      pwFind.initDisplay();
     }
-  }
-
-  @Override
-  public void mousePressed(MouseEvent e) {
-
   }
 
   @Override
