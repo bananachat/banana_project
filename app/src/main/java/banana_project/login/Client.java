@@ -1,6 +1,5 @@
 package banana_project.login;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -10,14 +9,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.plaf.ColorUIResource;
-
-import com.google.gson.stream.MalformedJsonException;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.KeyAdapter;
@@ -27,6 +22,12 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class Client extends JFrame implements ActionListener, MouseListener {
+  // 클래스 연결
+  // Main main = null; //메인화면 연결
+  // Memjoin memjoin = null; //회원가입 연결
+  IdFind idFind = null; // 아이디찾기 연결
+  PwFind pwFind = null; // 비밀번호찾기 연결
+
   // 서버 연결부 선언
   Socket socket = null;
   ObjectOutputStream oos = null;// 말하기
@@ -36,12 +37,11 @@ public class Client extends JFrame implements ActionListener, MouseListener {
 
   // 화면부 선언
   JFrame jf_login = new JFrame(); // 메인 프레임
-  JPanel jp_login = new JPanel(null); // 메인 패널
+  JPanel jp_login = new JPanel(null); // 로그인 패널
   JLabel jlb_idText = new JLabel("  example@email.com"); // jtf위에 표시될 jlb
   JLabel jlb_pwText = new JLabel("  password"); // jtf위에 표시될 jlb
   JLabel jlb_findId = new JLabel(); // 아이디찾기 라벨
   JLabel jlb_findPw = new JLabel(); // 비밀번호 찾기 라벨
-
   // 아이디, 비밀번호 입력을 위한 JTextField (테두리선을 지우기위해 클래스 재정의)
   JTextField jtf_userId = new JTextField() { // 아이디 입력창
     @Override
@@ -53,16 +53,19 @@ public class Client extends JFrame implements ActionListener, MouseListener {
     public void setBorder(Border border) {
     }
   };
-  Font fPlain = new Font("맑은 고딕", Font.PLAIN, 12); // 보통 폰트
-  Font fBold = new Font("맑은 고딕", Font.BOLD, 12); // 볼드 폰트
+  // 폰트 설정
+  Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통 폰트
+  Font b14 = new Font("맑은 고딕", Font.BOLD, 14); // 볼드 폰트
+  // 이미지 설정
   String imgPath = "D:\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
   ImageIcon img_main = new ImageIcon(imgPath + "banana_main.png"); // 메인 로고 이미지
   ImageIcon img_title = new ImageIcon(imgPath + "banana_title.png"); // 타이틀창 이미지
   ImageIcon img_login = new ImageIcon(imgPath + ""); // 로그인 버튼 이미지
   ImageIcon img_join = new ImageIcon(imgPath + ""); // 회원가입 버튼 이미지
+  // 버튼 설정
   JButton jbtn_login = new JButton("로그인"); // 로그인 버튼
   JButton jbtn_join = new JButton("회원가입"); // 회원가입 버튼
-  JButton jbtn_main = new JButton(img_main); // 메인 로고 이미지 붙이기용 버튼
+  JButton jbtn_main = new JButton(img_main); // 메인 로그인 이미지 붙이기용 버튼
 
   // 화면부 메소드
   public void initDisplay() {
@@ -74,11 +77,11 @@ public class Client extends JFrame implements ActionListener, MouseListener {
     jlb_pwText.setForeground(Color.gray);
     jlb_idText.setBounds(60, 300, 270, 45);
     jlb_pwText.setBounds(60, 340, 270, 45);
-    jlb_idText.setFont(fPlain);
-    jlb_pwText.setFont(fPlain);
+    jlb_idText.setFont(p12);
+    jlb_pwText.setFont(p12);
     jp_login.add(jlb_idText);
     jp_login.add(jlb_pwText);
-    // JTextField(ip,pw입력), JLabel(분실정보찾기), JButton(바나나이미지, 로그인, 가입버튼) 붙임
+    // 패널에 추가
     jp_login.add(jtf_userId);
     jp_login.add(jtf_userPw);
     jp_login.add(jbtn_login);
@@ -90,52 +93,44 @@ public class Client extends JFrame implements ActionListener, MouseListener {
     jtf_userId.setBounds(60, 300, 270, 45);
     jtf_userPw.setBounds(60, 340, 270, 45);
     jtf_userPw.setEchoChar('*');
-
     // 로그인 버튼 정의
     jbtn_login.setBorderPainted(false);
+    jbtn_login.setBackground(new Color(130, 65, 60));
+    jbtn_login.setForeground(Color.white);
+    jbtn_login.setFont(b14);
     jbtn_login.setBounds(200, 400, 130, 45);
-    // jbtn_login.setBounds(175, 285, 120, 40);
-    // KeyListener : 엔터키 누르면 로그인 버튼 눌림
+    // KeyListener-엔터키 누르면 로그인 버튼 눌림
     jbtn_login.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-          // join.initDisplay();
+          // main = new Main(this); //메인화면 연결
+          // main.initDisplay();
         }
       }
     });
-
     // 회원가입버튼 정의
-    jbtn_join.setForeground(Color.BLACK);
-    jbtn_join.setFont(fPlain);
+    jbtn_join.setBorderPainted(false);
+    jbtn_join.setBackground(new Color(130, 65, 60));
+    jbtn_join.setForeground(Color.white);
+    jbtn_join.setFont(b14);
     jbtn_join.setBounds(60, 400, 130, 45);
-    jbtn_join.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mousePressed(MouseEvent e) {
-        super.mousePressed(e);
-        // Join join = new Join();
-        // join.initDisplay();
-      }
-    });
-
     // 아이디/비밀번호 찾기 라벨버튼 정의
     jlb_findId.setText("<HTML><U>아이디 찾기</U></HTML>");
     jlb_findPw.setText("<HTML><U>비밀번호 찾기</U></HTML>");
     jlb_findId.setForeground(new ColorUIResource(135, 90, 75));
     jlb_findPw.setForeground(new ColorUIResource(135, 90, 75));
-    jlb_findId.setFont(fBold);
-    jlb_findPw.setFont(fBold);
-    jlb_findId.setBounds(100, 460, 200, 20);
-    jlb_findPw.setBounds(220, 460, 200, 20);
+    jlb_findId.setFont(p12);
+    jlb_findPw.setFont(p12);
+    jlb_findId.setBounds(100, 460, 70, 20);
+    jlb_findPw.setBounds(220, 460, 80, 20);
     jlb_findId.addMouseListener(this);
     jlb_findPw.addMouseListener(this);
-
     // 바나나 이미지 정의
     jbtn_main.setBackground(new Color(255, 230, 120));
     jbtn_main.setBorderPainted(false); // 버튼 외곽선 없애기
     jbtn_main.setBounds(60, 35, 270, 250); // 바나나 이미지 고정
     jp_login.setBackground(new Color(255, 230, 120)); // 도화지 색깔 노란색
-
     // JFrame, 메인프레임 정의
     jf_login.setTitle("바나나톡");
     jf_login.setIconImage(img_title.getImage());
@@ -148,11 +143,7 @@ public class Client extends JFrame implements ActionListener, MouseListener {
 
   public static void main(String[] args) {
     Client client = new Client();
-    client.jp_login.add(client.jlb_idText);
-    client.jp_login.add(client.jlb_pwText);
     client.initDisplay();
-    client.jp_login.add(client.jlb_idText);
-    client.jp_login.add(client.jlb_pwText);
   }
 
   @Override
@@ -170,21 +161,21 @@ public class Client extends JFrame implements ActionListener, MouseListener {
         // oos.writeObject(Protocol.TALK_IN + Protocol.seperator + userId + userPw);
         // ClientThread clientThread = new ClientThread(this);
         // clientThread.start();
+        // main = new Main(this); //메인화면 연결
+        // main.initDisplay();
       } catch (Exception e1) {
         System.out.println(e1.toString());
       }
     }
-
     // 회원가입 버튼을 눌렀을 때
     else if (jbtn_join == obj) {
-      // Memjoin memjoin = new Memjoin(this);
+      // memjoin = new Memjoin(this); //회원가입 연결
       // memjoin.initDisplay();
     }
   }
 
   @Override
   public void mouseClicked(MouseEvent e) {
-
   }
 
   @Override
@@ -192,29 +183,25 @@ public class Client extends JFrame implements ActionListener, MouseListener {
     Object obj = e.getSource();
     // 아이디찾기 라벨 눌렀을 때
     if (jlb_findId == obj) {
-      IdFind idFind = new IdFind(this);
+      idFind = new IdFind(this); // 아이디찾기 연결
       idFind.initDisplay();
     }
-
     // 비밀번호찾기 라벨 눌렀을 때
     else if (jlb_findPw == obj) {
-      PwFind pwFind = new PwFind(this);
+      pwFind = new PwFind(this); // 비밀번호찾기 연결
       pwFind.initDisplay();
     }
   }
 
   @Override
   public void mouseReleased(MouseEvent e) {
-
   }
 
   @Override
   public void mouseEntered(MouseEvent e) {
-
   }
 
   @Override
   public void mouseExited(MouseEvent e) {
-
   }
 }
