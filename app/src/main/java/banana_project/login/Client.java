@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.plaf.ColorUIResource;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -49,10 +50,11 @@ public class Client extends JFrame implements ActionListener, MouseListener {
   JLabel jlb_pwText = new JLabel("  password");
   JLabel jlb_findId = new JLabel(); // 아이디찾기 라벨
   JLabel jlb_findPw = new JLabel(); // 비밀번호 찾기 라벨
-  Font fP = new Font("맑은 고딕", Font.PLAIN, 12);
-  Font fB = new Font("맑은 고딕", Font.BOLD, 12);
+  Font fPlain = new Font("맑은 고딕", Font.PLAIN, 12);
+  Font fBold = new Font("맑은 고딕", Font.BOLD, 12);
   String imgPath = "D:\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
-  ImageIcon img_main = new ImageIcon(imgPath + "bananaMain.png"); // 메인 로고 이미지
+  ImageIcon img_main = new ImageIcon(imgPath + "banana_main.png"); // 메인 로고 이미지
+  ImageIcon img_title = new ImageIcon(imgPath + "banana_title.png"); // 타이틀창 이미지
   ImageIcon img_login = new ImageIcon(imgPath + ""); // 로그인 이미지
   ImageIcon img_join = new ImageIcon(imgPath + ""); // 회원가입 이미지
   JButton jbtn_login = new JButton("로그인");
@@ -65,10 +67,12 @@ public class Client extends JFrame implements ActionListener, MouseListener {
     jbtn_login.addActionListener(this);
     jbtn_join.addActionListener(this);
     // 로그인, 패스워드 라벨 설정
-    jlb_idText.setForeground(Color.GRAY);
-    jlb_pwText.setForeground(Color.GRAY);
+    jlb_idText.setForeground(Color.gray);
+    jlb_pwText.setForeground(Color.gray);
     jlb_idText.setBounds(60, 300, 270, 45);
     jlb_pwText.setBounds(60, 340, 270, 45);
+    jlb_idText.setFont(fPlain);
+    jlb_pwText.setFont(fPlain);
     jp_login.add(jlb_idText);
     jp_login.add(jlb_pwText);
     // JTextField(ip,pw입력), JLabel(분실정보찾기), JButton(바나나이미지, 로그인, 가입버튼) 붙임
@@ -100,7 +104,7 @@ public class Client extends JFrame implements ActionListener, MouseListener {
 
     // 회원가입버튼 정의
     jbtn_join.setForeground(Color.BLACK);
-    jbtn_join.setFont(fP);
+    jbtn_join.setFont(fPlain);
     jbtn_join.setBounds(60, 400, 130, 45);
     jbtn_join.addMouseListener(new MouseAdapter() {
       @Override
@@ -114,10 +118,10 @@ public class Client extends JFrame implements ActionListener, MouseListener {
     // 아이디/비밀번호 찾기 라벨버튼 정의
     jlb_findId.setText("<HTML><U>아이디 찾기</U></HTML>");
     jlb_findPw.setText("<HTML><U>비밀번호 찾기</U></HTML>");
-    jlb_findId.setForeground(Color.BLACK);
-    jlb_findPw.setForeground(Color.BLACK);
-    jlb_findId.setFont(fP);
-    jlb_findPw.setFont(fP);
+    jlb_findId.setForeground(new ColorUIResource(135, 90, 75));
+    jlb_findPw.setForeground(new ColorUIResource(135, 90, 75));
+    jlb_findId.setFont(fBold);
+    jlb_findPw.setFont(fBold);
     jlb_findId.setBounds(100, 460, 200, 20);
     jlb_findPw.setBounds(220, 460, 200, 20);
     jlb_findId.addMouseListener(this);
@@ -131,11 +135,15 @@ public class Client extends JFrame implements ActionListener, MouseListener {
 
     // JFrame, 메인프레임 정의
     jf_login.setTitle("바나나톡");
+    jf_login.setIconImage(img_title.getImage());
     jf_login.setContentPane(jp_login); // 액자에 도화지 끼우기
     jf_login.setSize(400, 600);
     jf_login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     jf_login.setLocationRelativeTo(null);// 창 가운데서 띄우기
     jf_login.setVisible(true);
+    // jlb테스트
+    jlb_idText.revalidate();
+    jlb_pwText.repaint();
   }
 
   public static void main(String[] args) {
@@ -171,33 +179,29 @@ public class Client extends JFrame implements ActionListener, MouseListener {
     if (jlb_findId == obj) {
       IdFind idFind = new IdFind(this);
       idFind.initDisplay();
-    } else if (jlb_findPw == obj) {
-
     }
-
+    // 비밀번호찾기 라벨 눌렀을 때
+    else if (jlb_findPw == obj) {
+    }
   }
 
   @Override
   public void mousePressed(MouseEvent e) {
-    // TODO Auto-generated method stub
 
   }
 
   @Override
   public void mouseReleased(MouseEvent e) {
-    // TODO Auto-generated method stub
 
   }
 
   @Override
   public void mouseEntered(MouseEvent e) {
-    // TODO Auto-generated method stub
 
   }
 
   @Override
   public void mouseExited(MouseEvent e) {
-    // TODO Auto-generated method stub
 
   }
 }

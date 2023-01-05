@@ -1,4 +1,4 @@
-package dev_java1.week5;
+package banana_project.join;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -10,10 +10,11 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
 //회원가입 UI
 public class JoinView2 extends JDialog implements ActionListener {
    boolean isIdCheck = false;
-   String imgPath = "C:\\VsCode-Java2022\\junit5-2022\\dev_java1\\app\\src\\main\\java\\dev_java1\\images\\banana\\";
+   String imgPath = "D:\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
    JDialog jdl_join = new JDialog(); // 회원가입 프레임
    JPanel jp_join = new JPanel(null); // 회원가입 도화지
    JLabel jlb_name = new JLabel("이름");
@@ -33,7 +34,7 @@ public class JoinView2 extends JDialog implements ActionListener {
    JTextField jtf_birth = new JTextField(); // 생년월일
    JTextField jtf_phone = new JTextField(); // 폰번호
    JTextField jtf_nickName = new JTextField(); // 닉네임
-   ImageIcon imgic_join = new ImageIcon(imgPath+"bt_join.png"); // 로그인 버튼 이미지
+   ImageIcon imgic_join = new ImageIcon(imgPath + "bt_join.png"); // 로그인 버튼 이미지
    JButton jbtn_idconfirm = new JButton("중복검사"); // 로그인 버튼
    JButton jbtn_join = new JButton(imgic_join);// 회원가입 버튼
    Font f_join = new Font("맑은 고딕", Font.PLAIN, 25);
@@ -44,7 +45,7 @@ public class JoinView2 extends JDialog implements ActionListener {
       jbtn_join.addActionListener(this);
       jbtn_idconfirm.addActionListener(this);
       // 타이틀 부분
-      ImageIcon bookIcon = new ImageIcon(imgPath+"title.png");
+      ImageIcon bookIcon = new ImageIcon(imgPath + "title.png");
       jdl_join.setIconImage(bookIcon.getImage());
       jdl_join.setTitle("바나나톡");
       // 정보입력 부분
@@ -99,7 +100,7 @@ public class JoinView2 extends JDialog implements ActionListener {
       jp_join.add(jlb_title);// 회원가입 라벨 왼쪽 상단에 붙이기
       jp_join.add(jbtn_join);// 회원가입 버튼
       jp_join.add(jbtn_idconfirm);// 아이디 중복검사 버튼
-      jp_join.setBackground(new Color(253, 220, 81)); // 도화지 색깔 노란색
+      jp_join.setBackground(new Color(255, 230, 120)); // 도화지 색깔 노란색
       // JDialog, 회원가입 메인창 정의
       jdl_join.setTitle("회원가입");
       jdl_join.setContentPane(jp_join);

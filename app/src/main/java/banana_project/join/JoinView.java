@@ -1,4 +1,4 @@
-package dev_java1.week5;
+package banana_project.join;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -17,13 +16,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-
-import banana_project.server.util.DBConnectionMgr
+import banana_project.server.util.DBConnectionMgr;
 //회원가입 DB연동 
 
 public class JoinView extends JDialog implements ActionListener {
    boolean isIdCheck = false;
-   String imgPath = "C:\\VsCode-Java2022\\junit5-2022\\dev_java1\\app\\src\\main\\java\\dev_java1\\images\\banana\\";
+   String imgPath = "D:\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
    JDialog jdl_join = new JDialog(); // 회원가입 프레임
    JPanel jp_join = new JPanel(null); // 회원가입 도화지
    JLabel jlb_name = new JLabel("이름");
@@ -109,7 +107,7 @@ public class JoinView extends JDialog implements ActionListener {
       jp_join.add(jlb_title);// 회원가입 라벨 왼쪽 상단에 붙이기
       jp_join.add(jbtn_join);// 회원가입 버튼
       jp_join.add(jbtn_idconfirm);// 아이디 중복검사 버튼
-      jp_join.setBackground(new Color(253, 220, 81)); // 도화지 색깔 노란색
+      jp_join.setBackground(new Color(255, 230, 120)); // 도화지 색깔 노란색
       // JDialog, 회원가입 메인창 정의
       jdl_join.setTitle("회원가입");
       jdl_join.setContentPane(jp_join);
@@ -118,7 +116,7 @@ public class JoinView extends JDialog implements ActionListener {
       jdl_join.setVisible(true);
    }
 
-   // 단위테스트욤
+   // 단위테스트용
    public static void main(String[] args) {
       JoinView join = new JoinView();
       join.initDisplay();
@@ -154,7 +152,7 @@ public class JoinView extends JDialog implements ActionListener {
          } catch (Exception e) {
             e.printStackTrace();
          }
-         if(result == 1){
+         if (result == 1) {
             JOptionPane.showMessageDialog(this, "회원가입 성공");
          }
       } // end of if
