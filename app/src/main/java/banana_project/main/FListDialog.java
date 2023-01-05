@@ -1,14 +1,16 @@
 package banana_project.main;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
-public class FListDialog implements ActionListener {
+public class FListDialog extends JDialog implements ActionListener, ListSelectionListener {
     // [선언부]
-    JDialog jdg = new JDialog();
+//    JDialog jdg = new JDialog();
     Main main = null;
     Vector<JButton> vList = new Vector<JButton>();
 
@@ -27,6 +29,7 @@ public class FListDialog implements ActionListener {
     // 리스트를 JList로
     DefaultListModel<String> dlm = new DefaultListModel<String>();
     JList<String> jl_list = null;
+    Vector<String> copy_list = new Vector<>();
 
     // SOUTH
     JPanel jp_south = new JPanel();
@@ -35,21 +38,18 @@ public class FListDialog implements ActionListener {
     // [생성자]
     public FListDialog() {
         // TEST -다이얼로그 자체 컴파일용
-        jdg.setSize(400, 300);
-        jdg.setLocation(850, 500);
-        jdg.setVisible(false);
+        this.setSize(400, 300);
+        this.setLocation(850, 500);
+        this.setVisible(false);
     }
     public FListDialog(Main main) {
         this.main = main;
-        jdg.setSize(400, 300);
-        jdg.setLocation(850, 500);
-        jdg.setVisible(false);
+        this.setSize(400, 300);
+        this.setLocation(850, 500);
+        this.setVisible(false);
+        copy_list.add(0, "임시사용자");
     }
 
-
-//    public void createList() {
-//
-//    } // end of createList()
 
     // 친구리스트(JList) 생성
     public void createList() {
@@ -57,13 +57,6 @@ public class FListDialog implements ActionListener {
             dlm.addElement(Integer.toString(i));
         }
         jl_list = new JList(dlm);
-//////////////////////////////////////// 버튼 리스트 출력
-//        for (int i=0; i<10; i++) {
-//            jbtn_list = new JButton(Integer.toString(i));
-//            jbtn_list.addActionListener(this);
-//            vList.add(jbtn_list);
-//        }
-
     } // end of createList()
 
 
@@ -88,11 +81,14 @@ public class FListDialog implements ActionListener {
         jsp_display.getVerticalScrollBar().setUnitIncrement(16);
         createList();
         jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
-        // 버튼을 벡터에 삽입
-//        for (int i=0; i<vList.size(); i++) {
-//            jp_center.add(vList.get(i));
-//        }
+
         // 리스트로 출력
+//        // 단일 선택 모드
+//        jl_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        // 다중 선택 모드
+        jl_list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        jl_list.addListSelectionListener(this);
         jp_center.add(jl_list);
 
 
@@ -105,11 +101,11 @@ public class FListDialog implements ActionListener {
 
 
 
-        jdg.add(jp_north, BorderLayout.NORTH);
-        jdg.add(jsp_display, BorderLayout.CENTER);
-        jdg.add(jp_south, BorderLayout.SOUTH);
-        jdg.setTitle(title);
-        jdg.setVisible(isView);
+        this.add(jp_north, BorderLayout.NORTH);
+        this.add(jsp_display, BorderLayout.CENTER);
+        this.add(jp_south, BorderLayout.SOUTH);
+        this.setTitle(title);
+        this.setVisible(isView);
     }
 
 
@@ -122,6 +118,8 @@ public class FListDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
+
+        // Main 내 이벤트 발생
         if (obj == main.jbtn_firChan) {
             // 친추/새채팅 클릭
             System.out.println("jbtn_firChan(" + main.jbtn_firChan.getText() +") 클릭");
@@ -136,7 +134,8 @@ public class FListDialog implements ActionListener {
                 setDialog(main.jbtn_firChan.getText(), true);
                 // TODO: 새 채팅 로직
             }
-        } else if (obj == jbtn_search || obj == jtf_search) {
+        }
+        else if (obj == jbtn_search || obj == jtf_search) {
             // search 이벤트 호출
             System.out.println("search 이벤트 호출");
             System.out.println("입력값 : \"" + jtf_search.getText() + "\"");
@@ -144,20 +143,47 @@ public class FListDialog implements ActionListener {
         } else if (obj == jbtn_add) {
             // jbtn_add 클릭
             System.out.println("jbtn_add 클릭");
-            String num = jl_list.getSelectedValue();
+
+            String num = "";
+            for (int i=0; i<copy_list.size()-1; i++) {
+                num += (copy_list.get(i) + ", ");
+            }
+            num += (copy_list.get(copy_list.size()-1));
+//            String num = jl_list.getSelectedValue();
             String msg = num + "을 추가합니다";
-            System.out.println(msg);
-            JOptionPane.showMessageDialog(jdg, msg,"info",JOptionPane.INFORMATION_MESSAGE);
-            jdg.dispose();
-            System.out.println("친구검색 다이얼로그 종료");
+
+            // 친구 선택했는지 확인
+            if (num == null) {
+                msg = "친구를 선택하세요";
+                JOptionPane.showMessageDialog(this, msg,"info",JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                System.out.println(msg);
+
+                for(String str : copy_list) {
+                    System.out.println(str);
+                }
+
+                JOptionPane.showMessageDialog(this, msg, "info", JOptionPane.INFORMATION_MESSAGE);
+                System.out.println("친구검색 다이얼로그 종료");
+
+                msg = "";
+                num = "";
+                this.dispose();
+            }
         }
 
-//        /////////////////// 친구 목록버튼 클릭
-//        for (int i=0; i<vList.size(); i++) {
-//            if (obj == vList.get(i)) {
-//                System.out.println("jbtn_list(" + vList.get(i).getText() +") 클릭");
-//            }
-//        }
+    }
 
+    // JList 이벤트 호출
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        if (!e.getValueIsAdjusting()) {
+            // 단일 선택 모드
+            System.out.println("선택 : " + jl_list.getSelectedValue());
+
+            // 선택한 친구들 정보 수집
+            // 다중 선택 모드
+            copy_list.add((String)jl_list.getSelectedValue());
+        }
     }
 }

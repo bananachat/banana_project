@@ -2,15 +2,11 @@ package banana_project.main;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 import java.util.Vector;
 
-public class Main extends JFrame implements ActionListener {
+public class Main extends JFrame implements ActionListener, MouseListener {
     // "FListDialog" 호출
     FListDialog flDialog = new FListDialog(this);
 
@@ -72,6 +68,8 @@ public class Main extends JFrame implements ActionListener {
         // 중앙 리스트 출력, TODO: 스크롤바로 나올 수 있게 해야함
         jsp_display.setBounds(5, 85, 375, 420);
         jsp_display.getVerticalScrollBar().setUnitIncrement(16);
+
+        jl_list.addMouseListener(this);
         jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
         jp_center.add(jl_list);
         this.add(jsp_display);
@@ -96,13 +94,15 @@ public class Main extends JFrame implements ActionListener {
         this.add(jbtn_chat);
 
         // 창 위치 지정
-        this.setLocation(500, 100);
+        this.setLocation(800, 300);
+//        this.setLocationRelativeTo(null);   // 가운데 위치
         // 창 크기 설정
 //        this.setSize(350, 600);
         this.setSize(400, 600);
         this.setTitle("채팅 목록");
+        this.setResizable(false);
         this.setVisible(true);
-
+        // JFrame 종료 시 이벤트
         this.addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e) {
                 System.out.println("종료합니다.");
@@ -151,4 +151,35 @@ public class Main extends JFrame implements ActionListener {
             }
         }
     } // end of actionPerformed()
+
+
+    // 마우스 클릭 이벤트
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // jl_list 목록을 눌렀을때 이벤트
+        System.out.println("jl_list(" + jl_list.getSelectedValue() + ") 클릭 이벤트");
+        if(e.getComponent() == jl_list){
+            // jl_list 목록을 두번 눌렀을때 이벤트
+            if(e.getClickCount() == 2){
+                String msg = jl_list.getSelectedValue() + "을 두번 눌렀습니다.";
+                JOptionPane.showMessageDialog(this, msg, "info", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
 }
