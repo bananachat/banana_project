@@ -41,7 +41,7 @@ public class IdFind implements ActionListener, MouseListener {
     }
   };
   // 이미지 설정
-  String imgPath = "D:\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
+  String imgPath = "./app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
   ImageIcon img_idFind = new ImageIcon(imgPath + "banana_find.png"); // 아이디찾기 이미지
   // 버튼 설정
   JButton jbtn_back = new JButton("돌아가기"); // 돌아가기 버튼

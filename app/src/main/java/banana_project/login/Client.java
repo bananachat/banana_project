@@ -57,7 +57,7 @@ public class Client extends JFrame implements ActionListener, MouseListener {
   Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통 폰트
   Font b14 = new Font("맑은 고딕", Font.BOLD, 14); // 볼드 폰트
   // 이미지 설정
-  String imgPath = "D:\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
+  String imgPath = "./app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
   ImageIcon img_main = new ImageIcon(imgPath + "banana_main.png"); // 메인 로고 이미지
   ImageIcon img_title = new ImageIcon(imgPath + "banana_title.png"); // 타이틀창 이미지
   ImageIcon img_login = new ImageIcon(imgPath + ""); // 로그인 버튼 이미지
