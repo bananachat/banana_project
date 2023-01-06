@@ -1,4 +1,4 @@
-package banana_project.login;
+package banana_project.client.login;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;

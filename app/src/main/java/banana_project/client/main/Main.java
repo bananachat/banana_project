@@ -1,4 +1,4 @@
-package banana_project.main;
+package banana_project.client.main;
 
 import javax.swing.*;
 import java.awt.*;
