@@ -112,8 +112,13 @@ public class IdFind implements ActionListener, FocusListener {
     else if (obj == jbtn_findId || obj == jtf_userName || obj == jtf_userHp) {
       userName = jtf_userName.getText();
       userHp = jtf_userHp.getText();
-      if (" 이름".equals(userName) || "".equals(userName) || " 핸드폰 번호".equals(userHp) || "".equals(userHp)) {
-        JOptionPane.showMessageDialog(client.jf_login, "이름과 핸드폰번호를 입력해주세요", "info", JOptionPane.WARNING_MESSAGE);
+      // 이름을 입력하지 않았을 경우
+      if (" 이름".equals(userName) || "".equals(userName)) {
+        JOptionPane.showMessageDialog(client.jf_login, "이름을 입력해주세요", "info", JOptionPane.WARNING_MESSAGE);
+      }
+      // 핸드폰번호를 입력하지 않았을 경우
+      else if (" 핸드폰 번호".equals(userHp) || "".equals(userHp)) {
+        JOptionPane.showMessageDialog(client.jf_login, "핸드폰번호를 입력해주세요", "info", JOptionPane.WARNING_MESSAGE);
       }
     }
   }

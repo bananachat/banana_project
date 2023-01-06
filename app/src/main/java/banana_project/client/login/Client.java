@@ -10,6 +10,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
+
+import banana_project.client.join.MemJoin;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -23,12 +26,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class Client extends JFrame implements ActionListener, MouseListener, FocusListener {
-  // 클래스 연결
-  // Main main = null; //메인화면 연결
-  // Memjoin memjoin = null; //회원가입 연결
-  IdFind idFind = null; // 아이디찾기 연결
-  PwFind pwFind = null; // 비밀번호찾기 연결
-
   // 서버 연결부 선언
   Socket socket = null;
   ObjectOutputStream oos = null;// 말하기
@@ -193,8 +190,8 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     }
     // 회원가입 버튼을 눌렀을 때
     else if (obj == jbtn_join) {
-      // memjoin = new Memjoin(this); //회원가입 연결
-      // memjoin.initDisplay();
+      // MemJoin memJoin = new MemJoin(this);
+      // memJoin.initDisplay();
     }
   }
 
@@ -207,12 +204,12 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     Object obj = e.getSource();
     // 아이디찾기 라벨 눌렀을 때
     if (obj == jlb_findId) {
-      idFind = new IdFind(this); // 아이디찾기 연결
+      IdFind idFind = new IdFind(this);
       idFind.initDisplay();
     }
     // 비밀번호찾기 라벨 눌렀을 때
     else if (obj == jlb_findPw) {
-      pwFind = new PwFind(this); // 비밀번호찾기 연결
+      PwFind pwFind = new PwFind(this);
       pwFind.initDisplay();
     }
   }
@@ -232,14 +229,14 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   @Override
   public void focusGained(FocusEvent e) {
     Object obj = e.getSource();
-    // 이름 jtf를 클릭했을 때
+    // 아이디 jtf를 클릭했을 때
     if (obj == jtf_userId) {
       jtf_userId.setForeground(Color.black);
       if (" example@email.com".equals(jtf_userId.getText())) {
         jtf_userId.setText("");
       }
     }
-    // 핸드폰번호 jtf를 클릭했을 때
+    // 비밀번호 jtf를 클릭했을 때
     else if (obj == jtf_userPw) {
       jtf_userPw.setForeground(Color.black);
       if (" password".equals(jtf_userPw.getText())) {
@@ -251,7 +248,20 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
 
   @Override
   public void focusLost(FocusEvent e) {
-    // TODO Auto-generated method stub
-
+    Object obj = e.getSource();
+    // 아이디 jtf를 공백으로두고 벗어났을 때
+    if (obj == jtf_userId) {
+      if ("".equals(jtf_userId.getText())) {
+        jtf_userId.setForeground(Color.gray);
+        jtf_userId.setText(" example@email.com");
+      }
+    }
+    // 비밀번호 jtf를 공백으로두고 벗어났을 때
+    else if (obj == jtf_userPw) {
+      if ("".equals(jtf_userPw.getText())) {
+        jtf_userPw.setForeground(Color.gray);
+        jtf_userPw.setText(" password");
+      }
+    }
   }
 }
