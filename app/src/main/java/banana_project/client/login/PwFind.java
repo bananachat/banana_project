@@ -122,10 +122,17 @@ public class PwFind implements ActionListener, FocusListener {
       userName = jtf_userName.getText();
       userId = jtf_userId.getText();
       userHp = jtf_userHp.getText();
-      if (" 이름".equals(userName) || "".equals(userName)
-          || " example@email.com".equals(userId) || "".equals(userId)
-          || " 핸드폰 번호".equals(userHp) || "".equals(userHp)) {
-        JOptionPane.showMessageDialog(client.jf_login, "이름, 이메일, 핸드폰번호를 입력해주세요", "info", JOptionPane.WARNING_MESSAGE);
+      // 이름을 입력하지 않았을 경우
+      if (" 이름".equals(userName) || "".equals(userName)) {
+        JOptionPane.showMessageDialog(client.jf_login, "이름을 입력해주세요", "info", JOptionPane.WARNING_MESSAGE);
+      }
+      // 이메일을 입력하지 않았을 경우
+      else if (" example@email.com".equals(userId) || "".equals(userId)) {
+        JOptionPane.showMessageDialog(client.jf_login, "이메일을 입력해주세요", "info", JOptionPane.WARNING_MESSAGE);
+      }
+      // 핸드폰번호를 입력하지 않았을 경우
+      else if (" 핸드폰 번호".equals(userHp) || "".equals(userHp)) {
+        JOptionPane.showMessageDialog(client.jf_login, "핸드폰번호를 입력해주세요", "info", JOptionPane.WARNING_MESSAGE);
       }
     }
   }
