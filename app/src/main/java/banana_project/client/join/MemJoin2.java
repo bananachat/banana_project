@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 //회원가입 UI
-public class JoinView2 extends JDialog implements ActionListener {
+public class MemJoin2 extends JDialog implements ActionListener {
    boolean isIdCheck = false;
    String imgPath = "D:\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
    JDialog jdl_join = new JDialog(); // 회원가입 프레임
@@ -111,7 +111,7 @@ public class JoinView2 extends JDialog implements ActionListener {
 
    // 단위테스트욤
    public static void main(String[] args) {
-      JoinView join = new JoinView();
+      MemJoin join = new MemJoin();
       join.initDisplay();
    }
 

@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 import banana_project.server.util.DBConnectionMgr;
 //회원가입 DB연동 
 
-public class JoinView extends JDialog implements ActionListener {
+public class MemJoin extends JDialog implements ActionListener {
    boolean isIdCheck = false;
    String imgPath = "D:\\banana_project\\app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
    JDialog jdl_join = new JDialog(); // 회원가입 프레임
@@ -118,7 +118,7 @@ public class JoinView extends JDialog implements ActionListener {
 
    // 단위테스트용
    public static void main(String[] args) {
-      JoinView join = new JoinView();
+      MemJoin join = new MemJoin();
       join.initDisplay();
    }
 
