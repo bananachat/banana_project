@@ -31,10 +31,10 @@ public class Protocol {
 //    public static final int  = 307
 
     //          [비밀번호 찾기]           //
-//    public static final int FPW_START = 400;
-//    public static final int FPW_EXIT = 401;
-//    public static final int NOF_ACNT = 402;
-//    public static final int RESET_PW = 403;
+    public static final int FPW_START = 400;
+    public static final int FPW_EXIT = 401;
+    public static final int NOF_ACNT = 402;
+    public static final int RESET_PW = 403;
 //    public static final int  = 404;
 //    public static final int  = 405;
 //    public static final int  = 406;
@@ -49,10 +49,10 @@ public class Protocol {
 //    public static final int  = 415;
 
     //          [친구 목록]           //
-//    public static final int  = 500;
-//    public static final int  = 501;
-//    public static final int  = 502;
-//    public static final int  = 503;
+    public static final int PRI_FRIENDS = 500;
+    public static final int MYPAGE_EV = 501;
+    public static final int ADD_FRIENDS_EV = 502;
+    public static final int NOF_FRIENDS = 503;
 //    public static final int  = 504;
 //    public static final int  = 505;
 //    public static final int  = 506;
@@ -65,8 +65,8 @@ public class Protocol {
 //    public static final int  = 513;
 //    public static final int  = 514;
 
-    //          [리스트 화면]           //
-//    public static final int  = 600;
+    //          [친구 검색]           //
+//    public static final int PRIN = 600;
 //    public static final int  = 601;
 //    public static final int  = 602;
 //    public static final int  = 603;
