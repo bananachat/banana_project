@@ -6,21 +6,22 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Vector;
 
-public class FListDialog extends JDialog implements ActionListener, ListSelectionListener {
-    // [선언부]
-//    JDialog jdg = new JDialog();
+public class FListDialog extends JDialog implements ActionListener, ListSelectionListener, FocusListener {
+    ////////////////////////// [선언부] //////////////////////////
     Main main = null;
-    Vector<JButton> vList = new Vector<JButton>();
+    Vector<JButton> vList = new Vector<JButton>();      // 친구 리스트
 
-    // NORTH
+    // [NORTH]
     JPanel jp_north = new JPanel();
 //    JLabel jlb_friends = new JLabel("친구 이름를 입력하세요");
-    JTextField jtf_search = new JTextField("친구를 검색", 28);
+    JTextField jtf_search = new JTextField(28);
     JButton jbtn_search = new JButton("검색");
 
-    // CENTER
+    // [CENTER]
     JPanel jp_center = new JPanel();
     JScrollPane jsp_display = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);    // TODO: 리스트를 스크롤
@@ -35,7 +36,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     JPanel jp_south = new JPanel();
     JButton jbtn_add = new JButton("추가");
 
-    // [생성자]
+    ////////////////////////// [생성자] //////////////////////////
     public FListDialog() {
         // TEST -다이얼로그 자체 컴파일용
         this.setSize(400, 300);
@@ -43,14 +44,12 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.setVisible(false);
     }
     public FListDialog(Main main) {
+        this();
         this.main = main;
-        this.setSize(400, 300);
-        this.setLocation(850, 500);
-        this.setVisible(false);
 //        copy_list.add(0, "임시사용자");
     }
 
-
+    ////////////////////////// [메소드] //////////////////////////
     // 친구리스트(JList) 생성
     public void createList() {
         for (int i=0; i<10; i++) {
@@ -60,7 +59,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     } // end of createList()
 
 
-    // [메소드]
+    ////////////////////////// [화면출력] //////////////////////////
     public void setDialog(String title, boolean isView) {
         // [North]
         jp_north.setLayout(new BorderLayout());
@@ -70,6 +69,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 //        jlb_friends.setForeground(Color.GRAY);
 //        jtf_search.add(jlb_friends);
         jtf_search.addActionListener(this);
+        jtf_search.addFocusListener(this);
         jp_north.add("West",jtf_search);
 
         jbtn_search.setSize(50, 40);
@@ -84,10 +84,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
 
         // 리스트로 출력
-//        // 단일 선택 모드
-//        jl_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        // 다중 선택 모드
-        jl_list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        jl_list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);   // 다중 선택 모드
 
         jl_list.addListSelectionListener(this);
         jp_center.add(jl_list);
@@ -101,7 +98,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         jp_south.add("East", jbtn_add);
 
 
-
         this.add(jp_north, BorderLayout.NORTH);
         this.add(jsp_display, BorderLayout.CENTER);
         this.add(jp_south, BorderLayout.SOUTH);
@@ -110,12 +106,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     }
 
 
-//    public static void main(String[] args) {
-//        ChatListViewDialog d = new ChatListViewDialog();
-//        new ChatListViewDialog();
-//        d.setDialog("test", true);
-//    }
-
+    ////////////////////////// [이벤트] //////////////////////////
     @Override
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
@@ -124,6 +115,8 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         if (obj == main.jbtn_firChan) {
             // 친추/새채팅 클릭
             System.out.println("jbtn_firChan(" + main.jbtn_firChan.getText() +") 클릭");
+            jtf_search.setText("친구를 검색");
+
             if ("친구추가".equals(main.jbtn_firChan.getText())) {
                 System.out.println("친구추가 로직 시작...");
 
@@ -135,45 +128,67 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 setDialog(main.jbtn_firChan.getText(), true);
                 // TODO: 새 채팅 로직
             }
-        }
+        } // end of Main 내 이벤트
         else if (obj == jbtn_search || obj == jtf_search) {
-            // search 이벤트 호출
+            // 친구 검색 이벤트 호출
             System.out.println("search 이벤트 호출");
             System.out.println("입력값 : \"" + jtf_search.getText() + "\"");
-
-        } else if (obj == jbtn_add) {
-            // jbtn_add 클릭
+        } // end of 친구 검색
+        else if (obj == jbtn_add) {
+            // 친구|채팅 추가 이벤트 호출
             System.out.println("jbtn_add 클릭");
-
+            String msg = "";            // 출력할 메시지
             String num = "";
-            for (int i=0; i<copy_list.size()-1; i++) {
-                num += (copy_list.get(i) + ", ");
-            }
-            num += (copy_list.get(copy_list.size()-1));
-//            String num = jl_list.getSelectedValue();
-            String msg = num + "을 추가합니다";
 
-            // 친구 선택했는지 확인
-            if (num == null || "".equals(num)) {
+            // 선택한 친구들 String
+            if (copy_list.size() == 0) {
+                // 친구 선택을 안했을 경우
+                System.out.println("선택한 친구가 없음");
                 msg = "친구를 선택하세요";
                 JOptionPane.showMessageDialog(this, msg,"info",JOptionPane.INFORMATION_MESSAGE);
             } else {
+                for (int i=0; i<copy_list.size(); i++) {
+                    num += (copy_list.get(i) + " ");
+                }
+//            num += (copy_list.get(copy_list.size()));
+//            String num = jl_list.getSelectedValue();
+
+                // 친구 목록 선택 시
+
+                // 상황별 메시지 변경
+                if ("친구추가".equals(main.jbtn_firChan.getText())) {
+                    System.out.println("친구추가...");
+
+                    msg = num + "을(를) 친구추가합니다";
+                } else if ("새 채팅".equals(main.jbtn_firChan.getText())) {
+                    System.out.println("새 채팅...");
+
+                    msg = num + "와(과) 채팅 시작합니다";
+                }
+
                 System.out.println(msg);
 
-                for(String str : copy_list) {
-                    System.out.println(str);
-                }
+                // 복사한 친구들 리스트 출력
+                System.out.println("선택한 친구들 : " + num);
 
                 JOptionPane.showMessageDialog(this, msg, "info", JOptionPane.INFORMATION_MESSAGE);
                 System.out.println("친구검색 다이얼로그 종료");
 
-                msg = "";
-                num = "";
+                // 선택한 친구 리스트 삭제
+                copy_list.clear();
                 this.dispose();
-            }
-        }
 
-    }
+            }
+
+            // 친구 선택했는지 확인
+            if ("".equals(num)) {
+
+            } else {
+
+            }
+        } // end of 친구|채팅 추가 이벤트
+
+    } // end of ActionPerformed
 
     // JList 이벤트 호출
     @Override
@@ -186,5 +201,17 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
             // 다중 선택 모드
             copy_list.add((String)jl_list.getSelectedValue());
         }
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+        if (e.getSource() == jtf_search) {
+            jtf_search.setText("");
+        }
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+
     }
 }

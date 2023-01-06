@@ -7,48 +7,42 @@ import java.awt.event.*;
 import java.util.Vector;
 
 public class Main extends JFrame implements ActionListener, MouseListener {
+    ////////////////////////// [선언부] //////////////////////////
     // "FListDialog" 호출
+
+    // [NORTH]
     FListDialog flDialog = new FListDialog(this);
-
-    // [선언부]
-    Vector<JButton> vList = new Vector<JButton>();
-
-    // NORTH
     JButton jbtn_myPage = new JButton("마이페이지");
-    JButton jbtn_firChan = new JButton("새 채팅");   // 친구추가 | 새 채팅
+    JButton jbtn_firChan = new JButton("새 채팅");   // "친구추가 | 새 채팅"으로 텍스트 변환
 
-    // CENTER
-    JLabel jlb_secChan = new JLabel("채팅 목록");    // 친구 | 채팅 목록
-    JPanel jp_center = new JPanel();   // TODO: 중앙 패널 <- 리스트
+    // [CENTER]
+    JLabel jlb_secChan = new JLabel("채팅 목록");    // "친구 목록 | 채팅 목록"
+    JPanel jp_center = new JPanel();                    // 리스트 출력
     JScrollPane jsp_display = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);    // TODO: 리스트를 스크롤
-    // 리스트를 버튼으로
-    JButton jbtn_list = null;    // TODO: 친구 | 채팅 리스트
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
     // 리스트를 JList 사용
     DefaultListModel<String> dlm = new DefaultListModel<String>();
     JList<String> jl_list = null;
 
 
-    // SOUTH
+    // [SOUTH]
     JPanel jp_south = new JPanel();
-    JButton jbtn_main = new JButton("내 화면");
+    JButton jbtn_friends = new JButton("친구리스트");
     JButton jbtn_chat = new JButton("채팅방");
 
 
+    ////////////////////////// [생성자] //////////////////////////
     public Main() {
-//        // JButton 생성
-//        for (int i=0; i<20; i++) {
-//            jbtn_list = new JButton(Integer.toString(i));
-//            vList.add(jbtn_list);
-//        }
         // JList 생성
-        for (int i=0; i<100; i++) {
+        for (int i=0; i<100; i++) {                 // TODO: DB 테이블 정보를 받아와야한다 (현재 임의리스트)
             dlm.addElement(Integer.toString(i));
         }
         jl_list = new JList(dlm);
     } // end of Main()
 
+
+    ////////////////////////// [화면 출력] //////////////////////////
     public void initDisplay() {
         this.setLayout(null);
 
@@ -65,7 +59,7 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         jlb_secChan.setBounds(10, 60, 330, 20);
         this.add(jlb_secChan);
 
-        // 중앙 리스트 출력, TODO: 스크롤바로 나올 수 있게 해야함
+        // 중앙 리스트 출력
         jsp_display.setBounds(5, 85, 375, 420);
         jsp_display.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -73,22 +67,12 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
         jp_center.add(jl_list);
         this.add(jsp_display);
-//        //////////////////// 버튼으로
-//        jp_secChan.setLayout(new GridLayout(vList.size(), 1));
-        // 버튼을 벡터에 삽입
-//        for (int i=0; i<vList.size(); i++) {
-//            jp_secChan.add(vList.get(i));
-//            vList.get(i).addActionListener(this);
-//        }
-//        this.add(jp_center);
-
-//        jp_center.setLayout(new GridLayout(dlm.getSize(), 1));
 
 
         // [south]
-        jbtn_main.addActionListener(this);
-        jbtn_main.setBounds(10, 510, 175, 40);
-        this.add(jbtn_main);
+        jbtn_friends.addActionListener(this);
+        jbtn_friends.setBounds(10, 510, 175, 40);
+        this.add(jbtn_friends);
         jbtn_chat.addActionListener(this);
         jbtn_chat.setBounds(200, 510, 175, 40);
         this.add(jbtn_chat);
@@ -97,11 +81,11 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         this.setLocation(800, 300);
 //        this.setLocationRelativeTo(null);   // 가운데 위치
         // 창 크기 설정
-//        this.setSize(350, 600);
         this.setSize(400, 600);
         this.setTitle("채팅 목록");
         this.setResizable(false);
         this.setVisible(true);
+
         // JFrame 종료 시 이벤트
         this.addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e) {
@@ -111,15 +95,18 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         });
     } // end of initDisplay()
 
+
+    ////////////////////////// [메인메소드] //////////////////////////
     public static void main(String[] args) {
         Main main = new Main();
         System.out.println("생성자 시작");
-//        new Main();
         System.out.println("화면 출력");
         main.initDisplay();
 
     } // end of main()
 
+
+    ////////////////////////// [이벤트] //////////////////////////
     @Override
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
@@ -127,8 +114,9 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         if(obj == jbtn_myPage) {
             // 마이페이지 클릭
             System.out.println("jbtn_myPage(마이페이지클릭) 클릭");
+            // TODO: 마이페이지 로직
         }
-        else if (obj == jbtn_main) {
+        else if (obj == jbtn_friends) {
             // 친구목록 클릭
             System.out.println("jbtn_myPage(내 화면) 클릭");
             this.setTitle("친구 목록");
@@ -142,18 +130,10 @@ public class Main extends JFrame implements ActionListener, MouseListener {
             jbtn_firChan.setText("새 채팅");
             jlb_secChan.setText("채팅 목록");
         }
-
-
-        // 목록버튼 클릭
-        for (int i=0; i<vList.size(); i++) {
-            if (obj == vList.get(i)) {
-                System.out.println("jbtn_list(" + vList.get(i).getText() +") 클릭");
-            }
-        }
     } // end of actionPerformed()
 
 
-    // 마우스 클릭 이벤트
+    //              [[마우스 클릭 이벤트]]              //
     @Override
     public void mouseClicked(MouseEvent e) {
         // jl_list 목록을 눌렀을때 이벤트
