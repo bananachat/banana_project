@@ -47,7 +47,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.setSize(400, 300);
         this.setLocation(850, 500);
         this.setVisible(false);
-        copy_list.add(0, "임시사용자");
+//        copy_list.add(0, "임시사용자");
     }
 
 
@@ -79,6 +79,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         // [Center]
         jsp_display.setBorder(BorderFactory.createEmptyBorder(5 , 5, 5 , 5));
         jsp_display.getVerticalScrollBar().setUnitIncrement(16);
+        jp_center.removeAll();
         createList();
         jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
 
@@ -153,7 +154,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
             String msg = num + "을 추가합니다";
 
             // 친구 선택했는지 확인
-            if (num == null) {
+            if (num == null || "".equals(num)) {
                 msg = "친구를 선택하세요";
                 JOptionPane.showMessageDialog(this, msg,"info",JOptionPane.INFORMATION_MESSAGE);
             } else {
