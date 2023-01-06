@@ -2,7 +2,7 @@ package banana_project.server;
 
 public class Protocol {
     //          [구분자]           //
-    public static final String separator = "#";
+    public static final String seperator = "#";
 
     //          [로그인]           //
     public static final int CLIENT_START = 100;     // 클라이언트 시작

@@ -12,6 +12,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
 
 import banana_project.client.join.MemJoin;
+import banana_project.client.main.Main;
+import banana_project.server.Protocol;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -32,13 +34,15 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   ObjectInputStream ois = null;// 듣기
   String userId = null; // 유저가입력한 아이디
   String userPw = null; // 유저가 입력한 비밀번호
+  // 테스트용 아이디와 비밀번호
+  String dbId = "test";
+  String dbPw = "1234";
 
   // 화면부 선언
   JFrame jf_login = new JFrame(); // 메인 프레임
   JPanel jp_login = new JPanel(null); // 로그인 패널
   JLabel jlb_findId = new JLabel(); // 아이디찾기 라벨
   JLabel jlb_findPw = new JLabel(); // 비밀번호 찾기 라벨
-  // 아이디, 비밀번호 입력을 위한 JTextField (테두리선을 지우기위해 클래스 재정의)
   JTextField jtf_userId = new JTextField(" example@email.com"); // 아이디 입력창
   JPasswordField jtf_userPw = new JPasswordField(" password"); // 비밀번호 입력창
   // 폰트 설정
@@ -66,33 +70,6 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     jtf_userPw.addFocusListener(this);
     jlb_findId.addMouseListener(this);
     jlb_findPw.addMouseListener(this);
-
-    // 힌트문 테스트
-    // jtf_userId.addFocusListener(new FocusAdapter() {
-    // @Override
-    // public void focusGained(FocusEvent e) {
-    // if (getText().equals(hint)) {
-    // setText("");
-    // setFont(gainFont);
-    // } else {
-    // setText(getText());
-    // setFont(gainFont);
-    // }
-    // }
-
-    // @Override
-    // public void focusLost(FocusEvent e) {
-    // if (getText().equals(hint) || getText().length() == 0) {
-    // setText(hint);
-    // setFont(lostFont);
-    // setForeground(Color.GRAY);
-    // } else {
-    // setText(getText());
-    // setFont(gainFont);
-    // setForeground(Color.BLACK);
-    // }
-    // }
-    // });
 
     // 패널에 추가
     jp_login.add(jtf_userId);
@@ -151,12 +128,27 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     jf_login.setSize(400, 600);
     jf_login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     jf_login.setLocationRelativeTo(null);// 창 가운데서 띄우기
+    jf_login.setResizable(false);
     jf_login.setVisible(true);
+  }
+
+  // 서버연결부 메소드
+  public void init() {
+    try {
+      socket = new Socket("127.0.0.1", 3000);
+      oos = new ObjectOutputStream(socket.getOutputStream()); // 말하기
+      ois = new ObjectInputStream(socket.getInputStream()); // 듣기
+      ClientThread clientThread = new ClientThread(this); // 클라이언트 스레드와 연결
+      clientThread.start(); // clientThread의 run() 호출
+    } catch (Exception e) {
+      System.out.println(e.toString());
+    }
   }
 
   public static void main(String[] args) {
     Client client = new Client();
     client.initDisplay();
+    client.init();
   }
 
   @Override
@@ -173,25 +165,28 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
       // 비밀번호를 입력하지 않았을 경우
       else if ("".equals(userPw) || " password".equals(userPw)) {
         JOptionPane.showMessageDialog(jf_login, "비밀번호를 입력해주세요", "info", JOptionPane.WARNING_MESSAGE);
-      }
-      try {
-        socket = new Socket("127.0.0.1", 3000);
-        oos = new ObjectOutputStream(socket.getOutputStream());
-        ois = new ObjectInputStream(socket.getInputStream());
-        // 101#아이디#패스워드
-        // oos.writeObject(Protocol.TALK_IN + Protocol.seperator + userId + userPw);
-        // ClientThread clientThread = new ClientThread(this);
-        // clientThread.start();
-        // main = new Main(this); //메인화면 연결
-        // main.initDisplay();
-      } catch (Exception e1) {
-        System.out.println(e1.toString());
+      } else {
+        try {
+          // 로그인 시도시 100#아이디#패스워드 형태로 서버에 전달
+          oos.writeObject(Protocol.CLIENT_START
+              + Protocol.seperator + userId
+              + Protocol.seperator + userPw);
+        } catch (Exception e2) {
+          e2.printStackTrace();
+        }
+        // 테스트용 if문
+        if (userId.equals(dbId) && userPw.equals(dbPw)) {
+          jf_login.setVisible(false);
+          Main main = new Main();
+          main.initDisplay();
+        }
       }
     }
     // 회원가입 버튼을 눌렀을 때
     else if (obj == jbtn_join) {
-      // MemJoin memJoin = new MemJoin(this);
-      // memJoin.initDisplay();
+      jf_login.setVisible(false);
+      MemJoin memJoin = new MemJoin();
+      memJoin.initDisplay();
     }
   }
 

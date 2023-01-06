@@ -119,6 +119,8 @@ public class IdFind implements ActionListener, FocusListener {
       // 핸드폰번호를 입력하지 않았을 경우
       else if (" 핸드폰 번호".equals(userHp) || "".equals(userHp)) {
         JOptionPane.showMessageDialog(client.jf_login, "핸드폰번호를 입력해주세요", "info", JOptionPane.WARNING_MESSAGE);
+      } else {
+
       }
     }
   }

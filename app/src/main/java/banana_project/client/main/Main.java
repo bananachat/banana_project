@@ -78,11 +78,11 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         this.add(jbtn_chat);
 
         // 창 위치 지정
-        this.setLocation(800, 300);
-//        this.setLocationRelativeTo(null);   // 가운데 위치
+        // this.setLocation(800, 300);
         // 창 크기 설정
         this.setSize(400, 600);
         this.setTitle("채팅 목록");
+        this.setLocationRelativeTo(null); // 가운데 위치 -> 수정.위치변경했습니다!
         this.setResizable(false);
         this.setVisible(true);
 
