@@ -21,7 +21,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class IdFind extends JFrame implements ActionListener, FocusListener {
+public class IdFind implements ActionListener, FocusListener {
   /**
    * 서버 연결부 선언
    */
@@ -36,7 +36,6 @@ public class IdFind extends JFrame implements ActionListener, FocusListener {
   /**
    * 화면부 선언
    */
-  JFrame jf_idFind = new JFrame();
   JPanel jp_idFind = new JPanel(null);
   // 이미지
   String imgPath = "./app\\src\\main\\java\\banana_project\\image\\";
@@ -83,7 +82,7 @@ public class IdFind extends JFrame implements ActionListener, FocusListener {
     jp_idFind.add(jbtn_back);
     jp_idFind.add(jbtn_findId);
     jp_idFind.add(jbtn_main);
-    // Jtf 설정
+    // Jf 설정
     jtf_userName.setForeground(Color.gray);
     jtf_userHp.setForeground(Color.gray);
     jtf_userName.setFont(p12);
@@ -110,14 +109,9 @@ public class IdFind extends JFrame implements ActionListener, FocusListener {
     jbtn_main.setBounds(60, 35, 270, 250); // 바나나 이미지 고정
     jp_idFind.setBackground(new Color(255, 230, 120)); // 패널색 노란색
     // JF설정
-    jf_idFind.setTitle("아이디 찾기");
-    jf_idFind.setIconImage(img_title.getImage()); // 타이틀창 이미지
-    jf_idFind.setContentPane(jp_idFind); // 액자에 도화지 끼우기
-    jf_idFind.setSize(400, 600);
-    jf_idFind.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    jf_idFind.setLocationRelativeTo(null);// 창 가운데서 띄우기
-    jf_idFind.setResizable(false);
-    jf_idFind.setVisible(true);
+    client.setTitle("아이디 찾기");
+    client.setContentPane(jp_idFind); // 액자에 도화지 끼우기
+    client.setVisible(true);
     // JOp 설정
     UIManager UI = new UIManager();
     UI.put("OptionPane.background", new Color(255, 230, 120));
@@ -136,8 +130,8 @@ public class IdFind extends JFrame implements ActionListener, FocusListener {
     Object obj = e.getSource();
     // 돌아가기 버튼을 눌렀을 때
     if (obj == jbtn_back) {
-      jf_idFind.dispose();
-      client.initDisplay();
+      client.setContentPane(client.jp_login);
+      client.revalidate();
     }
     // 아이디찾기 버튼을 눌렀을 때
     else if (obj == jbtn_findId || obj == jtf_userName || obj == jtf_userHp) {
@@ -146,22 +140,23 @@ public class IdFind extends JFrame implements ActionListener, FocusListener {
       String intUserHp = userHp.replaceAll("[^0-9]", "-"); // 숫자가 아닌 문자들을 -로 치환
       // 이름을 입력하지 않았을 경우
       if (" 이름".equals(userName) || "".equals(userName)) {
-        JOptionPane.showMessageDialog(jf_idFind, "이름을 입력해주세요", "아이디 찾기", JOptionPane.WARNING_MESSAGE, img_info);
+        JOptionPane.showMessageDialog(client, "이름을 입력해주세요", "아이디 찾기", JOptionPane.WARNING_MESSAGE, img_info);
       }
       // 핸드폰번호를 입력하지 않았을 경우
       else if (" 핸드폰 번호 (-없이 숫자만 입력)".equals(userHp) || "".equals(userHp)) {
-        JOptionPane.showMessageDialog(jf_idFind, "핸드폰번호를 입력해주세요", "아이디 찾기", JOptionPane.WARNING_MESSAGE, img_info);
+        JOptionPane.showMessageDialog(client, "핸드폰번호를 입력해주세요", "아이디 찾기", JOptionPane.WARNING_MESSAGE, img_info);
       }
       // 핸드폰번호에 숫자가 아닌 것을 넣었을 경우
       else if (intUserHp.contains("-")) {
-        JOptionPane.showMessageDialog(jf_idFind, "핸드폰번호는 -를 제외한 숫자만 입력해주세요.", "아이디 찾기", JOptionPane.WARNING_MESSAGE, img_notFound);
+        JOptionPane.showMessageDialog(client, "핸드폰번호는 -를 제외한 숫자만 입력해주세요.", "아이디 찾기", JOptionPane.WARNING_MESSAGE,
+            img_notFound);
       } else {
         // 테스트용 if문
         if (userName.equals(dbName) && userHp.equals(dbHp)) {
-          JOptionPane.showMessageDialog(jf_idFind,
+          JOptionPane.showMessageDialog(client,
               dbName + "님의 아이디\n" + dbId, "아이디 찾기", JOptionPane.INFORMATION_MESSAGE, img_confirm);
         } else {
-          JOptionPane.showMessageDialog(jf_idFind, "데이터를 찾을 수 없습니다.", "아이디 찾기", JOptionPane.ERROR_MESSAGE,
+          JOptionPane.showMessageDialog(client, "데이터를 찾을 수 없습니다.", "아이디 찾기", JOptionPane.ERROR_MESSAGE,
               img_notFound);
         }
       }

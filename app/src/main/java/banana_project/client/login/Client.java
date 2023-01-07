@@ -17,6 +17,7 @@ import banana_project.client.main.Main;
 import banana_project.server.Protocol;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,7 +45,6 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   /**
    * 화면부 선언
    */
-  JFrame jf_login = new JFrame();
   JPanel jp_login = new JPanel(null);
   // 이미지
   String imgPath = "./app\\src\\main\\java\\banana_project\\image\\"; // 경로+
@@ -123,14 +123,14 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     jbtn_main.setBounds(60, 35, 270, 250); // 바나나 이미지 고정
     jp_login.setBackground(new Color(255, 230, 120));
     // JF 설정
-    jf_login.setTitle("바나나톡");
-    jf_login.setIconImage(img_title.getImage()); // 타이틀창 이미지
-    jf_login.setContentPane(jp_login); // 액자에 도화지 끼우기
-    jf_login.setSize(400, 600);
-    jf_login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    jf_login.setLocationRelativeTo(null); // 창 가운데서 띄우기
-    jf_login.setResizable(false);
-    jf_login.setVisible(true);
+    this.setTitle("바나나톡");
+    this.setIconImage(img_title.getImage()); // 타이틀창 이미지
+    this.setContentPane(jp_login); // 액자에 도화지 끼우기
+    this.setSize(400, 600);
+    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    this.setLocationRelativeTo(null); // 창 가운데서 띄우기
+    this.setResizable(false);
+    this.setVisible(true);
     // JOp 설정
     UIManager UI = new UIManager();
     UI.put("OptionPane.background", new Color(255, 230, 120));
@@ -179,17 +179,19 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
       userPw = jtf_userPw.getText();
       // 아이디를 입력하지 않았을 경우
       if ("".equals(userId) || " example@email.com".equals(userId)) {
-        JOptionPane.showMessageDialog(jf_login, "이메일을 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, img_info);
+        JOptionPane.showMessageDialog(this, "이메일을 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, img_info);
       }
       // 이메일 형식이 아닐 경우
       else if (!userId.contains("@")) {
-        JOptionPane.showMessageDialog(jf_login, "example@email.com 형식으로 이메일을 입력해주세요", "로그인",
-            JOptionPane.WARNING_MESSAGE, img_notFound);
+        JOptionPane.showMessageDialog(this, "example@email.com 형식으로 입력해주세요", "로그인",
+            JOptionPane.WARNING_MESSAGE, img_info);
       }
       // 비밀번호를 입력하지 않았을 경우
       else if ("".equals(userPw) || " password".equals(userPw)) {
-        JOptionPane.showMessageDialog(jf_login, "비밀번호를 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, img_info);
-      } else {
+        JOptionPane.showMessageDialog(this, "비밀번호를 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, img_info);
+      }
+      // 형식에 맞게 입력했을경우 DB에서 확인
+      else {
         try {
           // 로그인 시도시 100#아이디#패스워드 형태로 서버에 전달
           oos.writeObject(Protocol.CLIENT_START
@@ -199,19 +201,23 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
           e2.printStackTrace();
         }
         // 테스트용 if문
+        // 아이디, 비번이 맞을 경우
         if (userId.equals(dbId) && userPw.equals(dbPw)) {
-          jf_login.dispose();
           Main main = new Main();
           main.initDisplay();
+        }
+        // 아이디는 맞는데 비번을 틀릴 경우
+        else if (userId.equals(dbId) && !userPw.equals(dbPw)) {
+          JOptionPane.showMessageDialog(this, "비밀번호가 틀렸습니다..", "로그인", JOptionPane.ERROR_MESSAGE,
+              img_notFound);
         } else {
-          JOptionPane.showMessageDialog(jf_login, "계정을 찾을 수 없습니다.", "로그인", JOptionPane.ERROR_MESSAGE,
+          JOptionPane.showMessageDialog(this, "계정을 찾을 수 없습니다.", "로그인", JOptionPane.ERROR_MESSAGE,
               img_notFound);
         }
       }
     }
     // 회원가입 버튼을 눌렀을 때
     else if (obj == jbtn_join) {
-//      jf_login.EXIT_ON_CLOSE;
       MemJoin memJoin = new MemJoin();
       memJoin.initDisplay();
     }
@@ -229,15 +235,13 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     Object obj = e.getSource();
     // 아이디찾기 라벨 눌렀을 때
     if (obj == jlb_findId) {
-      jf_login.dispose();
       IdFind idFind = new IdFind(this);
       idFind.initDisplay();
     }
     // 비밀번호찾기 라벨 눌렀을 때
     else if (obj == jlb_findPw) {
-      jf_login.dispose();
-      PwFind pwFind = new PwFind(this);
-      pwFind.initDisplay();
+      PwFind pwfind = new PwFind(this);
+      pwfind.initDisplay();
     }
   }
 
