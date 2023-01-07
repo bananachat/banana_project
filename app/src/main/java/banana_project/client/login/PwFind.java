@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Font;
@@ -26,15 +27,16 @@ public class PwFind implements ActionListener, FocusListener {
   // 화면부 선언
   JPanel jp_pwFind = new JPanel(null); // 비밀번호찾기 패널
   // 폰트 설정
-  Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통 폰트
-  Font b14 = new Font("맑은 고딕", Font.BOLD, 14); // 볼드 폰트
+  Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통12 폰트
+  Font b12 = new Font("맑은 고딕", Font.BOLD, 12); // 볼드12 폰트
+  Font b14 = new Font("맑은 고딕", Font.BOLD, 14); // 볼드14 폰트
   // 이름, 아이디, 핸드폰번호 jtf
   JTextField jtf_userName = new JTextField(" 이름");
   JTextField jtf_userId = new JTextField(" example@email.com");
   JTextField jtf_userHp = new JTextField(" 핸드폰 번호");
   // 이미지 설정
   String imgPath = "./app\\src\\main\\java\\banana_project\\image\\"; // 이미지파일 위치
-  ImageIcon img_pwFind = new ImageIcon(imgPath + "banana_find.png"); // 아이디찾기 이미지
+  ImageIcon img_pwFind = new ImageIcon(imgPath + "find.png"); // 아이디찾기 이미지
   // 버튼 설정
   JButton jbtn_back = new JButton("돌아가기"); // 돌아가기 버튼
   JButton jbtn_findPw = new JButton("비밀번호 찾기"); // 비밀번호찾기 버튼
@@ -108,6 +110,14 @@ public class PwFind implements ActionListener, FocusListener {
     client.jf_login.setContentPane(jp_pwFind); // 액자에 도화지 끼우기
     client.jf_login.setSize(400, 600);
     client.jf_login.setVisible(true);
+    // JOp 설정
+    UIManager UI = new UIManager();
+    UI.put("OptionPane.background", new Color(255, 230, 120));
+    UI.put("Panel.background", new Color(255, 230, 120));
+    UI.put("OptionPane.messageFont", b12);
+    UI.put("Button.background", new Color(130, 65, 60));
+    UI.put("Button.foreground", Color.white);
+    UI.put("Button.font", b12);
   }
 
   @Override
