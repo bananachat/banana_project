@@ -10,11 +10,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class LogVO {
-    private String login_date;
+    private String log_date;
     private int protocol;
     private String comments;
     private String user_id;
 
-    public LogVO() {
-    }
 }
