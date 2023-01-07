@@ -2,24 +2,17 @@ package banana_project.client.login;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
-import javax.swing.plaf.BorderUIResource;
-import javax.swing.plaf.ColorUIResource;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class IdFind implements ActionListener, FocusListener {
   /**
@@ -40,7 +33,6 @@ public class IdFind implements ActionListener, FocusListener {
   // 이미지
   String imgPath = "./app\\src\\main\\java\\banana_project\\image\\";
   ImageIcon img_idFind = new ImageIcon(imgPath + "logo_find.png"); // 찾기 로고 이미지
-  ImageIcon img_title = new ImageIcon(imgPath + "logo_title.png"); // 타이틀창 이미지
   ImageIcon img_info = new ImageIcon(imgPath + "mini_info.png"); // JOp 인포 이미지
   ImageIcon img_confirm = new ImageIcon(imgPath + "mini_confirm.png"); // JOp 확인 이미지
   ImageIcon img_notFound = new ImageIcon(imgPath + "mini_notFound.png"); // JOp 취소 이미지
@@ -107,6 +99,7 @@ public class IdFind implements ActionListener, FocusListener {
     jbtn_main.setBackground(new Color(255, 230, 120));
     jbtn_main.setBorderPainted(false); // 버튼 외곽선 없애기
     jbtn_main.setBounds(60, 35, 270, 250); // 바나나 이미지 고정
+    // Jp 설정
     jp_idFind.setBackground(new Color(255, 230, 120)); // 패널색 노란색
     // JF설정
     client.setTitle("아이디 찾기");
@@ -137,7 +130,7 @@ public class IdFind implements ActionListener, FocusListener {
     else if (obj == jbtn_findId || obj == jtf_userName || obj == jtf_userHp) {
       userName = jtf_userName.getText();
       userHp = jtf_userHp.getText();
-      String intUserHp = userHp.replaceAll("[^0-9]", "-"); // 숫자가 아닌 문자들을 -로 치환
+      String hpCheck = userHp.replaceAll("[^0-9]", "-"); // 숫자가 아닌 문자들을 -로 치환
       // 이름을 입력하지 않았을 경우
       if (" 이름".equals(userName) || "".equals(userName)) {
         JOptionPane.showMessageDialog(client, "이름을 입력해주세요", "아이디 찾기", JOptionPane.WARNING_MESSAGE, img_info);
@@ -147,22 +140,28 @@ public class IdFind implements ActionListener, FocusListener {
         JOptionPane.showMessageDialog(client, "핸드폰번호를 입력해주세요", "아이디 찾기", JOptionPane.WARNING_MESSAGE, img_info);
       }
       // 핸드폰번호에 숫자가 아닌 것을 넣었을 경우
-      else if (intUserHp.contains("-")) {
+      else if (hpCheck.contains("-")) {
         JOptionPane.showMessageDialog(client, "핸드폰번호는 -를 제외한 숫자만 입력해주세요.", "아이디 찾기", JOptionPane.WARNING_MESSAGE,
-            img_notFound);
+            img_info);
       } else {
         // 테스트용 if문
+        // 이름, 전화번호가 맞을 경우
         if (userName.equals(dbName) && userHp.equals(dbHp)) {
           JOptionPane.showMessageDialog(client,
               dbName + "님의 아이디\n" + dbId, "아이디 찾기", JOptionPane.INFORMATION_MESSAGE, img_confirm);
-        } else {
-          JOptionPane.showMessageDialog(client, "데이터를 찾을 수 없습니다.", "아이디 찾기", JOptionPane.ERROR_MESSAGE,
+        }
+        // 틀릴 경우
+        else {
+          JOptionPane.showMessageDialog(client, "계정을 찾을 수 없습니다.", "아이디 찾기", JOptionPane.ERROR_MESSAGE,
               img_notFound);
         }
       }
     }
   }
 
+  /**
+   * FocusListener 메소드
+   */
   @Override
   public void focusGained(FocusEvent e) {
     Object obj = e.getSource();
@@ -208,7 +207,6 @@ public class IdFind implements ActionListener, FocusListener {
    */
   public static void main(String[] args) {
     Client c = new Client();
-    IdFind i = new IdFind(c);
-    i.initDisplay();
+    c.initDisplay();
   }
 }

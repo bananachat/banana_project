@@ -10,14 +10,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
-import javax.swing.plaf.ColorUIResource;
-
 import banana_project.client.join.MemJoin;
 import banana_project.client.main.Main;
 import banana_project.server.Protocol;
-
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +24,7 @@ import java.awt.event.FocusListener;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.regex.Pattern;
 
 public class Client extends JFrame implements ActionListener, MouseListener, FocusListener {
   /**
@@ -47,11 +44,10 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
    */
   JPanel jp_login = new JPanel(null);
   // 이미지
-  String imgPath = "./app\\src\\main\\java\\banana_project\\image\\"; // 경로+
+  String imgPath = "./app\\src\\main\\java\\banana_project\\image\\"; // 경로
   ImageIcon img_main = new ImageIcon(imgPath + "logo_main.png"); // 메인 로고 이미지
   ImageIcon img_title = new ImageIcon(imgPath + "logo_title.png"); // 타이틀창 이미지
   ImageIcon img_info = new ImageIcon(imgPath + "mini_info.png"); // JOp 인포 이미지
-  ImageIcon img_confirm = new ImageIcon(imgPath + "mini_confirm.png"); // JOp 확인 이미지
   ImageIcon img_notFound = new ImageIcon(imgPath + "mini_notFound.png"); // JOp 취소 이미지
   // 폰트
   Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통12 폰트
@@ -108,11 +104,11 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     jbtn_join.setForeground(Color.white);
     jbtn_join.setFont(b14);
     jbtn_join.setBounds(60, 420, 130, 45);
-    // 아이디/비밀번호 찾기 라벨 설정
+    // Jlb
     jlb_findId.setText("<HTML><U>아이디 찾기</U></HTML>");
     jlb_findPw.setText("<HTML><U>비밀번호 찾기</U></HTML>");
-    jlb_findId.setForeground(new ColorUIResource(135, 90, 75));
-    jlb_findPw.setForeground(new ColorUIResource(135, 90, 75));
+    jlb_findId.setForeground(new Color(135, 90, 75));
+    jlb_findPw.setForeground(new Color(135, 90, 75));
     jlb_findId.setFont(p12);
     jlb_findPw.setFont(p12);
     jlb_findId.setBounds(100, 480, 70, 20);
@@ -121,6 +117,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     jbtn_main.setBackground(new Color(255, 230, 120));
     jbtn_main.setBorderPainted(false); // 버튼 외곽선 없애기
     jbtn_main.setBounds(60, 35, 270, 250); // 바나나 이미지 고정
+    // Jp 설정
     jp_login.setBackground(new Color(255, 230, 120));
     // JF 설정
     this.setTitle("바나나톡");
@@ -157,17 +154,6 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   }
 
   /**
-   * 메인메소드
-   * 
-   * @param args
-   */
-  public static void main(String[] args) {
-    Client client = new Client();
-    client.initDisplay();
-    client.init();
-  }
-
-  /**
    * ActionListener 메소드
    */
   @Override
@@ -177,12 +163,13 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     if (obj == jbtn_login || obj == jtf_userId || obj == jtf_userPw) {
       userId = jtf_userId.getText();
       userPw = jtf_userPw.getText();
+      String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
       // 아이디를 입력하지 않았을 경우
       if ("".equals(userId) || " example@email.com".equals(userId)) {
         JOptionPane.showMessageDialog(this, "이메일을 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, img_info);
       }
       // 이메일 형식이 아닐 경우
-      else if (!userId.contains("@")) {
+      else if (!Pattern.matches(idCheck, userId)) {
         JOptionPane.showMessageDialog(this, "example@email.com 형식으로 입력해주세요", "로그인",
             JOptionPane.WARNING_MESSAGE, img_info);
       }
@@ -210,7 +197,9 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
         else if (userId.equals(dbId) && !userPw.equals(dbPw)) {
           JOptionPane.showMessageDialog(this, "비밀번호가 틀렸습니다..", "로그인", JOptionPane.ERROR_MESSAGE,
               img_notFound);
-        } else {
+        }
+        // 전부 틀릴 경우
+        else {
           JOptionPane.showMessageDialog(this, "계정을 찾을 수 없습니다.", "로그인", JOptionPane.ERROR_MESSAGE,
               img_notFound);
         }
@@ -218,8 +207,9 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     }
     // 회원가입 버튼을 눌렀을 때
     else if (obj == jbtn_join) {
-      MemJoin memJoin = new MemJoin();
-      memJoin.initDisplay();
+      this.dispose();
+      // MemJoin memJoin = new MemJoin(this);
+      // memJoin.initDisplay();
     }
   }
 
@@ -296,5 +286,16 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
         jtf_userPw.setText(" password");
       }
     }
+  }
+
+  /**
+   * 메인메소드
+   * 
+   * @param args
+   */
+  public static void main(String[] args) {
+    Client client = new Client();
+    client.initDisplay();
+    client.init();
   }
 }
