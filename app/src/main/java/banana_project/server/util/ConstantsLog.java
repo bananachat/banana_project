@@ -1,12 +1,13 @@
 package banana_project.server.util;
 
-public class Constants {
+public class ConstantsLog {
 
     /**
      * 로그 출력 처리용 기호
      */
     public static final String SIGN_SPACE = " ";
     public static final String SIGN_ENTER = "\n";
+    public static final String METHOD_SIGN = "() | ";
 
     /**
      * 기록할 로그 타입 설정
@@ -37,5 +38,4 @@ public class Constants {
     public static final String ENTER_MSG = "ENTER";
     public static final String EXIT_MSG = "EXIT";
     public static final String ERROR_MSG = "ERROR";
-    public static final String MK_LOG_MSG = "makeLogMsg()";
 }

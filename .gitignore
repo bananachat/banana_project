@@ -31,4 +31,6 @@ hs_err_pid*
 .idea/
 
 # Log files
-log/.DS_Store
+log/
+
+.DS_Store
