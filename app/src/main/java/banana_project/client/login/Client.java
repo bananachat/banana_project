@@ -190,6 +190,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
         // 테스트용 if문
         // 아이디, 비번이 맞을 경우
         if (userId.equals(dbId) && userPw.equals(dbPw)) {
+          this.dispose();
           Main main = new Main();
           main.initDisplay();
         }
@@ -207,9 +208,8 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     }
     // 회원가입 버튼을 눌렀을 때
     else if (obj == jbtn_join) {
-      this.dispose();
-      // MemJoin memJoin = new MemJoin(this);
-      // memJoin.initDisplay();
+      MemJoin memJoin = new MemJoin(this);
+      memJoin.initDisplay();
     }
   }
 

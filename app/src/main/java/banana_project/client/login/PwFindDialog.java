@@ -128,6 +128,8 @@ public class PwFindDialog extends JDialog implements ActionListener {
       else {
         JOptionPane.showMessageDialog(this, "비밀번호가 재설정되었습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE, img_confirm);
         this.dispose();
+        pwFind.client.setContentPane(pwFind.client.jp_login);
+        pwFind.client.revalidate();
         try {
           // 비밀번호 재설정시 서버에 전달
         } catch (Exception e2) {

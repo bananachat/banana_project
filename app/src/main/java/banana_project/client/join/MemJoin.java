@@ -153,9 +153,9 @@ public class MemJoin implements ActionListener {
    // 단위테스트용
    public static void main(String[] args) {
       Client c = new Client();
-      c.initDisplay();
-      MemJoin memJoin= new MemJoin();
-      memjoin.initDisplay();
+      // c.initDisplay();
+      MemJoin memJoin= new MemJoin(c);
+      memJoin.initDisplay();
    }
 
    @Override
