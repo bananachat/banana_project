@@ -12,11 +12,10 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 
 import banana_project.server.util.DBConnectionMgr;
+import  banana_project.client.login.Client;
 //회원가입 DB연동 
 
-public class MemJoin extends Client implements ActionListener {
-   //클라이언트 클래스 상속
-   Client client = null;
+public class MemJoin implements ActionListener {
    boolean isIdCheck = false;
    //이미지
    String imgPath = "./app\\src\\main\\java\\banana_project\\image\\"; // 경로+
@@ -30,7 +29,7 @@ public class MemJoin extends Client implements ActionListener {
    Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통12 폰트
    Font b14 = new Font("맑은 고딕", Font.BOLD, 14); // 볼드14 폰트
    Font f_join = new Font("맑은 고딕", Font.BOLD, 25);//볼드25 폰트
-   Client jf_join = new Client(); // 회원가입 프레임
+   Client client= new Client(); // 회원가입 프레임
    JPanel jp_join = new JPanel(null); // 회원가입 도화지
    //Jlb
    JLabel jlb_name = new JLabel("이름");
@@ -69,8 +68,8 @@ public class MemJoin extends Client implements ActionListener {
       jbtn_checkNick.addActionListener(this);
       // 타이틀 부분
       ImageIcon bookIcon = new ImageIcon(imgPath + "logo_title.png");
-      jf_join.setIconImage(bookIcon.getImage());
-      jf_join.setTitle("바나나톡");
+      client.setIconImage(bookIcon.getImage());
+      client.setTitle("바나나톡");
       // 정보입력 부분
       jp_join.add(jtf_userName);// 이름
       jp_join.add(jlb_name);
@@ -143,18 +142,20 @@ public class MemJoin extends Client implements ActionListener {
       jp_join.add(jbtn_checkNick);// 닉네임 중복검사 버튼
       jp_join.setBackground(new Color(255, 230, 120)); // 도화지 색깔 노란색
       // JFrame, 회원가입 메인창 정의
-      jf_join.setTitle("회원가입");
-      jf_join.setContentPane(jp_join);
-      jf_join.setSize(400, 600);
-      jf_join.setLocationRelativeTo(null);// 창 가운데서 띄우기
-      jf_join.setVisible(true);
+      client.setTitle("회원가입");
+      client.setContentPane(jp_join);
+      client.setSize(400, 600);
+      client.setLocationRelativeTo(null);// 창 가운데서 띄우기
+      client.setVisible(true);
    }
 
 
    // 단위테스트용
    public static void main(String[] args) {
-      MemJoin join = new MemJoin();
-      join.initDisplay();
+      Client c = new Client();
+      c.initDisplay();
+      MemJoin memJoin= new MemJoin();
+      memjoin.initDisplay();
    }
 
    @Override
@@ -174,26 +175,26 @@ public class MemJoin extends Client implements ActionListener {
 
          //이름 입력 안함
          if("".equals(userName)||"BananaTalk".equals(userName)){
-            JOptionPane.showMessageDialog(jf_join, "이름을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.showMessageDialog(client, "이름을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
          }//아이디 입력안함
          else if ("".equals(userId)|| " example@email.com".equals(userId)){
-            JOptionPane.showMessageDialog(jf_join, "이메일을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.showMessageDialog(client, "이메일을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
          }//아이디 형식안맞음, 이메일 형식이 아닐 경우
          else if (!Pattern.matches(idCheck, userId)) {
-            JOptionPane.showMessageDialog(this, "example@email.com 형식으로 입력해주세요", "회원가입",
+            JOptionPane.showMessageDialog(client, "example@email.com 형식으로 입력해주세요", "회원가입",
                     JOptionPane.WARNING_MESSAGE, img_info);
          }//비밀번호, 비밀번호확인을 입력 안한경우
             else if ("".equals(userPw)||"".equals(userPwRe)||"password".equals(userPw)||"password".equals(userPwRe)) {
-               JOptionPane.showMessageDialog(jf_join, "비밀번호를 입력해주세요", "회원가입",JOptionPane.WARNING_MESSAGE, img_info);
+               JOptionPane.showMessageDialog(client, "비밀번호를 입력해주세요", "회원가입",JOptionPane.WARNING_MESSAGE, img_info);
          }//생년월일 입력안함
          else if ("".equals(userBrith)||"2000-01-01".equals(userBrith)) {
-            JOptionPane.showMessageDialog(jf_join, "생년월일을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.showMessageDialog(client, "생년월일을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
          } //전화번호 입력안한경우
             else if ("".equals(userHp)||"010-0000-0000".equals(userHp)) {
-               JOptionPane.showMessageDialog(jf_join, "전화번호를 입력해주세요", "회원가입",JOptionPane.WARNING_MESSAGE, img_info);
+               JOptionPane.showMessageDialog(client, "전화번호를 입력해주세요", "회원가입",JOptionPane.WARNING_MESSAGE, img_info);
          }//닉네임을 입력안함
          else if("".equals(userNick)||"Banana".equals(userNick)) {
-            JOptionPane.showMessageDialog(jf_join, "닉네임을 입력해주세요", "회원가입",JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.showMessageDialog(client, "닉네임을 입력해주세요", "회원가입",JOptionPane.WARNING_MESSAGE, img_info);
          }
           else {
 
@@ -225,7 +226,7 @@ public class MemJoin extends Client implements ActionListener {
                e.printStackTrace();
             }
             if (result == 1) {
-               JOptionPane.showMessageDialog(this, "회원가입 성공");
+               JOptionPane.showMessageDialog(client, "회원가입 성공");
             }
          }//end of 입력안한경우들
       } // end of if 회원가입 버튼눌렀을때
