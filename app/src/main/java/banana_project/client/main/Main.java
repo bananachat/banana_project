@@ -8,15 +8,13 @@ import java.util.Vector;
 
 public class Main extends JFrame implements ActionListener, MouseListener {
     ////////////////////////// [선언부] //////////////////////////
-    // "FListDialog" 호출
-
     // [NORTH]
     FListDialog flDialog = new FListDialog(this);
     JButton jbtn_myPage = new JButton("마이페이지");
-    JButton jbtn_firChan = new JButton("새 채팅");   // "친구추가 | 새 채팅"으로 텍스트 변환
+    JButton jbtn_firChan = new JButton("친구 추가");   // "친구추가 | 새 채팅"으로 텍스트 변환
 
     // [CENTER]
-    JLabel jlb_secChan = new JLabel("채팅 목록");    // "친구 목록 | 채팅 목록"
+    JLabel jlb_secChan = new JLabel("친구 목록");    // "친구 목록 | 채팅 목록"으로 텍스트 변환
     JPanel jp_center = new JPanel();                    // 리스트 출력
     JScrollPane jsp_display = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -25,11 +23,13 @@ public class Main extends JFrame implements ActionListener, MouseListener {
     DefaultListModel<String> dlm = new DefaultListModel<String>();
     JList<String> jl_list = null;
 
-
     // [SOUTH]
-    JPanel jp_south = new JPanel();
     JButton jbtn_friends = new JButton("친구리스트");
     JButton jbtn_chat = new JButton("채팅방");
+
+    Font p12 = new Font("맑은 코딕", Font.PLAIN, 12);    // 보통 12폰트
+    Font b12 = new Font("맑은 코딕", Font.BOLD, 12);    // 볼드 12폰트
+    Font b14 = new Font("맑은 코딕", Font.BOLD, 14);    // 볼드 14폰트
 
 
     ////////////////////////// [생성자] //////////////////////////
@@ -47,11 +47,20 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         this.setLayout(null);
 
         // [north]
-        jbtn_myPage.addActionListener(this);
+        jbtn_myPage.addActionListener(this);                            // jbtn_myPage 설정
         jbtn_myPage.setBounds(10, 10, 175, 40);
+        jbtn_myPage.setBorderPainted(false);
+        jbtn_myPage.setBackground(new Color(130, 65, 60));
+        jbtn_myPage.setForeground(Color.WHITE);
+        jbtn_myPage.setFont(b12);
         this.add(jbtn_myPage);
-        jbtn_firChan.addActionListener(flDialog);
+
+        jbtn_firChan.addActionListener(flDialog);                          // jbtn_firChan 설정
         jbtn_firChan.setBounds(200, 10, 175, 40);
+        jbtn_firChan.setBorderPainted(false);
+        jbtn_firChan.setBackground(new Color(130, 65, 60));
+        jbtn_firChan.setForeground(Color.WHITE);
+        jbtn_firChan.setFont(b12);
         this.add(jbtn_firChan);
 
 
@@ -70,16 +79,24 @@ public class Main extends JFrame implements ActionListener, MouseListener {
 
 
         // [south]
-        jbtn_friends.addActionListener(this);
+        jbtn_friends.addActionListener(this);                           // jbtn_friends 설정
         jbtn_friends.setBounds(10, 510, 175, 40);
+        jbtn_friends.setBorderPainted(false);
+        jbtn_friends.setBackground(new Color(130, 65, 60));
+        jbtn_friends.setForeground(Color.WHITE);
+        jbtn_friends.setFont(b12);
         this.add(jbtn_friends);
-        jbtn_chat.addActionListener(this);
+
+        jbtn_chat.addActionListener(this);                              // jbtn_chat 설정
         jbtn_chat.setBounds(200, 510, 175, 40);
+        jbtn_chat.setBorderPainted(false);
+        jbtn_chat.setBackground(new Color(130, 65, 60));
+        jbtn_chat.setForeground(Color.WHITE);
+        jbtn_chat.setFont(b12);
         this.add(jbtn_chat);
 
-        // 창 위치 지정
-        // this.setLocation(800, 300);
-        // 창 크기 설정
+        // [창 설정]
+        this.getContentPane().setBackground(new Color(255,230,120));
         this.setSize(400, 600);
         this.setTitle("채팅 목록");
         this.setLocationRelativeTo(null); // 가운데 위치 -> 수정.위치변경했습니다!
@@ -115,12 +132,13 @@ public class Main extends JFrame implements ActionListener, MouseListener {
             // 마이페이지 클릭
             System.out.println("jbtn_myPage(마이페이지클릭) 클릭");
             // TODO: 마이페이지 로직
+
         }
         else if (obj == jbtn_friends) {
             // 친구목록 클릭
             System.out.println("jbtn_myPage(내 화면) 클릭");
             this.setTitle("친구 목록");
-            jbtn_firChan.setText("친구추가");
+            jbtn_firChan.setText("친구 추가");
             jlb_secChan.setText("친구 목록");
         }
         else if (obj == jbtn_chat) {
