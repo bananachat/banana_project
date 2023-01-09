@@ -13,7 +13,6 @@ import java.util.Vector;
 public class FListDialog extends JDialog implements ActionListener, ListSelectionListener, FocusListener {
     ////////////////////////// [선언부] //////////////////////////
     Main main = null;
-    Vector<JButton> vList = new Vector<JButton>();      // 친구 리스트
 
     // [NORTH]
     JPanel jp_north = new JPanel();
@@ -22,11 +21,9 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
     // [CENTER]
     JPanel jp_center = new JPanel();
-    JScrollPane jsp_display = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);    // TODO: 리스트를 스크롤
-    // 리스트를 버튼으로
-    JButton jbtn_list = null;    // TODO: 친구 | 채팅 리스트
-    // 리스트를 JList로
+    JScrollPane jsp_display = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+                                                , JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    // 친구리스트를 JList로
     DefaultListModel<String> dlm = new DefaultListModel<String>();
     JList<String> jl_list = null;
     Vector<String> copy_list = new Vector<>();                                          // 선택한 친구들 리스트
@@ -52,12 +49,15 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     public FListDialog(Main main) {
         this();
         this.main = main;
-//        copy_list.add(0, "임시사용자");
     }
 
 
     ////////////////////////// [메소드] //////////////////////////
     // 친구리스트(JList) 생성
+
+    /**
+     *
+     */
     public void createList() {
         // TODO: 현재 임의의 리스트 출력
         for (int i=0; i<10; i++) {
@@ -68,6 +68,12 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
 
     ////////////////////////// [화면출력] //////////////////////////
+
+    /**
+     *
+     * @param title     다이얼로그 타이틀
+     * @param isView    다이얼로그 출력 유무
+     */
     public void setDialog(String title, boolean isView) {
         // [North]
         jp_north.setLayout(new BorderLayout());
@@ -93,25 +99,14 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         jsp_display.setBorder(BorderFactory.createEmptyBorder(5 , 5, 5 , 5));
         jsp_display.getVerticalScrollBar().setUnitIncrement(16);
         jp_center.removeAll();
+
+        // 친구 리스트 출력
         createList();
         jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
 
         // 리스트로 출력
-//        jl_list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);   // 다중 선택 모드
         jl_list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);   // 단일 선택 모드
-
-        // TODO: 아래는 구글 검색한것 테스트
-        jl_list.addListSelectionListener( new ListSelectionListener() {
-            public  void  valueChanged ( ListSelectionEvent e ) {
-                if (e.getValueIsAdjusting()){
-                    System.out.println("선택 : " + jl_list.getSelectedValue());
-
-                    copy_list.add((String)jl_list.getSelectedValue());
-                    System.out.println("다중 선택 : " + copy_list);
-                }
-            }
-        });
-//        jl_list.addListSelectionListener(this);
+        jl_list.addListSelectionListener(this);
 
         jp_center.add(jl_list);
 
@@ -143,33 +138,13 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
 
-        // Main 내 이벤트 발생
-        if (obj == main.jbtn_firChan) {
-            // "친구 추가 / 새 채팅" 클릭
-            copy_list.clear();
-            dlm.clear();
-
-            System.out.println("jbtn_firChan(" + main.jbtn_firChan.getText() +") 클릭");
-
-            if ("친구 추가".equals(main.jbtn_firChan.getText())) {
-                System.out.println("친구추가 로직 시작...");
-
-                setDialog(main.jbtn_firChan.getText(), true);
-                // TODO: 친구추가 로직
-
-            } else if ("새 채팅".equals(main.jbtn_firChan.getText())) {
-                System.out.println("새 채팅 로직 시작...");
-
-                setDialog(main.jbtn_firChan.getText(), true);
-                // TODO: 새 채팅 로직
-
-            }
-        } // end of Main 내 이벤트
-
-        else if (obj == jbtn_search || obj == jtf_search) {
+        if (obj == jbtn_search || obj == jtf_search) {
             // 친구 검색 이벤트 호출
             System.out.println("search 이벤트 호출");
             System.out.println("입력값 : \"" + jtf_search.getText() + "\"");
+
+            // TODO: 검색한 친구 리스트 호출
+
         } // end of 친구 검색
 
         else if (obj == jbtn_add) {
@@ -185,9 +160,11 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 msg = "친구를 선택하세요";
                 JOptionPane.showMessageDialog(this, msg,"info",JOptionPane.INFORMATION_MESSAGE);
             } else {
-                for (int i=0; i<copy_list.size(); i++) {
-                    num += (copy_list.get(i) + " ");
+                // 선택한 친구들 리스트, num 변수에 추가
+                for (int i=0; i<copy_list.size()-1; i++) {
+                    num += (copy_list.get(i) + ", ");
                 }
+                num += (copy_list.get(copy_list.size()-1) + " ");
 
                 // 상황별 메시지 변경
                 if ("친구 추가".equals(main.jbtn_firChan.getText())) {
@@ -199,8 +176,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
                     msg = num + "와(과) 채팅 시작합니다";
                 }
-
-                System.out.println(msg);
 
                 // 복사한 친구들 리스트 출력
                 System.out.println("선택한 친구들 : " + num);
@@ -224,15 +199,15 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     public void valueChanged(ListSelectionEvent e) {
 //        // TODO: 이중 이벤트 발생
 
-//        if (!e.getValueIsAdjusting()) {
-//            // 선택한 친구들 정보 수집
-//            System.out.println("선택 : " + jl_list.getSelectedValue());
-//
-//            // 다중 선택 모드
-//            copy_list.add((String)jl_list.getSelectedValue());
-//            System.out.println("다중 선택 : " + copy_list);
-//
-//        }
+        if (!e.getValueIsAdjusting()) {
+            // 선택한 친구들 정보 수집
+            System.out.println("선택 : " + jl_list.getSelectedValue());
+
+            // 다중 선택 모드
+            copy_list.add((String)jl_list.getSelectedValue());
+            System.out.println("다중 선택 : " + copy_list);
+
+        }
     }
 
     @Override

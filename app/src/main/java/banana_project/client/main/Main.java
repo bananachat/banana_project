@@ -8,8 +8,11 @@ import java.util.Vector;
 
 public class Main extends JFrame implements ActionListener, MouseListener {
     ////////////////////////// [선언부] //////////////////////////
+    String logMsg = "";                                     // 로그 기록용
+
+
     // [NORTH]
-    FListDialog flDialog = new FListDialog(this);
+    FListDialog flDialog = null;                            // "친구 추가" 다이얼로그
     JButton jbtn_myPage = new JButton("마이페이지");
     JButton jbtn_firChan = new JButton("친구 추가");   // "친구추가 | 새 채팅"으로 텍스트 변환
 
@@ -55,7 +58,7 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         jbtn_myPage.setFont(b12);
         this.add(jbtn_myPage);
 
-        jbtn_firChan.addActionListener(flDialog);                          // jbtn_firChan 설정
+        jbtn_firChan.addActionListener(this);                          // jbtn_firChan 설정
         jbtn_firChan.setBounds(200, 10, 175, 40);
         jbtn_firChan.setBorderPainted(false);
         jbtn_firChan.setBackground(new Color(130, 65, 60));
@@ -134,6 +137,29 @@ public class Main extends JFrame implements ActionListener, MouseListener {
             // TODO: 마이페이지 로직
 
         }
+        // Main 내 이벤트 발생
+        else if (obj == jbtn_firChan) {
+            // "친구 추가 / 새 채팅" 클릭
+            flDialog = new FListDialog(this);
+            flDialog.copy_list.clear();
+            dlm.clear();
+
+            System.out.println("jbtn_firChan(" + jbtn_firChan.getText() +") 클릭");
+
+            if ("친구 추가".equals(jbtn_firChan.getText())) {
+                System.out.println("친구추가 로직 시작...");
+
+                flDialog.setDialog(jbtn_firChan.getText(), true);
+                // TODO: 친구추가 로직
+
+            } else if ("새 채팅".equals(jbtn_firChan.getText())) {
+                System.out.println("새 채팅 로직 시작...");
+
+                flDialog.setDialog(jbtn_firChan.getText(), true);
+                // TODO: 새 채팅 로직
+
+            }
+        } // end of Main 내 이벤트
         else if (obj == jbtn_friends) {
             // 친구목록 클릭
             System.out.println("jbtn_myPage(내 화면) 클릭");
