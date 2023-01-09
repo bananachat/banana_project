@@ -38,7 +38,6 @@ public class MemJoin implements ActionListener, FocusListener {
    JLabel jlb_id = new JLabel("아이디");
    JLabel jlb_pw = new JLabel("비밀번호");
    JLabel jlb_pw2 = new JLabel("비밀번호확인");
-   JLabel jlb_birth = new JLabel("생년월일");
    JLabel jlb_phone = new JLabel("전화번호");
    JLabel jlb_nickName = new JLabel("닉네임");
    JLabel jlb_idAvble = new JLabel("사용가능한 아이디 입니다.");
@@ -47,12 +46,10 @@ public class MemJoin implements ActionListener, FocusListener {
    //Jtf
    JTextField jtf_userName = new JTextField("BananaTalk"); // 이름
    JTextField jtf_userId = new JTextField("example@email.com"); // 아이디
-   JPasswordField jtf_userPw = new JPasswordField(); // 비밀번호 입력창
-   JPasswordField jtf_userPwRe = new JPasswordField(); // 비밀번호 확인 입력창
-   JTextField jtf_birth = new JTextField("2000-00-00"); // 생년월일
+   JPasswordField jtf_userPw = new JPasswordField("password"); // 비밀번호 입력창
+   JPasswordField jtf_userPwRe = new JPasswordField("password"); // 비밀번호 확인 입력창
    JTextField jtf_userHp = new JTextField("010-0000-0000"); // 폰번호
    JTextField jtf_nickName = new JTextField("Banana"); // 닉네임
-   //   ImageIcon imgic_join = new ImageIcon(imgPath + "mini_exist_account.png"); // 회원가입 버튼 이미지
    //Jbtn
    JButton jbtn_checkId = new JButton("중복검사"); // 아이디 중복검사 버튼
    JButton jbtn_checkNick = new JButton("중복검사"); // 닉네임 중복검사 버튼
@@ -67,7 +64,16 @@ public class MemJoin implements ActionListener, FocusListener {
 
       jbtn_join.addActionListener(this);
       jbtn_checkId.addActionListener(this);
+
       jbtn_checkNick.addActionListener(this);
+      jtf_userId.addFocusListener(this);
+      jtf_userName.addFocusListener(this);
+      jtf_userPw.addFocusListener(this);
+      jtf_userPwRe.addFocusListener(this);
+      jtf_userHp.addFocusListener(this);
+      jtf_nickName.addFocusListener(this);
+
+
       // 타이틀 부분
       ImageIcon bookIcon = new ImageIcon(imgPath + "logo_title.png");
       client.setIconImage(bookIcon.getImage());
@@ -83,7 +89,7 @@ public class MemJoin implements ActionListener, FocusListener {
       jtf_userId.setForeground(Color.gray);//예시 글자색 회색
       jtf_userPw.setForeground(Color.gray);
       jtf_userPwRe.setForeground(Color.gray);
-      jtf_birth.setForeground(Color.gray);
+
       jtf_userHp.setForeground(Color.gray);
       jtf_nickName.setForeground(Color.gray);
       jtf_userName.setForeground(Color.gray);
@@ -106,11 +112,7 @@ public class MemJoin implements ActionListener, FocusListener {
       jtf_userPwRe.setBounds(95, 255, 180, 35);
       jlb_pw2.setBounds(10, 255, 200, 35);
       jlb_pw2.setFont(p12);
-      jp_join.add(jtf_birth);// 생년월일
-      jp_join.add(jlb_birth);
-      jtf_birth.setBounds(95, 300, 180, 35);
-      jlb_birth.setBounds(35, 300, 200, 35);
-      jlb_birth.setFont(p12);
+
       jp_join.add(jtf_userHp);// 전화번호
       jp_join.add(jlb_phone);
       jtf_userHp.setBounds(95, 345, 180, 35);
@@ -156,27 +158,25 @@ public class MemJoin implements ActionListener, FocusListener {
    // 단위테스트용
    public static void main(String[] args) {
       Client c = new Client();
-<<<<<<< Updated upstream
-      // c.initDisplay();
-      MemJoin memJoin= new MemJoin(c);
-=======
-//      c.initDisplay();
       MemJoin memJoin = new MemJoin(c);
->>>>>>> Stashed changes
       memJoin.initDisplay();
    }
 
+   /**
+    *
+    * @param ae the event to be processed
+    */
    @Override
    public void actionPerformed(ActionEvent ae) {
       Object obj = ae.getSource();
       //회원가입버튼을 눌렀을 때
-      if (obj == jbtn_join | obj == jtf_userId) {//|| obj == jtf_userId
+      if (obj == jbtn_join || obj == jtf_userId) {//|| obj == jtf_userId
          System.out.println("회원가입 버튼 클릭");
          String userName = jtf_userName.getText();
          String userId = jtf_userId.getText();
          String userPw = jtf_userPw.getText();
          String userPwRe = jtf_userPwRe.getText();
-         String userBrith = jtf_birth.getText();
+
          String userHp = jtf_userHp.getText();
          String userNick = jtf_nickName.getText();
          String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
@@ -195,12 +195,9 @@ public class MemJoin implements ActionListener, FocusListener {
          else if ("".equals(userPw) || "".equals(userPwRe)) {
             JOptionPane.showMessageDialog(client, "비밀번호를 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
          }//비밀번호 확인 불일치
-         else if (userPw != userPwRe) {
+         else if (!userPw.equals(userPwRe)) {
             JOptionPane.showMessageDialog(client, "비밀번호 확인이 일치하지 않습니다.", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
-         }//생년월일 입력안함
-         else if ("".equals(userBrith) || "2000-00-00".equals(userBrith)) {
-            JOptionPane.showMessageDialog(client, "생년월일을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
-         } //전화번호 입력안한경우
+         }//전화번호 입력안한경우
          else if ("".equals(userHp) || "010-0000-0000".equals(userHp)) {
             JOptionPane.showMessageDialog(client, "전화번호를 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
          }//닉네임을 입력안함
@@ -208,89 +205,9 @@ public class MemJoin implements ActionListener, FocusListener {
             JOptionPane.showMessageDialog(client, "닉네임을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
          } else {
 
-
-//            //디비연동
-//            DBConnectionMgr dbMgr = new DBConnectionMgr();
-//            Connection con = null;
-//            PreparedStatement pstmt = null;
-//            StringBuilder sql = new StringBuilder();
-//            sql.append("insert into chat_member(user_id, user_pw, user_name, user_nickname");////순서중요한가요? 디비저장이름인가요?
-//            sql.append(",mem_hp, mem_birth, reg_date)");
-//            sql.append(" values(seq_cmember_num.nextval, ?,?,?,?,?,?,to_char(sysdate,'YYYY-MM-DD'))");//잘몰라요ㅠㅠ 은재언니께 질문^^
-//            int result = 0;
-//            try {
-//               con = dbMgr.getConnection();
-//               pstmt = con.prepareStatement(sql.toString());
-//               int i = 0;
-//               pstmt.setString(++i, getId());
-//               pstmt.setString(++i, getPw());
-//               pstmt.setString(++i, getName());
-//               pstmt.setString(++i, getNickName());
-//               pstmt.setString(++i, getHp());
-//               pstmt.setString(++i, getBirth());
-//               result = pstmt.executeUpdate();
-//            } catch (SQLException se) {
-//               System.out.println(sql.toString());
-//               System.out.println(se.toString());
-//            } catch (Exception e) {
-//               e.printStackTrace();
-//            }
-//            if (result == 1) {
-//               JOptionPane.showMessageDialog(client, "회원가입 성공");
-//            }
          }//end of 입력안한경우들
       } // end of if 회원가입 버튼눌렀을때
    }//// end of actionPerformed
-
-   // 각 컬럼의 값들을 설정하거나 읽어오는 getter/setter 메쏘드입니다.
-
-   public String getName() {
-      return jtf_userName.getText();
-   }
-
-   public void setName(String strName) {
-      jtf_userName.setText(strName);
-   }
-
-   public String getId() {
-      return jtf_userId.getText();
-   }
-
-   public void setId(String strId) {
-      jtf_userId.setText(strId);
-   }
-
-   public String getPw() {
-      return jtf_userPw.getText();
-   }
-
-   public void setPw(String strPw) {
-      jtf_userPw.setText(strPw);
-   }
-
-   public String getNickName() {
-      return jtf_nickName.getText();
-   }
-
-   public void setNickName(String strNickName) {
-      jtf_nickName.setText(strNickName);
-   }
-
-   public String getHp() {
-      return jtf_userHp.getText();
-   }
-
-   public void setHp(String strHp) {
-      jtf_userHp.setText(strHp);
-   }
-
-   public String getBirth() {
-      return jtf_birth.getText();
-   }
-
-   public void setBirth(String strBirth) {
-      jtf_birth.setText(strBirth);
-   }
 
    @Override
    public void focusGained(FocusEvent e) {
@@ -298,7 +215,6 @@ public class MemJoin implements ActionListener, FocusListener {
 
       // 이름 jtf를 클릭했을 때
       if (obj == jtf_userName) {
-         jtf_userName.setForeground(Color.black);
          if ("BananaTalk".equals(jtf_userName.getText())) {
             jtf_userName.setText("");
          }
@@ -306,31 +222,24 @@ public class MemJoin implements ActionListener, FocusListener {
       // 아이디 jtf를 클릭했을 때
       if (obj == jtf_userId) {
          jtf_userId.setForeground(Color.black);
-         if (" example@email.com".equals(jtf_userId.getText())) {
+         if ("example@email.com".equals(jtf_userId.getText())) {
             jtf_userId.setText("");
          }
       }
       // 비밀번호 jtf를 클릭했을 때
       else if (obj == jtf_userPw) {
          jtf_userPw.setForeground(Color.black);
-         if (" password".equals(jtf_userPw.getText())) {
+         if ("password".equals(jtf_userPw.getText())) {
             jtf_userPw.setText("");
          }
       }
       // 비밀번호확인 jtf를 클릭했을 때
             else if (obj == jtf_userPwRe) {
                jtf_userPwRe.setForeground(Color.black);
-               if (" password".equals(jtf_userPwRe.getText())) {
+               if ("password".equals(jtf_userPwRe.getText())) {
                   jtf_userPwRe.setText("");
                }
             }
-      // 생년월일 jtf를 클릭했을 때
-      else if (obj == jtf_birth) {
-         jtf_birth.setForeground(Color.black);
-         if ("2000-00-00".equals(jtf_birth.getText())) {
-            jtf_birth.setText("");
-         }
-      }
       // 전화번호 jtf를 클릭했을 때
       else if (obj == jtf_userHp) {
          jtf_userHp.setForeground(Color.black);
@@ -367,19 +276,13 @@ public class MemJoin implements ActionListener, FocusListener {
          else if (obj == jtf_userPw) {
             if ("".equals(jtf_userPw.getText())) {
                jtf_userPw.setForeground(Color.gray);
-               jtf_userPw.setText(" password");
+               jtf_userPw.setText("password");
             }
          }//비번확인
          else if (obj == jtf_userPwRe) {
             if ("".equals(jtf_userPwRe.getText())) {
                jtf_userPwRe.setForeground(Color.gray);
-               jtf_userPwRe.setText(" password");
-            }
-         }//생일
-         else if (obj == jtf_birth) {
-            if ("".equals(jtf_birth.getText())) {
-               jtf_birth.setForeground(Color.gray);
-               jtf_birth.setText("2000-00-00");
+               jtf_userPwRe.setText("password");
             }
          }//전화번호
           else if (obj == jtf_userHp) {

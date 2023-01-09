@@ -208,14 +208,8 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     }
     // 회원가입 버튼을 눌렀을 때
     else if (obj == jbtn_join) {
-<<<<<<< Updated upstream
       MemJoin memJoin = new MemJoin(this);
       memJoin.initDisplay();
-=======
-      this.dispose();
-//       MemJoin memJoin = new MemJoin(this);
-//       memJoin.initDisplay();
->>>>>>> Stashed changes
     }
   }
 
