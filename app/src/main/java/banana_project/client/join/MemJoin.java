@@ -233,7 +233,7 @@ public class MemJoin implements ActionListener, FocusListener {
             jtf_userPw.setText("");
          }
       }
-      // 비밀번호확인 jtf를 클릭했을 때
+      // 비밀번호확인 jtf를 클릭했을 때ㅎㅎ
             else if (obj == jtf_userPwRe) {
                jtf_userPwRe.setForeground(Color.black);
                if ("password".equals(jtf_userPwRe.getText())) {
