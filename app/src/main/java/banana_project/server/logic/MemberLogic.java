@@ -118,7 +118,7 @@ public class MemberLogic {
         try {
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
-            pst.setString(1, user_id);
+//            pst.setString(1, user_id);
         } catch (SQLException se){
             se.printStackTrace();
         }
