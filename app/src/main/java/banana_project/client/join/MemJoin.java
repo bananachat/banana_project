@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.regex.Pattern;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 
 import banana_project.server.util.DBConnectionMgr;
 import  banana_project.client.login.Client;
@@ -81,57 +82,65 @@ public class MemJoin implements ActionListener, FocusListener {
       // 정보입력 부분
       jp_join.add(jtf_userName);// 이름
       jp_join.add(jlb_name);
-      jtf_userName.setBounds(95, 100, 180, 35);
-      jlb_name.setBounds(57, 100, 200, 35);
+      jtf_userName.setBounds(95, 100, 180, 45);
+      jlb_name.setBounds(57, 100, 200, 45);
       jlb_name.setFont(p12);
+      jtf_userName.setBorder(new LineBorder(Color.white, 8));//테두리 없애기
       jp_join.add(jtf_userId);// 아이디
       jp_join.add(jlb_id);
       jtf_userId.setForeground(Color.gray);//예시 글자색 회색
       jtf_userPw.setForeground(Color.gray);
       jtf_userPwRe.setForeground(Color.gray);
 
+      jtf_userId.setBorder(new LineBorder(Color.white, 8));//테두리 없애기
+
       jtf_userHp.setForeground(Color.gray);
       jtf_nickName.setForeground(Color.gray);
       jtf_userName.setForeground(Color.gray);
-      jtf_userId.setBounds(95, 145, 180, 35);
-      jlb_id.setBounds(45, 145, 200, 35);
+      jtf_userId.setBounds(95, 145, 180, 45);
+      jlb_id.setBounds(45, 145, 200, 45);
       jlb_id.setFont(p12);
       jp_join.add(jlb_idAvble);// 아이디 중복검사 결과
       jlb_idAvble.setVisible(false);
       jp_join.add(jlb_idNotAvble);
-      jlb_idAvble.setBounds(95, 180, 180, 35);
-      jlb_idNotAvble.setBounds(95, 180, 200, 35);
+      jlb_idAvble.setBounds(95, 180, 180, 45);
+      jlb_idNotAvble.setBounds(95, 180, 200, 45);
       jlb_idNotAvble.setVisible(false);
+
       jp_join.add(jtf_userPw);// 비밀번호
       jp_join.add(jlb_pw);
-      jtf_userPw.setBounds(95, 210, 180, 35);
-      jlb_pw.setBounds(35, 210, 200, 35);
+      jtf_userPw.setBounds(95, 210, 180, 45);
+      jlb_pw.setBounds(35, 210, 200, 45);
       jlb_pw.setFont(p12);
+      jtf_userPw.setBorder(new LineBorder(Color.white, 8));//테두리 없애기
       jp_join.add(jtf_userPwRe);// 비밀번호확인
       jp_join.add(jlb_pw2);
-      jtf_userPwRe.setBounds(95, 255, 180, 35);
-      jlb_pw2.setBounds(10, 255, 200, 35);
+      jtf_userPwRe.setBounds(95, 255, 180, 45);
+      jlb_pw2.setBounds(10, 255, 200, 45);
       jlb_pw2.setFont(p12);
+      jtf_userPwRe.setBorder(new LineBorder(Color.white, 8));//테두리 없애기
 
       jp_join.add(jtf_userHp);// 전화번호
       jp_join.add(jlb_phone);
-      jtf_userHp.setBounds(95, 345, 180, 35);
-      jlb_phone.setBounds(35, 345, 200, 35);
+      jtf_userHp.setBounds(95, 300, 180, 45);
+      jlb_phone.setBounds(35, 300, 200, 45);
       jlb_phone.setFont(p12);
+      jtf_userHp.setBorder(new LineBorder(Color.white, 8));//테두리 없애기
       jp_join.add(jtf_nickName);// 닉네임
       jp_join.add(jlb_nickName);
-      jtf_nickName.setBounds(95, 390, 180, 35);
-      jlb_nickName.setBounds(45, 390, 200, 35);
+      jtf_nickName.setBounds(95, 340, 180, 45);
+      jlb_nickName.setBounds(45, 340, 200, 45);
+      jtf_nickName.setBorder(new LineBorder(Color.white, 8));//테두리 없애기
       //JButton 설정
       jbtn_checkId.setBorderPainted(false); // 아이디 중복검사 버튼 외곽 라인 없애기
       jbtn_checkId.setForeground(Color.WHITE); // 아이디 중복검사 버튼 텍스트 색깔 (흰색)
       jbtn_checkId.setBackground(new Color(130, 65, 60)); // 아이디 중복검사 버튼 색깔 넣기 (지정색)
-      jbtn_checkId.setBounds(285, 145, 90, 35);
+      jbtn_checkId.setBounds(285, 145, 90, 45);
 
       jbtn_checkNick.setBorderPainted(false); // 닉네임 중복검사 버튼 외곽 라인 없애기
       jbtn_checkNick.setForeground(Color.WHITE); // 닉네임 중복검사 버튼 텍스트 색깔 (흰색)
       jbtn_checkNick.setBackground(new Color(130, 65, 60)); // 닉네임 중복검사 버튼 색깔 넣기 (지정색)
-      jbtn_checkNick.setBounds(285, 390, 90, 35);
+      jbtn_checkNick.setBounds(285, 340, 90, 45);
 
       jbtn_join.setBackground(new Color(130, 65, 60));//회원가입버튼 배경색
       jbtn_join.setForeground(Color.white);
