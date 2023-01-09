@@ -25,11 +25,11 @@ public class TalkServerThread extends Thread {
       ois = new ObjectInputStream(client.getInputStream());// 듣기
       // 100#tomato
       String msg = (String) ois.readObject();
-      ts.jta_log.append(msg + "\n");
+//      ts.jta_log.append(msg + "\n");
       StringTokenizer st = new StringTokenizer(msg, "#");
       st.nextToken();// 100 skip처리
       chatName = st.nextToken();// 토마토 저장
-      ts.jta_log.append(chatName + "님이 입장하였습니다.\n");
+//      ts.jta_log.append(chatName + "님이 입장하였습니다.\n");
       for (TalkServerThread tst : ts.globalList) {
         this.send(Protocol.TALK_IN + Protocol.separator + tst.chatName);
       }
@@ -65,8 +65,8 @@ public class TalkServerThread extends Thread {
       // while(true) {//무한루프에 빠질 수 있다.
       run_start: while (!isStop) {
         msg = (String) ois.readObject();
-        ts.jta_log.append(msg + "\n");
-        ts.jta_log.setCaretPosition(ts.jta_log.getDocument().getLength());
+//        ts.jta_log.append(msg + "\n");
+//        ts.jta_log.setCaretPosition(ts.jta_log.getDocument().getLength());
         StringTokenizer st = null;
         int protocol = 0;// 100|200|201|202|500
         if (msg != null) {
