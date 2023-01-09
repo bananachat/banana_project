@@ -112,6 +112,19 @@ public class MemberLogic {
         return result;
     }
 
+    public int checkDuplication(){
+        int result = -1;
+        String sql = "SELECT USER_ID FROM TB_USER WHERE USER_ID=?";
+        try {
+            con = mgr.getConnection();
+            pst = con.prepareStatement(sql);
+            pst.setString(1, user_id);
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+        return result;
+    }
+
 //    public int loginUser(UserVO uservo){
 //        int result = -1;
 //        StringBuilder sql = new StringBuilder();
