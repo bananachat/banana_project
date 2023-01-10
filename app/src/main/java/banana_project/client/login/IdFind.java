@@ -124,6 +124,7 @@ public class IdFind implements ActionListener, FocusListener {
     // 돌아가기 버튼을 눌렀을 때
     if (obj == jbtn_back) {
       client.setContentPane(client.jp_login);
+      client.setTitle("바나나톡");
       client.revalidate();
     }
     // 아이디찾기 버튼을 눌렀을 때

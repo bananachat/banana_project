@@ -42,7 +42,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   /**
    * 화면부 선언
    */
-  JPanel jp_login = new JPanel(null);
+  public JPanel jp_login = new JPanel(null);
   // 이미지
   String imgPath = "./app\\src\\main\\java\\banana_project\\image\\"; // 경로
   ImageIcon img_main = new ImageIcon(imgPath + "logo_main.png"); // 메인 로고 이미지
