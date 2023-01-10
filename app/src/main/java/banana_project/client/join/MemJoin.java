@@ -143,15 +143,17 @@ public class MemJoin implements ActionListener, FocusListener {
       jbtn_checkNick.setBackground(new Color(130, 65, 60)); // 닉네임 중복검사 버튼 색깔 넣기 (지정색)
       jbtn_checkNick.setBounds(285, 340, 90, 45);
 
+      jbtn_join.setBorderPainted(false);
       jbtn_join.setBackground(new Color(130, 65, 60));// 회원가입버튼 배경색
       jbtn_join.setForeground(Color.white);
       jbtn_join.setFont(b14);
-      jbtn_join.setBounds(195, 450, 150, 45);
+      jbtn_join.setBounds(200, 450, 130, 45);
 
+      jbtn_cancel.setBorderPainted(false);
       jbtn_cancel.setBackground(new Color(130, 65, 60));// 취소버튼 배경색
       jbtn_cancel.setForeground(Color.white);
       jbtn_cancel.setFont(b14);
-      jbtn_cancel.setBounds(42, 450, 150, 45);
+      jbtn_cancel.setBounds(60, 450, 130, 45);
 
       jlb_title.setFont(f_join);// 회원가입 라벨 붙이기
       jlb_title.setBounds(20, 30, 125, 45);
