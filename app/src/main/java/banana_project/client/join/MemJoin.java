@@ -1,38 +1,30 @@
 package banana_project.client.join;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.regex.Pattern;
-
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-
-import banana_project.server.util.DBConnectionMgr;
+import banana_project.client.common.SetFontNJOp;
+import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
-//회원가입 DB연동 
 
 public class MemJoin implements ActionListener, FocusListener {
-   boolean isIdCheck = false;
-   // 이미지
-   String imgPath = "./app\\src\\main\\java\\banana_project\\image\\"; // 경로+
+   /**
+    * 서버 연결부 선언
+    */
+   Client client = null;
 
-   ImageIcon img_main = new ImageIcon(imgPath + "logo_main.png"); // 메인 로고 이미지
-   ImageIcon img_title = new ImageIcon(imgPath + "logo_title.png"); // 타이틀창 이미지
-   ImageIcon img_info = new ImageIcon(imgPath + "mini_info.png"); // JOp 인포 이미지
-   ImageIcon img_confirm = new ImageIcon(imgPath + "mini_confirm.png"); // JOp 확인 이미지
-   ImageIcon img_notFound = new ImageIcon(imgPath + "mini_notFound.png"); // JOp 취소 이미지
-   // 폰트
-   Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통12 폰트
-   Font b14 = new Font("맑은 고딕", Font.BOLD, 14); // 볼드14 폰트
-   Font f_join = new Font("맑은 고딕", Font.BOLD, 25);// 볼드25 폰트
-   Client client = new Client(); // 회원가입 프레임
+   /**
+    * 화면부 선언
+    */
+   // 이미지, 폰트, JOp 세팅 불러오기
+   SetImg setImage = new SetImg();
+   SetFontNJOp setFontNJOp = new SetFontNJOp();
+   // JP
    JPanel jp_join = new JPanel(null); // 회원가입 도화지
    // Jlb
    JLabel jlb_name = new JLabel("이름");
@@ -43,7 +35,6 @@ public class MemJoin implements ActionListener, FocusListener {
    JLabel jlb_nickName = new JLabel("닉네임");
    JLabel jlb_idAvble = new JLabel("사용가능한 아이디 입니다.");
    JLabel jlb_idNotAvble = new JLabel("중복된 아이디 입니다.");
-   JLabel jlb_title = new JLabel("회원가입");// 회원가입 , title 라벨
    // Jtf
    JTextField jtf_userName = new JTextField("BananaTalk"); // 이름
    JTextField jtf_userId = new JTextField("example@email.com"); // 아이디
@@ -57,13 +48,16 @@ public class MemJoin implements ActionListener, FocusListener {
    JButton jbtn_join = new JButton("회원가입");// 회원가입 버튼
    JButton jbtn_cancel = new JButton("취소");// 취소 버튼
 
-   // 생성자
+   /**
+    * 생성자
+    * 
+    * @param client
+    */
    public MemJoin(Client client) {
       this.client = client;
    }
 
    public void initDisplay() {
-
       jbtn_join.addActionListener(this);
       jbtn_cancel.addActionListener(this);
       jbtn_checkId.addActionListener(this);
@@ -77,7 +71,7 @@ public class MemJoin implements ActionListener, FocusListener {
       jtf_nickName.addFocusListener(this);
 
       // 타이틀 부분
-      ImageIcon bookIcon = new ImageIcon(imgPath + "logo_title.png");
+      ImageIcon bookIcon = new ImageIcon(setImage.imgPath + "logo_title.png");
       client.setIconImage(bookIcon.getImage());
       client.setTitle("바나나톡");
       // 정보입력 부분
@@ -85,7 +79,7 @@ public class MemJoin implements ActionListener, FocusListener {
       jp_join.add(jlb_name);
       jtf_userName.setBounds(95, 100, 180, 45);
       jlb_name.setBounds(57, 100, 200, 45);
-      jlb_name.setFont(p12);
+      jlb_name.setFont(setFontNJOp.p12);
       jtf_userName.setBorder(new LineBorder(Color.white, 8));// 테두리 없애기
       jp_join.add(jtf_userId);// 아이디
       jp_join.add(jlb_id);
@@ -100,7 +94,7 @@ public class MemJoin implements ActionListener, FocusListener {
       jtf_userName.setForeground(Color.gray);
       jtf_userId.setBounds(95, 145, 180, 45);
       jlb_id.setBounds(45, 145, 200, 45);
-      jlb_id.setFont(p12);
+      jlb_id.setFont(setFontNJOp.p12);
       jp_join.add(jlb_idAvble);// 아이디 중복검사 결과
       jlb_idAvble.setVisible(false);
       jp_join.add(jlb_idNotAvble);
@@ -112,20 +106,20 @@ public class MemJoin implements ActionListener, FocusListener {
       jp_join.add(jlb_pw);
       jtf_userPw.setBounds(95, 210, 180, 45);
       jlb_pw.setBounds(35, 210, 200, 45);
-      jlb_pw.setFont(p12);
+      jlb_pw.setFont(setFontNJOp.p12);
       jtf_userPw.setBorder(new LineBorder(Color.white, 8));// 테두리 없애기
       jp_join.add(jtf_userPwRe);// 비밀번호확인
       jp_join.add(jlb_pw2);
       jtf_userPwRe.setBounds(95, 255, 180, 45);
       jlb_pw2.setBounds(10, 255, 200, 45);
-      jlb_pw2.setFont(p12);
+      jlb_pw2.setFont(setFontNJOp.p12);
       jtf_userPwRe.setBorder(new LineBorder(Color.white, 8));// 테두리 없애기
 
       jp_join.add(jtf_userHp);// 전화번호
       jp_join.add(jlb_phone);
       jtf_userHp.setBounds(95, 300, 180, 45);
       jlb_phone.setBounds(35, 300, 200, 45);
-      jlb_phone.setFont(p12);
+      jlb_phone.setFont(setFontNJOp.p12);
       jtf_userHp.setBorder(new LineBorder(Color.white, 8));// 테두리 없애기
       jp_join.add(jtf_nickName);// 닉네임
       jp_join.add(jlb_nickName);
@@ -146,18 +140,15 @@ public class MemJoin implements ActionListener, FocusListener {
       jbtn_join.setBorderPainted(false);
       jbtn_join.setBackground(new Color(130, 65, 60));// 회원가입버튼 배경색
       jbtn_join.setForeground(Color.white);
-      jbtn_join.setFont(b14);
+      jbtn_join.setFont(setFontNJOp.b14);
       jbtn_join.setBounds(200, 450, 130, 45);
 
       jbtn_cancel.setBorderPainted(false);
       jbtn_cancel.setBackground(new Color(130, 65, 60));// 취소버튼 배경색
       jbtn_cancel.setForeground(Color.white);
-      jbtn_cancel.setFont(b14);
+      jbtn_cancel.setFont(setFontNJOp.b14);
       jbtn_cancel.setBounds(60, 450, 130, 45);
 
-      jlb_title.setFont(f_join);// 회원가입 라벨 붙이기
-      jlb_title.setBounds(20, 30, 125, 45);
-      jp_join.add(jlb_title);// 회원가입 라벨 왼쪽 상단에 붙이기
       jp_join.add(jbtn_join);// 회원가입 버튼
       jp_join.add(jbtn_cancel);// 취소 버튼
       jp_join.add(jbtn_checkId);// 아이디 중복검사 버튼
@@ -200,26 +191,31 @@ public class MemJoin implements ActionListener, FocusListener {
 
          // 이름 입력 안함
          if ("".equals(userName) || "BananaTalk".equals(userName)) {
-            JOptionPane.showMessageDialog(client, "이름을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.showMessageDialog(client, "이름을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, setImage.img_info);
          } // 아이디 입력안함
          else if ("".equals(userId) || "example@email.com".equals(userId)) {
-            JOptionPane.showMessageDialog(client, "이메일을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.showMessageDialog(client, "이메일을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE,
+                  setImage.img_info);
          } // 아이디 형식안맞음, 이메일 형식이 아닐 경우
          else if (!Pattern.matches(idCheck, userId)) {
             JOptionPane.showMessageDialog(client, "example@email.com 형식으로 입력해주세요", "회원가입",
-                  JOptionPane.WARNING_MESSAGE, img_info);
+                  JOptionPane.WARNING_MESSAGE, setImage.img_info);
          } // 비밀번호, 비밀번호확인을 입력 안한경우
          else if ("".equals(userPw) || "".equals(userPwRe)) {
-            JOptionPane.showMessageDialog(client, "비밀번호를 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.showMessageDialog(client, "비밀번호를 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE,
+                  setImage.img_info);
          } // 비밀번호 확인 불일치
          else if (!userPw.equals(userPwRe)) {
-            JOptionPane.showMessageDialog(client, "비밀번호 확인이 일치하지 않습니다.", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.showMessageDialog(client, "비밀번호 확인이 일치하지 않습니다.", "회원가입", JOptionPane.WARNING_MESSAGE,
+                  setImage.img_info);
          } // 전화번호 입력안한경우
          else if ("".equals(userHp) || "010-0000-0000".equals(userHp)) {
-            JOptionPane.showMessageDialog(client, "전화번호를 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.showMessageDialog(client, "전화번호를 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE,
+                  setImage.img_info);
          } // 닉네임을 입력안함
          else if ("".equals(userNick) || "Banana".equals(userNick)) {
-            JOptionPane.showMessageDialog(client, "닉네임을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.showMessageDialog(client, "닉네임을 입력해주세요", "회원가입", JOptionPane.WARNING_MESSAGE,
+                  setImage.img_info);
          } else {
 
          } // end of 입력안한경우들
