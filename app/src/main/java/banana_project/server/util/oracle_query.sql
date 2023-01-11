@@ -14,7 +14,7 @@ CREATE TABLE TB_USER
     login_date	    DATE	        DEFAULT	SYSDATE
 );
 COMMENT ON TABLE TB_USER IS '사용자 정보';
-COMMENT ON COLUMN TB_USER.user_name IS '사용자 ID(이메일)';
+COMMENT ON COLUMN TB_USER.user_id IS '사용자 ID(이메일)';
 COMMENT ON COLUMN TB_USER.user_pw IS '패스워드';
 COMMENT ON COLUMN TB_USER.user_name IS '이름';
 COMMENT ON COLUMN TB_USER.user_hp IS '연락처';
