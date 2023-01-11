@@ -17,7 +17,7 @@ public class ClientThread extends Thread {
     while (!isStop) {
       try {
         String msg = "";
-        msg = (String) client.ois.readObject(); // 서버가 클라이언트에게 전송한 메시지
+        msg = (String) client.ois.readObject(); // 서버스레드가 클라이언트에게 전송한 메시지
         StringTokenizer st = null;
         int protocol = 0;
         // 토큰 설정 및 전송받은 프로토콜
