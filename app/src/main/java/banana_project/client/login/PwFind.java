@@ -1,14 +1,13 @@
 package banana_project.client.login;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
+import banana_project.client.common.SetFontNJOp;
+import banana_project.client.common.SetImg;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -31,17 +30,11 @@ public class PwFind implements ActionListener, FocusListener {
   /**
    * 화면부 선언
    */
+  // 이미지, 폰트, JOp 세팅 불러오기
+  SetImg setImage = new SetImg();
+  SetFontNJOp setFontNJOp = new SetFontNJOp();
+  // JP
   JPanel jp_pwFind = new JPanel(null);
-  // 이미지 설정
-  String imgPath = "./app\\src\\main\\java\\banana_project\\image\\";
-  ImageIcon img_pwFind = new ImageIcon(imgPath + "logo_find.png"); // 찾기 로고 이미지
-  ImageIcon img_info = new ImageIcon(imgPath + "mini_info.png"); // JOp 인포 이미지
-  ImageIcon img_confirm = new ImageIcon(imgPath + "mini_confirm.png"); // JOp 확인 이미지
-  ImageIcon img_notFound = new ImageIcon(imgPath + "mini_notFound.png"); // JOp 취소 이미지
-  // 폰트
-  Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통12 폰트
-  Font b12 = new Font("맑은 고딕", Font.BOLD, 12); // 볼드12 폰트
-  Font b14 = new Font("맑은 고딕", Font.BOLD, 14); // 볼드14 폰트
   // jtf
   JTextField jtf_userName = new JTextField(" 이름");
   JTextField jtf_userId = new JTextField(" example@email.com");
@@ -49,7 +42,7 @@ public class PwFind implements ActionListener, FocusListener {
   // Jbtn
   JButton jbtn_back = new JButton("돌아가기"); // 돌아가기 버튼
   JButton jbtn_findPw = new JButton("비밀번호 찾기"); // 비밀번호찾기 버튼
-  JButton jbtn_main = new JButton(img_pwFind); // 찾기 이미지용 버튼
+  JButton jbtn_main = new JButton(setImage.img_find); // 찾기 이미지용 버튼
 
   /**
    * 생성자
@@ -84,9 +77,9 @@ public class PwFind implements ActionListener, FocusListener {
     jtf_userName.setForeground(Color.gray);
     jtf_userId.setForeground(Color.gray);
     jtf_userHp.setForeground(Color.gray);
-    jtf_userName.setFont(p12);
-    jtf_userId.setFont(p12);
-    jtf_userHp.setFont(p12);
+    jtf_userName.setFont(setFontNJOp.p12);
+    jtf_userId.setFont(setFontNJOp.p12);
+    jtf_userHp.setFont(setFontNJOp.p12);
     jtf_userName.setBounds(60, 285, 270, 45);
     jtf_userId.setBounds(60, 345, 270, 45);
     jtf_userHp.setBounds(60, 405, 270, 45);
@@ -97,13 +90,13 @@ public class PwFind implements ActionListener, FocusListener {
     jbtn_back.setBorderPainted(false);
     jbtn_back.setBackground(new Color(130, 65, 60));
     jbtn_back.setForeground(Color.white);
-    jbtn_back.setFont(b14);
+    jbtn_back.setFont(setFontNJOp.b14);
     jbtn_back.setBounds(60, 465, 130, 45);
     // 비밀번호찾기 버튼 설정
     jbtn_findPw.setBorderPainted(false);
     jbtn_findPw.setBackground(new Color(130, 65, 60));
     jbtn_findPw.setForeground(Color.white);
-    jbtn_findPw.setFont(b14);
+    jbtn_findPw.setFont(setFontNJOp.b14);
     jbtn_findPw.setBounds(200, 465, 130, 45);
     // 로고 이미지 설정
     jbtn_main.setBackground(new Color(255, 230, 120));
@@ -115,14 +108,6 @@ public class PwFind implements ActionListener, FocusListener {
     client.setTitle("비밀번호 찾기");
     client.setContentPane(jp_pwFind); // 액자에 도화지 끼우기
     client.setVisible(true);
-    // JOp 설정
-    UIManager UI = new UIManager();
-    UI.put("OptionPane.background", new Color(255, 230, 120));
-    UI.put("Panel.background", new Color(255, 230, 120));
-    UI.put("OptionPane.messageFont", b12);
-    UI.put("Button.background", new Color(130, 65, 60));
-    UI.put("Button.foreground", Color.white);
-    UI.put("Button.font", b12);
   }
 
   /**
@@ -146,25 +131,26 @@ public class PwFind implements ActionListener, FocusListener {
       String hpCheck = userHp.replaceAll("[^0-9]", "-"); // 숫자가 아닌 문자들을 -로 치환
       // 이름을 입력하지 않았을 경우
       if (" 이름".equals(userName) || "".equals(userName)) {
-        JOptionPane.showMessageDialog(client, "이름을 입력해주세요", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE, img_info);
+        JOptionPane.showMessageDialog(client, "이름을 입력해주세요", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 이메일을 입력하지 않았을 경우
       else if (" example@email.com".equals(userId) || "".equals(userId)) {
-        JOptionPane.showMessageDialog(client, "이메일을 입력해주세요", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE, img_info);
+        JOptionPane.showMessageDialog(client, "이메일을 입력해주세요", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 이메일 형식이 아닐 경우
       else if (!Pattern.matches(idCheck, userId)) {
         JOptionPane.showMessageDialog(client, "example@email.com 형식으로 입력해주세요", "비밀번호 찾기",
-            JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 핸드폰번호를 입력하지 않았을 경우
       else if (" 핸드폰 번호 (-없이 숫자만 입력)".equals(userHp) || "".equals(userHp)) {
-        JOptionPane.showMessageDialog(client, "핸드폰번호를 입력해주세요", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE, img_info);
+        JOptionPane.showMessageDialog(client, "핸드폰번호를 입력해주세요", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE,
+            setImage.img_info);
       }
       // 핸드폰번호에 숫자가 아닌 것을 넣었을 경우
       else if (hpCheck.contains("-")) {
         JOptionPane.showMessageDialog(client, "핸드폰번호는 -를 제외한 숫자만 입력해주세요.", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE,
-            img_info);
+            setImage.img_info);
       } else {
         // 테스트용 if문
         // 이름, 아이디, 전화번호가 맞을 경우
@@ -175,7 +161,7 @@ public class PwFind implements ActionListener, FocusListener {
         // 틀릴 경우
         else {
           JOptionPane.showMessageDialog(client, "계정을 찾을 수 없습니다.", "비밀번호 찾기", JOptionPane.ERROR_MESSAGE,
-              img_notFound);
+              setImage.img_notFound);
         }
       }
     }

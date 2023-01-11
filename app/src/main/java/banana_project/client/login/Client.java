@@ -1,6 +1,5 @@
 package banana_project.client.login;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -8,13 +7,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
+
+import banana_project.client.common.SetFontNJOp;
+import banana_project.client.common.SetImg;
 import banana_project.client.join.MemJoin;
 import banana_project.client.main.Main;
 import banana_project.server.Protocol;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -42,24 +42,18 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   /**
    * 화면부 선언
    */
+  // 이미지, 폰트, JOp 세팅 불러오기
+  SetImg setImage = new SetImg();
+  SetFontNJOp setFontNJOp = new SetFontNJOp();
+  // JP
   public JPanel jp_login = new JPanel(null);
-  // 이미지
-  String imgPath = "./app\\src\\main\\java\\banana_project\\image\\"; // 경로
-  ImageIcon img_main = new ImageIcon(imgPath + "logo_main.png"); // 메인 로고 이미지
-  ImageIcon img_title = new ImageIcon(imgPath + "logo_title.png"); // 타이틀창 이미지
-  ImageIcon img_info = new ImageIcon(imgPath + "mini_info.png"); // JOp 인포 이미지
-  ImageIcon img_notFound = new ImageIcon(imgPath + "mini_notFound.png"); // JOp 취소 이미지
-  // 폰트
-  Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통12 폰트
-  Font b12 = new Font("맑은 고딕", Font.BOLD, 12); // 볼드12 폰트
-  Font b14 = new Font("맑은 고딕", Font.BOLD, 14); // 볼드14 폰트
   // Jtf
   JTextField jtf_userId = new JTextField(" example@email.com"); // 아이디 입력창
   JPasswordField jtf_userPw = new JPasswordField(" password"); // 비밀번호 입력창
   // Jbtn
   JButton jbtn_login = new JButton("로그인"); // 로그인 버튼
   JButton jbtn_join = new JButton("회원가입"); // 회원가입 버튼
-  JButton jbtn_main = new JButton(img_main); // 메인 로고용 버튼
+  JButton jbtn_main = new JButton(setImage.img_main); // 메인 로고용 버튼
   // Jlb
   JLabel jlb_findId = new JLabel();
   JLabel jlb_findPw = new JLabel();
@@ -96,21 +90,21 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     jbtn_login.setBorderPainted(false);
     jbtn_login.setBackground(new Color(130, 65, 60));
     jbtn_login.setForeground(Color.white);
-    jbtn_login.setFont(b14);
+    jbtn_login.setFont(setFontNJOp.b14);
     jbtn_login.setBounds(200, 420, 130, 45);
     // 회원가입버튼 설정
     jbtn_join.setBorderPainted(false);
     jbtn_join.setBackground(new Color(130, 65, 60));
     jbtn_join.setForeground(Color.white);
-    jbtn_join.setFont(b14);
+    jbtn_join.setFont(setFontNJOp.b14);
     jbtn_join.setBounds(60, 420, 130, 45);
     // Jlb
     jlb_findId.setText("<HTML><U>아이디 찾기</U></HTML>");
     jlb_findPw.setText("<HTML><U>비밀번호 찾기</U></HTML>");
     jlb_findId.setForeground(new Color(135, 90, 75));
     jlb_findPw.setForeground(new Color(135, 90, 75));
-    jlb_findId.setFont(p12);
-    jlb_findPw.setFont(p12);
+    jlb_findId.setFont(setFontNJOp.p12);
+    jlb_findPw.setFont(setFontNJOp.p12);
     jlb_findId.setBounds(100, 480, 70, 20);
     jlb_findPw.setBounds(220, 480, 80, 20);
     // 로고 이미지 설정
@@ -121,21 +115,13 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     jp_login.setBackground(new Color(255, 230, 120));
     // JF 설정
     this.setTitle("바나나톡");
-    this.setIconImage(img_title.getImage()); // 타이틀창 이미지
+    this.setIconImage(setImage.img_title.getImage()); // 타이틀창 이미지
     this.setContentPane(jp_login); // 액자에 도화지 끼우기
     this.setSize(400, 600);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setLocationRelativeTo(null); // 창 가운데서 띄우기
     this.setResizable(false);
     this.setVisible(true);
-    // JOp 설정
-    UIManager UI = new UIManager();
-    UI.put("OptionPane.background", new Color(255, 230, 120));
-    UI.put("Panel.background", new Color(255, 230, 120));
-    UI.put("OptionPane.messageFont", b12);
-    UI.put("Button.background", new Color(130, 65, 60));
-    UI.put("Button.foreground", Color.white);
-    UI.put("Button.font", b12);
   }
 
   /**
@@ -166,16 +152,16 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
       String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
       // 아이디를 입력하지 않았을 경우
       if ("".equals(userId) || " example@email.com".equals(userId)) {
-        JOptionPane.showMessageDialog(this, "이메일을 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, img_info);
+        JOptionPane.showMessageDialog(this, "이메일을 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 이메일 형식이 아닐 경우
       else if (!Pattern.matches(idCheck, userId)) {
         JOptionPane.showMessageDialog(this, "example@email.com 형식으로 입력해주세요", "로그인",
-            JOptionPane.WARNING_MESSAGE, img_info);
+            JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 비밀번호를 입력하지 않았을 경우
       else if ("".equals(userPw) || " password".equals(userPw)) {
-        JOptionPane.showMessageDialog(this, "비밀번호를 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, img_info);
+        JOptionPane.showMessageDialog(this, "비밀번호를 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 형식에 맞게 입력했을경우 DB에서 확인
       else {
@@ -197,12 +183,12 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
         // 아이디는 맞는데 비번을 틀릴 경우
         else if (userId.equals(dbId) && !userPw.equals(dbPw)) {
           JOptionPane.showMessageDialog(this, "비밀번호가 틀렸습니다..", "로그인", JOptionPane.ERROR_MESSAGE,
-              img_notFound);
+              setImage.img_notFound);
         }
         // 전부 틀릴 경우
         else {
           JOptionPane.showMessageDialog(this, "계정을 찾을 수 없습니다.", "로그인", JOptionPane.ERROR_MESSAGE,
-              img_notFound);
+              setImage.img_notFound);
         }
       }
     }
