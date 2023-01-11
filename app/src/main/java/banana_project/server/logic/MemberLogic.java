@@ -209,5 +209,8 @@ public class MemberLogic {
 //        System.out.println("결과값 : " + result);
         int result = ml.updateUser(uv);
         System.out.println("결과값 : " + result);
+
+        result = ml.loginUser(uv);
+        System.out.println("result = " + result);
     }
 }

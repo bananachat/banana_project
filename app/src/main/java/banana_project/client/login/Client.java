@@ -139,6 +139,27 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     }
   }
 
+    /**
+     * 로그인성공
+     */
+    public void login_s(){
+        this.dispose();
+        Main main = new Main();
+        main.initDisplay();
+      }
+
+      /**
+       * 아이디 틀림(계정없음)
+       */
+      public void wrong_id(){
+      }
+
+      /**
+       * 비밀번호 틀림
+       */
+      public void wrong_pw(){
+      }
+
   /**
    * ActionListener 메소드
    */
@@ -166,30 +187,31 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
       // 형식에 맞게 입력했을경우 DB에서 확인
       else {
         try {
-          // 로그인 시도시 100#아이디#패스워드 형태로 서버에 전달
+          // 로그인 시도 -> 100#아이디#패스워드
           oos.writeObject(Protocol.CLIENT_START
               + Protocol.seperator + userId
               + Protocol.seperator + userPw);
         } catch (Exception e2) {
           e2.printStackTrace();
         }
+
         // 테스트용 if문
         // 아이디, 비번이 맞을 경우
-        if (userId.equals(dbId) && userPw.equals(dbPw)) {
-          this.dispose();
-          Main main = new Main();
-          main.initDisplay();
-        }
-        // 아이디는 맞는데 비번을 틀릴 경우
-        else if (userId.equals(dbId) && !userPw.equals(dbPw)) {
-          JOptionPane.showMessageDialog(this, "비밀번호가 틀렸습니다..", "로그인", JOptionPane.ERROR_MESSAGE,
-              setImage.img_notFound);
-        }
-        // 전부 틀릴 경우
-        else {
-          JOptionPane.showMessageDialog(this, "계정을 찾을 수 없습니다.", "로그인", JOptionPane.ERROR_MESSAGE,
-              setImage.img_notFound);
-        }
+        // if (userId.equals(dbId) && userPw.equals(dbPw)) {
+        //   this.dispose();
+        //   Main main = new Main();
+        //   main.initDisplay();
+        // }
+        // // 아이디는 맞는데 비번을 틀릴 경우
+        // else if (userId.equals(dbId) && !userPw.equals(dbPw)) {
+        //   JOptionPane.showMessageDialog(this, "비밀번호가 틀렸습니다..", "로그인", JOptionPane.ERROR_MESSAGE,
+        //       setImage.img_notFound);
+        // }
+        // // 전부 틀릴 경우
+        // else {
+        //   JOptionPane.showMessageDialog(this, "계정을 찾을 수 없습니다.", "로그인", JOptionPane.ERROR_MESSAGE,
+        //       setImage.img_notFound);
+        // }
       }
     }
     // 회원가입 버튼을 눌렀을 때

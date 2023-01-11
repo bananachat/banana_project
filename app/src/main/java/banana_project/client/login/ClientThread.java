@@ -1,12 +1,23 @@
 package banana_project.client.login;
 
 import java.util.StringTokenizer;
-
+import banana_project.client.common.SetFontNJOp;
+import banana_project.client.common.SetImg;
 import banana_project.server.thread.Protocol;
 
 public class ClientThread extends Thread {
+  /**
+   * 서버연결부 선언
+   */
   Client client = null;
+  // 테스트용 유저정보
+  String nickName = null;
 
+  /**
+   * 생성자
+   * 
+   * @param client
+   */
   public ClientThread(Client client) {
     this.client = client;
   }
@@ -27,16 +38,18 @@ public class ClientThread extends Thread {
         }
         // 프로토콜 switch문 시작
         switch (protocol) {
-          // 로그인 성공
+          // 로그인 성공 -> 101#닉네임
           case Protocol.LOGIN_S: {
-            // main = new Main(client);
-            // main.initDisplay();
+            nickName = st.nextToken();
+            client.login_s();
           }
           // 아이디 틀림
           case Protocol.WRONG_ID: {
+            // 아이디틀림메소드
           }
           // 비밀번호 틀림
           case Protocol.WRONG_PW: {
+            // 비번틀림메소드
           }
           default:
             System.out.println("해당하는 프로토콜이 존재하지 않습니다.");

@@ -5,7 +5,10 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
+import banana_project.server.logic.MemberLogic;
+
 public class ServerThread extends Thread {
+  MemberLogic memberLogic = null;
   Server server = null;
   Socket client = null;
   ObjectOutputStream oos = null;
@@ -83,11 +86,11 @@ public class ServerThread extends Thread {
           case Protocol.CLIENT_START: {
             String userId = st.nextToken();
             String userPw = st.nextToken();
-            broadCasting(Protocol.CLIENT_START
-                + Protocol.seperator + userId
-                + Protocol.seperator + userPw);
-          }
+            // DB와 같은지 체크
+            // memberLogic.loginUser(null);
+            // 로그인성공/아이디다름(계정없음)/패스워드다름
             break;
+          }
           // case Protocol.WHISPER: {
           //   String nickName = st.nextToken();// 보내는 넘
           //   // insert here - 받는 넘
