@@ -18,7 +18,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class FriendLogic {
     // DB 연결 변수
@@ -30,6 +33,9 @@ public class FriendLogic {
     // 로그 생성
     LogLogic ll = new LogLogic();
 
+    // 프로토콜
+    int protocol = 0;
+
     // DB에서 가져온 친구리스트
     String[] friendsList = null;
 
@@ -40,7 +46,7 @@ public class FriendLogic {
      * lResult[1] : 친구리스트
      *
      * @param uservo        사용자 정보
-     * @return lResult      친구리스트 결과 반환
+     * @return lResult      친구리스트
      */
     public List<Object> printFriend(UserVO uservo) {
         System.out.println("FriendLogic.printFriend() 메소드 시작");
@@ -110,8 +116,8 @@ public class FriendLogic {
         lResult.add(result);
         lResult.add(friendsList);
 
-        System.out.println("쿼리 결과 : " + result);
-        System.out.println("친구리스트 : " + friendsList);
+        System.out.println("쿼리 결과 : " + lResult.get(0).toString());
+        System.out.println("친구리스트 : " + lResult.get(1).toString());
         System.out.println("FriendLogic.printFriend() 메소드 종료");
 
         return lResult;
@@ -125,7 +131,7 @@ public class FriendLogic {
      *
      * @param uservo        사용자 정보
      * @param friendID      조회할 친구 ID
-     * @return lResult      친구리스트 결과 반환
+     * @return lResult      친구 조회 결과
      */
     public List<Object> findFriend(UserVO uservo, String friendID) {
         System.out.println("FriendLogic.printFriend() 메소드 시작");
@@ -204,4 +210,78 @@ public class FriendLogic {
 
         return lResult;
     } // end of findFriend (친구 이름으로 조회)
+
+
+
+    /**
+     * 선택한 ID를 친구추가
+     * -1 : 친구 추가 실패
+     * 1  : 친구 추가 성공
+     *
+     * @param uservo            사용자 정보
+     * @param selectID          선택한 계정ID
+     * @return result
+     */
+    public int addFriend(UserVO uservo, String selectID) {
+        // 로그 출력
+
+        System.out.println("FriendLogic.addFriend() 메소드 시작");
+        // 리턴값 기본 -1
+        int result = -1;
+
+//        // 선택한 아이디 리스트가 존재하는지 확인
+//        if (selectID==null) {
+//            // 선택한 계정이 없을 경우
+//            // NF_RESULT = 604 - 검색 결과가 없음
+//            System.out.println("선택한 아이디가 없음");
+//
+//            //TODO: 널값일 경우
+//        }
+
+        System.out.println("사용자 ID : " + uservo.getUser_id());
+        System.out.println("선택한 계정ID : " + selectID);
+
+        // 친구 추가 쿼리문
+        StringBuilder sql = new StringBuilder();
+        sql.append("INSERT INTO TB_FRIENDS_LIST ");
+        sql.append("(user_id, f_id) ");
+        sql.append("VALUES (?, ?) ");
+
+        try {
+            conn = dbMgr.getConnection();
+            pstmt = conn.prepareStatement(sql.toString());
+
+            // 쿼리문 내 파라미터 값
+            pstmt.setString(1, uservo.getUser_id());
+            pstmt.setString(2, selectID);
+
+            // 쿼리문 결과<-레코드 개수(1개)
+            result = pstmt.executeUpdate();
+            if (result == 1) {
+                // 정상동작 (ADD_FRIEND = 605;   	//친구 추가 이벤트)
+                protocol=605;
+            } else {
+                // 비정상 동작 TODO:친구추가 실패 프로토콜 설정 필요
+//                protocol=??
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // DB 사용한 자원 반납
+            try {
+                dbMgr.freeConnection(conn, pstmt);
+            } catch (Exception e) {
+                // 디버깅
+                e.printStackTrace();
+            }
+        }
+
+
+        return result;
+    } // end of addFriend (친구 추가)
+
+
+    // TODO: 추후 친구 삭제 로직 작성
 }
