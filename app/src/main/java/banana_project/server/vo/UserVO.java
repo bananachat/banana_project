@@ -17,6 +17,7 @@ public class UserVO {
     private String ins_date;
     private String upd_date;
     private String login_date;
+    private String salt;
 
     public UserVO() {
 

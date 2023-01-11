@@ -4,6 +4,7 @@ import banana_project.server.thread.Protocol;
 import banana_project.server.util.ConstantsLog;
 import banana_project.server.util.ConstantsMember;
 import banana_project.server.util.DBConnectionMgr;
+import banana_project.server.util.EncryptPassword;
 import banana_project.server.vo.LogVO;
 import banana_project.server.vo.UserVO;
 
@@ -20,6 +21,8 @@ public class MemberLogic {
     Connection con = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
+    //Password 암호화용
+    EncryptPassword ep = new EncryptPassword();
 
     /**
      * MemberLogic constructor
@@ -32,10 +35,10 @@ public class MemberLogic {
     //조회인 경우에는 executeQuery()를 사용하고 리턴타입은 ResultSet
     //테이블을 생성할 때는 execute()를 사용함.
 
-    /* 로그인 -> 아이디/비번 -> 맞다 안맞다
+    /* 0로그인 -> 아이디/비번 -> 맞다 안맞다
        +아이디찾기 -> 이름/폰번호 -> 일치 한다 안한다
        +비밀번호 찾기 -> 이름/아이디/폰번호 -> 일치한다 안한다
-     O 회원가입 -> 가입됐다 안됐다
+       0회원가입 -> 가입됐다 안됐다
        아이디 중복체크 -> 있다 없다
        닉네임 중복체크 -> 있다 없다
        폰번호 중복체크 -> 있다 없다
@@ -57,15 +60,18 @@ public class MemberLogic {
         //리턴값 기본 -1
         int result = -1;
         //회원정보 INSERT sql 작성
-        String sql = "INSERT INTO TB_USER (user_id, user_pw, user_name, user_hp, user_nickname) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO TB_USER (user_id, user_pw, user_name, user_hp, user_nickname, salt) VALUES (?,?,?,?,?,?)";
         try {
+            String salt = ep.getSalt();
+            String password = ep.getEncrypt(uservo.getUser_pw(), salt);
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
             pst.setString(1, uservo.getUser_id());
-            pst.setString(2, uservo.getUser_pw());
+            pst.setString(2, password);
             pst.setString(3, uservo.getUser_name());
             pst.setString(4, uservo.getUser_hp());
             pst.setString(5, uservo.getUser_nickname());
+            pst.setString(6, salt);
             result = pst.executeUpdate();
         } catch (SQLException se) {
             se.printStackTrace();
@@ -103,6 +109,7 @@ public class MemberLogic {
         try {
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
+//            String password = uservo.getPassword();
             pst.setString(1, uservo.getUser_pw());
             pst.setString(2, uservo.getUser_name());
             pst.setString(3, uservo.getUser_hp());
@@ -159,23 +166,33 @@ public class MemberLogic {
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                 new LogVO(Protocol.CLIENT_START, uservo.toString(), uservo.getUser_id()));
         int result = -1;
-        String sql = "SELECT user_pw FROM TB_USER WHERE user_id = ?";
+        String sql = "SELECT user_pw, salt, fail_cnt FROM TB_USER WHERE user_id = ?";
         try {
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
             pst.setString(1, uservo.getUser_id());
             rs = pst.executeQuery();
             if (rs.next()) {
-                String u_pw = rs.getString("user_pw");
-                if (u_pw.equals(uservo.getUser_pw())) {
-                    ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                            new LogVO(Protocol.LOGIN_S, uservo.toString(), uservo.getUser_id()));
-                    result = Protocol.LOGIN_S;
-                    return result;
+                int fail_cnt = rs.getInt("fail_cnt");
+                if(fail_cnt < 5) {
+                    String u_pw = rs.getString("user_pw");
+                    String salt = rs.getString("salt");
+                    if (u_pw.equals(ep.getEncrypt(uservo.getUser_pw(), salt))) {
+                        ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
+                                new LogVO(Protocol.LOGIN_S, uservo.toString(), uservo.getUser_id()));
+                        result = Protocol.LOGIN_S;
+                        return result;
+                    } else {
+                        ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
+                                new LogVO(Protocol.WRONG_PW, uservo.toString(), uservo.getUser_id()));
+
+                        result = Protocol.WRONG_PW;
+                        return result;
+                    }
                 } else {
                     ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                            new LogVO(Protocol.WRONG_PW, uservo.toString(), uservo.getUser_id()));
-                    result = Protocol.WRONG_PW;
+                            new LogVO(Protocol.OVER_FAIL_CNT, uservo.toString(), uservo.getUser_id()));
+                    result = Protocol.OVER_FAIL_CNT;
                     return result;
                 }
             } else {
@@ -203,11 +220,11 @@ public class MemberLogic {
     public static void main(String[] args) {
         MemberLogic ml = new MemberLogic();
         UserVO uv = new UserVO();
-        uv.setUser_id("hello3");
+        uv.setUser_id("hello17");
         uv.setUser_pw("password");
         uv.setUser_name("name44");
-        uv.setUser_hp("010-5555-3333");
-        uv.setUser_nickname("자고싶어");
+        uv.setUser_hp("010-5555-3323");
+        uv.setUser_nickname("자고싶어2");
 //        int result = ml.joinUser(uv);
 //        System.out.println("결과값 : " + result);
 //        int result = ml.updateUser(uv);
