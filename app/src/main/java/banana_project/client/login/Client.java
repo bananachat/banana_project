@@ -12,7 +12,8 @@ import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.join.MemJoin;
 import banana_project.client.main.Main;
-import banana_project.server.Protocol;
+import banana_project.server.thread.Protocol;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

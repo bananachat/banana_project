@@ -1,7 +1,8 @@
 package banana_project.client.login;
 
 import java.util.StringTokenizer;
-import banana_project.server.Protocol;
+
+import banana_project.server.thread.Protocol;
 
 public class ClientThread extends Thread {
   Client client = null;

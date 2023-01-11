@@ -25,19 +25,19 @@ public class TalkServerThread extends Thread {
       ois = new ObjectInputStream(client.getInputStream());// 듣기
       // 100#tomato
       String msg = (String) ois.readObject();
-//      ts.jta_log.append(msg + "\n");
+      // ts.jta_log.append(msg + "\n");
       StringTokenizer st = new StringTokenizer(msg, "#");
       st.nextToken();// 100 skip처리
       chatName = st.nextToken();// 토마토 저장
-//      ts.jta_log.append(chatName + "님이 입장하였습니다.\n");
+      // ts.jta_log.append(chatName + "님이 입장하였습니다.\n");
       for (TalkServerThread tst : ts.globalList) {
-        this.send(Protocol.TALK_IN + Protocol.separator + tst.chatName);
+        this.send(Protocol.CLIENT_START + Protocol.seperator + tst.chatName);
       }
       // 현재 서버에 입장한 클라이언트 스레드 추가하기
       ts.globalList.add(this);
       this.broadCasting(msg);
     } catch (Exception e) {
-      // TODO: handle exception
+      e.printStackTrace();
     }
   }
 
@@ -53,7 +53,7 @@ public class TalkServerThread extends Thread {
     try {
       oos.writeObject(msg);
     } catch (Exception e) {
-      e.printStackTrace();// stack에 쌓여 있는 에러메시지 이력 출력함
+      e.printStackTrace(); // stack에 쌓여 있는 에러메시지 이력 출력함
     }
   }
 
@@ -62,11 +62,10 @@ public class TalkServerThread extends Thread {
     String msg = null;
     boolean isStop = false;
     try {
-      // while(true) {//무한루프에 빠질 수 있다.
       run_start: while (!isStop) {
         msg = (String) ois.readObject();
-//        ts.jta_log.append(msg + "\n");
-//        ts.jta_log.setCaretPosition(ts.jta_log.getDocument().getLength());
+        // ts.jta_log.append(msg + "\n");
+        // ts.jta_log.setCaretPosition(ts.jta_log.getDocument().getLength());
         StringTokenizer st = null;
         int protocol = 0;// 100|200|201|202|500
         if (msg != null) {
@@ -74,48 +73,52 @@ public class TalkServerThread extends Thread {
           protocol = Integer.parseInt(st.nextToken());// 100
         }
         switch (protocol) {
-          case Protocol.MESSAGE: {
-            String nickName = st.nextToken();
-            String message = st.nextToken();
-            broadCasting(Protocol.MESSAGE + Protocol.separator + nickName + Protocol.separator + message);
-          }
-            break;
-          case Protocol.WHISPER: {
-            String nickName = st.nextToken();// 보내는 넘
-            // insert here - 받는 넘
-            String otherName = st.nextToken();// 보내는 넘
-            // 귓속말로 보내진 메시지
-            String msg1 = st.nextToken();
-            for (TalkServerThread cst : ts.globalList) {
-              if (otherName.equals(cst.chatName)) {
-                cst.send(Protocol.WHISPER + Protocol.separator + nickName + Protocol.separator + otherName
-                    + Protocol.separator + msg1);
-                break;
-              }
-            } // end of for
-            this.send(Protocol.WHISPER + Protocol.separator + nickName + Protocol.separator + otherName
-                + Protocol.separator + msg1);
-          }
-            break;
-          case Protocol.CHANGE: {
-            String nickName = st.nextToken();
-            String afterName = st.nextToken();
-            String message = st.nextToken();
-            this.chatName = afterName;
-            broadCasting(Protocol.CHANGE + Protocol.separator + nickName + Protocol.separator + afterName
-                + Protocol.separator + message);
-          }
-            break;
-          case Protocol.TALK_OUT: {
-            String nickName = st.nextToken();
-            ts.globalList.remove(this);
-            broadCasting(Protocol.TALK_OUT + Protocol.separator + nickName);
-          }
-            break run_start;
+          // case Protocol.MESSAGE: {
+          // String nickName = st.nextToken();
+          // String message = st.nextToken();
+          // broadCasting(Protocol.MESSAGE + Protocol.seperator + nickName +
+          // Protocol.seperator + message);
+          // }
+          // break;
+          // case Protocol.WHISPER: {
+          // String nickName = st.nextToken();// 보내는 넘
+          // // insert here - 받는 넘
+          // String otherName = st.nextToken();// 보내는 넘
+          // // 귓속말로 보내진 메시지
+          // String msg1 = st.nextToken();
+          // for (TalkServerThread cst : ts.globalList) {
+          // if (otherName.equals(cst.chatName)) {
+          // cst.send(Protocol.WHISPER + Protocol.separator + nickName +
+          // Protocol.separator + otherName
+          // + Protocol.separator + msg1);
+          // break;
+          // }
+          // } // end of for
+          // this.send(Protocol.WHISPER + Protocol.separator + nickName +
+          // Protocol.separator + otherName
+          // + Protocol.separator + msg1);
+          // }
+          // break;
+          // case Protocol.CHANGE: {
+          // String nickName = st.nextToken();
+          // String afterName = st.nextToken();
+          // String message = st.nextToken();
+          // this.chatName = afterName;
+          // broadCasting(Protocol.CHANGE + Protocol.separator + nickName +
+          // Protocol.separator + afterName
+          // + Protocol.separator + message);
+          // }
+          // break;
+          // case Protocol.TALK_OUT: {
+          // String nickName = st.nextToken();
+          // ts.globalList.remove(this);
+          // broadCasting(Protocol.TALK_OUT + Protocol.separator + nickName);
+          // }
+          // break run_start;
         }///////////// end of switch
       } ///////////////// end of while
     } catch (Exception e) {
-      // TODO: handle exception
+      e.printStackTrace();
     }
   }
 }

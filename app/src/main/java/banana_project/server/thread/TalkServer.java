@@ -8,14 +8,6 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Vector;
 
-//선언과 생성을 분리하는 코딩 전개
-//자바는 단일상속만 가능함
-//자바는 단일상속의 단점을 보완하기 위해 인터페이스는 다중으로 처리가능함(구현체클래스)
-//상속을 받거나 implements하면 부모클래스나 인터페이스가 정의하고 있는 메소드를 
-//재정의 할 수 있다(Overriding-선언부는 완전 일치해야함)
-//인터페이스는 오로지 추상메소드만 갖는다 - Runnable도 인터페이스 이니까 추상메소드 있다.
-//그게  run메소드 이다.
-//class TalkServer extends JFrame, Thread{}
 public class TalkServer implements Runnable, ActionListener {
   // 선언부
   // 클라이언트측에서 new Socket하면 그 소켓정보를 받아서 쓰레드로 넘김
@@ -27,7 +19,6 @@ public class TalkServer implements Runnable, ActionListener {
 
   // 생성자
   public TalkServer() {
-    // initDisplay();//시점문제- 스케쥴링
   }
 
   // 스레드가 두 개이므로 화면요청과 start() 순서를 바꾸더라도 각자 처리가 됨
@@ -77,15 +68,3 @@ public class TalkServer implements Runnable, ActionListener {
 
   }
 }
-
-/*
- * 채팅서버 구축하기
- * 클라이언트측에서 접속하면 접속해온 정보를 서버측 화면에서 볼 수 있다.(JFrame을 상속했음-로그남김)
- * 자바는 단일 상속만 가능함. - 이러한 약점을 인터페이스로 지원함 - 그래서 다중인터페이스 구현체는 가능함
- * 스레드 구현방법
- * 1)Thread상속 하기
- * 2)Runnable 인터페이스를 implements하기
- * 현재 TalkServer는 JFrame을 상속받고 있어서 Runnable을 implements하였음.
- * 
- * 
- */
