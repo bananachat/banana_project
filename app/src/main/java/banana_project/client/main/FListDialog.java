@@ -26,7 +26,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     // 친구리스트를 JList로
     DefaultListModel<String> dlm = new DefaultListModel<String>();
     JList<String> jl_list = null;
-    Vector<String> copy_list = new Vector<>();                                          // 선택한 친구들 리스트
+    Vector<String> copy_list = new Vector<>();                  // 선택한 친구들 리스트
 
     // SOUTH
     JPanel jp_south = new JPanel();
@@ -53,13 +53,12 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
 
     ////////////////////////// [메소드] //////////////////////////
-    // 친구리스트(JList) 생성
-
+    // TODO: 현재 임의의 리스트 출력
+    // 초기 친구리스트 배열을 파라미터로 해야한다
     /**
-     *
+     * 친구리스트(JList) 생성
      */
     public void createList() {
-        // TODO: 현재 임의의 리스트 출력
         for (int i=0; i<10; i++) {
             dlm.addElement(Integer.toString(i));
         }
@@ -70,6 +69,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     ////////////////////////// [화면출력] //////////////////////////
 
     /**
+     * 친구검색 다이얼로그  호출
      *
      * @param title     다이얼로그 타이틀
      * @param isView    다이얼로그 출력 유무
@@ -105,7 +105,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
 
         // 리스트로 출력
-        jl_list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);   // 단일 선택 모드
+//        jl_list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);   // 단일 선택 모드
         jl_list.addListSelectionListener(this);
 
         jp_center.add(jl_list);
@@ -126,7 +126,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.add(jp_north, BorderLayout.NORTH);
         this.add(jsp_display, BorderLayout.CENTER);
         this.add(jp_south, BorderLayout.SOUTH);
-//        this.getContentPane().setBackground(new Color(255,230,120));
         this.setResizable(false);
         this.setTitle(title);
         this.setVisible(isView);
@@ -180,34 +179,50 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 // 복사한 친구들 리스트 출력
                 System.out.println("선택한 친구들 : " + num);
 
+                jl_list.removeListSelectionListener(this);              // 이벤트 해제
+
                 JOptionPane.showMessageDialog(this, msg, "info", JOptionPane.INFORMATION_MESSAGE);
                 System.out.println(msg);
 
-                // 선택한 친구 리스트 삭제
-                this.dispose();
+                dlm.clear();                    // 친구리스트 초기화
+                copy_list.clear();              // 선택한 친구리스트 초기화
 
                 System.out.println("친구검색 다이얼로그 종료");
-            } // end of "친구 추가 | 새 채팅" 이벤트
+                this.dispose();
+            }
 
         } // end of 친구|채팅 추가 이벤트
 
     } // end of ActionPerformed
 
 
-    // JList 이벤트 호출
+    // JList 클릭 이벤트 호출
     @Override
     public void valueChanged(ListSelectionEvent e) {
-//        // TODO: 이중 이벤트 발생
-
         if (!e.getValueIsAdjusting()) {
-            // 선택한 친구들 정보 수집
-            System.out.println("선택 : " + jl_list.getSelectedValue());
+            // 선택한 계정
+            String selValue = (String)jl_list.getSelectedValue();
+            System.out.println("계정 : " + selValue);
 
-            // 다중 선택 모드
-            copy_list.add((String)jl_list.getSelectedValue());
-            System.out.println("다중 선택 : " + copy_list);
+            // 선택한 값 추가
+            if (copy_list.size() == 0) {
+                // 처음 선택 시
+                copy_list.add(selValue);
 
-        }
+            } else {
+                // 선택한 리스트 중 중복값이 있는지 확인
+                boolean isDup = copy_list.contains(selValue);       // 중복 존재 시 true
+
+                if (isDup) {
+                    System.out.println("중복되는 값이 존재");
+                } else {
+                    System.out.println("새로운 계정 추가");
+                    copy_list.add(selValue);
+                }
+            }
+
+            System.out.println("선택한 리스트 : " + copy_list);
+        } // end of if (리스트 클릭 이벤트)
     }
 
     @Override
