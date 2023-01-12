@@ -13,7 +13,6 @@ import banana_project.client.common.SetImg;
 import banana_project.client.join.MemJoin;
 import banana_project.client.main.Main;
 import banana_project.server.thread.Protocol;
-
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,11 +32,6 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   Socket socket = null;
   ObjectOutputStream oos = null;// 말하기
   ObjectInputStream ois = null;// 듣기
-  String userId = null; // 유저입력 아이디
-  String userPw = null; // 유저입력 비밀번호
-  // 테스트용 아이디와 비밀번호
-  String dbId = "banana@email.com";
-  String dbPw = "banana1234";
 
   /**
    * 화면부 선언
@@ -129,7 +123,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
    */
   public void init() {
     try {
-      socket = new Socket("192.168.10.72", 1521);
+      socket = new Socket("192.168.10.72", 3000);
       oos = new ObjectOutputStream(socket.getOutputStream()); // 말하기
       ois = new ObjectInputStream(socket.getInputStream()); // 듣기
       ClientThread clientThread = new ClientThread(this); // 클라이언트 스레드와 연결
@@ -143,7 +137,8 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
    * 로그인성공
    */
   public void login_s() {
-    this.dispose();
+    // this.dispose();
+    this.setVisible(false);
     Main main = new Main();
     main.initDisplay();
   }
@@ -160,7 +155,8 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
    * 비밀번호 시도횟수 초과
    */
   public void over_fail_cnt() {
-    JOptionPane.showMessageDialog(this, "로그인 시도 횟수가 초과되었습니다.", "로그인", JOptionPane.ERROR_MESSAGE, setImage.img_notFound);
+    JOptionPane.showMessageDialog(this, "로그인 시도 횟수가 초과되었습니다.", "로그인", JOptionPane.ERROR_MESSAGE,
+        setImage.img_notFound);
   }
 
   /**
@@ -179,8 +175,8 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     Object obj = e.getSource();
     // 로그인 버튼을 눌렀을 때
     if (obj == jbtn_login || obj == jtf_userId || obj == jtf_userPw) {
-      userId = jtf_userId.getText();
-      userPw = jtf_userPw.getText();
+      String userId = jtf_userId.getText();
+      String userPw = jtf_userPw.getText();
       String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
       String pwCheck = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$"; // 비밀번호 형식(8~16자 숫자,영문자포함)
       // 아이디를 입력하지 않았을 경우

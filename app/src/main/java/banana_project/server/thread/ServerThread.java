@@ -34,6 +34,7 @@ public class ServerThread extends Thread {
     this.server = server;
     this.client = server.socket;
     try {
+      memberLogic = new MemberLogic();
       oos = new ObjectOutputStream(client.getOutputStream()); // 말하기
       ois = new ObjectInputStream(client.getInputStream()); // 듣기
       // 현재 서버에 입장한 클라이언트 스레드 추가하기
@@ -87,6 +88,7 @@ public class ServerThread extends Thread {
         }
         server.jta_log.append("Protocol: " + protocol + "\n");
         switch (protocol) {
+          // 클라이언트 시작
           case Protocol.CLIENT_START: {
             String userId = st.nextToken();
             String userPw = st.nextToken();
@@ -116,6 +118,19 @@ public class ServerThread extends Thread {
                 oos.writeObject(Protocol.WRONG_ID);
               }
                 break run_start;
+            }
+          }
+            break;
+          // 회원가입 시작
+          case Protocol.SIGN_UP: {
+            String userId = st.nextToken();
+            String userPw = st.nextToken();
+            String userName = st.nextToken();
+            String userHp = st.nextToken();
+            String nickName = st.nextToken();
+            int result = memberLogic.loginUser(UserVO.builder().user_id(userId).user_pw(userPw).user_name(userName)
+                .user_hp(userHp).user_nickname(nickName).build());
+            switch (result) {
             }
           }
           // case Protocol.WHISPER: {
