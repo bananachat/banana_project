@@ -1,5 +1,7 @@
 package banana_project.client.main;
 
+import banana_project.client.common.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,7 +11,7 @@ import java.util.Vector;
 public class Main extends JFrame implements ActionListener, MouseListener {
     ////////////////////////// [선언부] //////////////////////////
     String logMsg = "";                                     // 로그 기록용
-
+    SetImg setImg = new SetImg();                     // 이미지 설정
 
     // [NORTH]
     FListDialog flDialog = null;                            // "친구 추가" 다이얼로그
@@ -85,8 +87,8 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         jbtn_friends.addActionListener(this);                           // jbtn_friends 설정
         jbtn_friends.setBounds(10, 510, 175, 40);
         jbtn_friends.setBorderPainted(false);
-        jbtn_friends.setBackground(new Color(130, 65, 60));
-        jbtn_friends.setForeground(Color.WHITE);
+        jbtn_friends.setBackground(Color.white);
+        jbtn_friends.setForeground(new Color(130, 65, 60));
         jbtn_friends.setFont(b12);
         this.add(jbtn_friends);
 
@@ -99,9 +101,10 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         this.add(jbtn_chat);
 
         // [창 설정]
+        this.setIconImage(setImg.img_title.getImage());
         this.getContentPane().setBackground(new Color(255,230,120));
         this.setSize(400, 600);
-        this.setTitle("채팅 목록");
+        this.setTitle("친구 목록");
         this.setLocationRelativeTo(null); // 가운데 위치 -> 수정.위치변경했습니다!
         this.setResizable(false);
         this.setVisible(true);
@@ -141,8 +144,6 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         else if (obj == jbtn_firChan) {
             // "친구 추가 / 새 채팅" 클릭
             flDialog = new FListDialog(this);
-            flDialog.copy_list.clear();
-            dlm.clear();
 
             System.out.println("jbtn_firChan(" + jbtn_firChan.getText() +") 클릭");
 
@@ -166,6 +167,13 @@ public class Main extends JFrame implements ActionListener, MouseListener {
             this.setTitle("친구 목록");
             jbtn_firChan.setText("친구 추가");
             jlb_secChan.setText("친구 목록");
+
+            // 활성화 버튼 색 변경
+            jbtn_friends.setBackground(Color.white);
+            jbtn_friends.setForeground(new Color(130, 65, 60));
+
+            jbtn_chat.setBackground(new Color(130, 65, 60));
+            jbtn_chat.setForeground(Color.WHITE);
         }
         else if (obj == jbtn_chat) {
             // 채팅목록 클릭
@@ -173,6 +181,13 @@ public class Main extends JFrame implements ActionListener, MouseListener {
             this.setTitle("채팅 목록");
             jbtn_firChan.setText("새 채팅");
             jlb_secChan.setText("채팅 목록");
+
+            // 활성화 버튼 색 변경
+            jbtn_chat.setBackground(Color.white);
+            jbtn_chat.setForeground(new Color(130, 65, 60));
+
+            jbtn_friends.setBackground(new Color(130, 65, 60));
+            jbtn_friends.setForeground(Color.WHITE);
         }
     } // end of actionPerformed()
 
