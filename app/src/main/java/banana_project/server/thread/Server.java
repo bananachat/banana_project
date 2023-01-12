@@ -63,7 +63,7 @@ public class Server extends JFrame implements Runnable, ActionListener {
     globalList = new Vector<>();
     boolean isStop = false;
     try {
-      serverSocket = new ServerSocket(1521);
+      serverSocket = new ServerSocket(3000);
       System.out.println("123");
       jta_log.append("Server Ready ...\n");
       while (!isStop) {
