@@ -1,6 +1,10 @@
 package banana_project.client.login;
 
+import java.awt.Color;
 import java.util.StringTokenizer;
+
+import javax.swing.text.AttributeSet.ColorAttribute;
+
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.server.thread.Protocol;
@@ -27,10 +31,10 @@ public class ClientThread extends Thread {
   @Override
   public void run() {
     boolean isStop = false;
-    run_start: while (!isStop) {
+    while (!isStop) {
       try {
         String msg = "";
-        msg = (String) client.ois.readObject(); // 서버스레드가 클라이언트에게 전송한 메시지
+        msg = String.valueOf(client.ois.readObject()); // 서버스레드가 클라이언트에게 전송한 메시지
         StringTokenizer st = null;
         int protocol = 0;
         // 토큰 설정 및 전송받은 프로토콜
@@ -60,7 +64,7 @@ public class ClientThread extends Thread {
           case Protocol.WRONG_ID: {
             client.wrong_id();
           }
-            break run_start;
+            break;
         }
       } catch (Exception e) {
         e.printStackTrace();
