@@ -21,8 +21,8 @@ public class SqlQuarry {
      * 1  : 레코드 1개 생성
      *
      * @param table         테이블 명
-     * @param columns       컬럼명 들
-     * @param values        밸류값 들
+     * @param columns       컬럼명 배열
+     * @param values        밸류값 배열
      * @return result
      */
     public int quInsert(String table, String[] columns, String[] values) {
@@ -82,14 +82,28 @@ public class SqlQuarry {
      * 1  : 레코드 1개 생성
      *
      * @param table             테이블 명
-     * @param column            해당컬럼 명
-     * @param chValue           변경할 값
+     * @param columns            해당컬럼 배열
+     * @param chgValues           변경할값 배열
      * @param whereClause       조건절 (ex. user_name='홍길동' AND user_id='hong')
      * @return result
      */
-    public  int quUpdate(String table, String column, String chValue, String whereClause) {
+    public  int quUpdate(String table, String[] columns, String[] chgValues, String whereClause) {
         // 리턴값 기본 -1
         int result = -1;
+
+        // 컬럼 파라미터 설정
+        String column = "";
+        for (int i=0; i<columns.length-1; i++) {
+            column += columns[i] + ", ";
+        }
+        column = columns[columns.length-1];
+
+        // 변경할 값 파라미터 설정
+        String cValue = "";
+        for (int i=0; i<chgValues.length-1; i++) {
+            cValue += chgValues[i] + ", ";
+        }
+        cValue = chgValues[chgValues.length-1];
 
         StringBuilder sql = new StringBuilder();
         sql.append("UPDATE ? SET ? = ? WHERE ? ");
@@ -100,7 +114,7 @@ public class SqlQuarry {
 
             pstmt.setString(1, table);
             pstmt.setString(2, column);
-            pstmt.setString(3, chValue);
+            pstmt.setString(3, cValue);
             pstmt.setString(4, whereClause);
 
             // 쿼리 동작 레코드 수
