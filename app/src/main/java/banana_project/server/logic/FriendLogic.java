@@ -30,6 +30,9 @@ public class FriendLogic {
     PreparedStatement pstmt = null;
     ResultSet rs = null;
 
+    // 쿼리문 클래스 인스턴스화
+    SqlQuarry quarry = new SqlQuarry();
+
     // 로그 생성
     LogLogic ll = new LogLogic();
 
@@ -241,6 +244,7 @@ public class FriendLogic {
         System.out.println("사용자 ID : " + uservo.getUser_id());
         System.out.println("선택한 계정ID : " + selectID);
 
+        /*
         // 친구 추가 쿼리문
         StringBuilder sql = new StringBuilder();
         sql.append("INSERT INTO TB_FRIENDS_LIST ");
@@ -278,6 +282,15 @@ public class FriendLogic {
             }
         }
 
+         */
+
+
+        String table = "TB_FRIENDS_LIST";                   // 테이블 명
+        String[] columns = {"user_id", "f_id"};             // 컬럼 배열 (사용자ID, 친구ID)
+        String[] values = {uservo.getUser_id(), selectID};  // 값 배열 (사용자ID, 선택한ID)
+
+
+        result = quarry.quInsert(table, columns, values);
 
         return result;
     } // end of addFriend (친구 추가)
