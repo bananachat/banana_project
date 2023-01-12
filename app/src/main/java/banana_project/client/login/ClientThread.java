@@ -4,6 +4,7 @@ import java.util.StringTokenizer;
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.server.thread.Protocol;
+import lombok.Builder.Default;
 
 public class ClientThread extends Thread {
   /**
@@ -11,6 +12,7 @@ public class ClientThread extends Thread {
    */
   Client client = null;
   // 테스트용 유저정보
+  String userId = null;
   String nickName = null;
 
   /**
@@ -25,7 +27,7 @@ public class ClientThread extends Thread {
   @Override
   public void run() {
     boolean isStop = false;
-    while (!isStop) {
+    run_start: while (!isStop) {
       try {
         String msg = "";
         msg = (String) client.ois.readObject(); // 서버스레드가 클라이언트에게 전송한 메시지
@@ -40,19 +42,25 @@ public class ClientThread extends Thread {
         switch (protocol) {
           // 로그인 성공 -> 101#닉네임
           case Protocol.LOGIN_S: {
-            nickName = st.nextToken();
+            userId = st.nextToken();
             client.login_s();
           }
-          // 아이디 틀림
-          case Protocol.WRONG_ID: {
-            // 아이디틀림메소드
-          }
+            break;
           // 비밀번호 틀림
           case Protocol.WRONG_PW: {
-            // 비번틀림메소드
+            client.wrong_pw();
           }
-          default:
-            System.out.println("해당하는 프로토콜이 존재하지 않습니다.");
+            break;
+          // 비밀번호 시도횟수 초과
+          case Protocol.OVER_FAIL_CNT: {
+            client.over_fail_cnt();
+          }
+            break;
+          // 아이디 틀림(계정없음)
+          case Protocol.WRONG_ID: {
+            client.wrong_id();
+          }
+            break run_start;
         }
       } catch (Exception e) {
         e.printStackTrace();

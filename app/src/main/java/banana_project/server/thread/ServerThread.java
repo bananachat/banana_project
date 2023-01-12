@@ -5,7 +5,10 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
+import com.google.common.collect.ImmutableBiMap.Builder;
+
 import banana_project.server.logic.MemberLogic;
+import banana_project.server.vo.UserVO;
 
 public class ServerThread extends Thread {
   MemberLogic memberLogic = null;
@@ -73,59 +76,83 @@ public class ServerThread extends Thread {
     boolean isStop = false;
     try {
       run_start: while (!isStop) {
-        msg = (String) ois.readObject(); //클라이언트가 서버에게 전송한 메시지
+        msg = (String) ois.readObject(); // 클라이언트가 서버에게 전송한 메시지
         server.jta_log.append(msg + "\n");
         server.jta_log.setCaretPosition(server.jta_log.getDocument().getLength());
         StringTokenizer st = null;
         int protocol = 0;
         if (msg != null) {
           st = new StringTokenizer(msg, "#");
-          protocol = Integer.parseInt(st.nextToken());// 100
+          protocol = Integer.parseInt(st.nextToken());
         }
+        server.jta_log.append("Protocol: " + protocol + "\n");
         switch (protocol) {
           case Protocol.CLIENT_START: {
             String userId = st.nextToken();
             String userPw = st.nextToken();
             // DB와 같은지 체크
-            // memberLogic.loginUser(null);
-            // 로그인성공/아이디다름(계정없음)/패스워드다름
-            break;
+            server.jta_log.append("DB 체크 시작" + "\n");
+            int result = memberLogic.loginUser(UserVO.builder().user_id(userId).user_pw(userPw).build());
+            server.jta_log.append("Result: " + result + "\n");
+            switch (result) {
+              // 로그인 성공 -> 아이디? 닉네임?
+              case Protocol.LOGIN_S: {
+                oos.writeObject(Protocol.LOGIN_S
+                    + Protocol.seperator + userId);
+              }
+                break;
+              // 비밀번호 틀림
+              case Protocol.WRONG_PW: {
+                oos.writeObject(Protocol.WRONG_PW);
+              }
+                break;
+              // 비밀번호 시도횟수 초과
+              case Protocol.OVER_FAIL_CNT: {
+                oos.writeObject(Protocol.OVER_FAIL_CNT);
+              }
+                break;
+              // 아이디 틀림(계정없음) -> 디폴트로설정
+              default: {
+                oos.writeObject(Protocol.WRONG_ID);
+              }
+                break run_start;
+            }
           }
           // case Protocol.WHISPER: {
-          //   String nickName = st.nextToken();// 보내는 넘
-          //   // insert here - 받는 넘
-          //   String otherName = st.nextToken();// 보내는 넘
-          //   // 귓속말로 보내진 메시지
-          //   String msg1 = st.nextToken();
-          //   for (ServerThread serverThread : server.globalList) {
-          //     if (otherName.equals(serverThread.chatName)) {
-          //       serverThread.send(Protocol.WHISPER + Protocol.seperator + nickName +
-          //           Protocol.seperator + otherName
-          //           + Protocol.seperator + msg1);
-          //       break;
-          //     }
-          //   } // end of for
-          //   this.send(Protocol.WHISPER + Protocol.seperator + nickName +
-          //       Protocol.seperator + otherName
-          //       + Protocol.seperator + msg1);
+          // String nickName = st.nextToken();// 보내는 넘
+          // // insert here - 받는 넘
+          // String otherName = st.nextToken();// 보내는 넘
+          // // 귓속말로 보내진 메시지
+          // String msg1 = st.nextToken();
+          // for (ServerThread serverThread : server.globalList) {
+          // if (otherName.equals(serverThread.chatName)) {
+          // serverThread.send(Protocol.WHISPER + Protocol.seperator + nickName +
+          // Protocol.seperator + otherName
+          // + Protocol.seperator + msg1);
+          // break;
           // }
-          //   break;
+          // } // end of for
+          // this.send(Protocol.WHISPER + Protocol.seperator + nickName +
+          // Protocol.seperator + otherName
+          // + Protocol.seperator + msg1);
+          // }
+          // break;
           // case Protocol.CHANGE: {
-          //   String nickName = st.nextToken();
-          //   String afterName = st.nextToken();
-          //   String message = st.nextToken();
-          //   this.chatName = afterName;
-          //   broadCasting(Protocol.CHANGE + Protocol.seperator + nickName +
-          //       Protocol.seperator + afterName
-          //       + Protocol.seperator + message);
+          // String nickName = st.nextToken();
+          // String afterName = st.nextToken();
+          // String message = st.nextToken();
+          // this.chatName = afterName;
+          // broadCasting(Protocol.CHANGE + Protocol.seperator + nickName +
+          // Protocol.seperator + afterName
+          // + Protocol.seperator + message);
           // }
-          //   break;
+          // break;
           // case Protocol.TALK_OUT: {
-          //   String nickName = st.nextToken();
-          //   server.globalList.remove(this);
-          //   broadCasting(Protocol.TALK_OUT + Protocol.seperator + nickName);
+          // String nickName = st.nextToken();
+          // server.globalList.remove(this);
+          // broadCasting(Protocol.TALK_OUT + Protocol.seperator + nickName);
           // }
-          //   break run_start;
+          // break run_start;
         }// end of switch
       } // end of while
     } catch (Exception e) {

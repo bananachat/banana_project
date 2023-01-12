@@ -38,6 +38,7 @@ public class Server extends JFrame implements Runnable, ActionListener {
     jbtn_log.addActionListener(this);
     this.add("North", jbtn_log);
     this.add("Center", jsp_log);
+    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setSize(500, 400);
     this.setVisible(true);
   }
@@ -62,7 +63,7 @@ public class Server extends JFrame implements Runnable, ActionListener {
     globalList = new Vector<>();
     boolean isStop = false;
     try {
-      serverSocket = new ServerSocket(3000);
+      serverSocket = new ServerSocket(1521);
       System.out.println("123");
       jta_log.append("Server Ready ...\n");
       while (!isStop) {

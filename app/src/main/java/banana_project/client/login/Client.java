@@ -37,7 +37,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   String userPw = null; // 유저입력 비밀번호
   // 테스트용 아이디와 비밀번호
   String dbId = "banana@email.com";
-  String dbPw = "1234";
+  String dbPw = "banana1234";
 
   /**
    * 화면부 선언
@@ -129,7 +129,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
    */
   public void init() {
     try {
-      socket = new Socket("127.0.0.1", 3000);
+      socket = new Socket("192.168.10.72", 1521);
       oos = new ObjectOutputStream(socket.getOutputStream()); // 말하기
       ois = new ObjectInputStream(socket.getInputStream()); // 듣기
       ClientThread clientThread = new ClientThread(this); // 클라이언트 스레드와 연결
@@ -139,26 +139,37 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     }
   }
 
-    /**
-     * 로그인성공
-     */
-    public void login_s(){
-        this.dispose();
-        Main main = new Main();
-        main.initDisplay();
-      }
+  /**
+   * 로그인성공
+   */
+  public void login_s() {
+    this.dispose();
+    Main main = new Main();
+    main.initDisplay();
+  }
 
-      /**
-       * 아이디 틀림(계정없음)
-       */
-      public void wrong_id(){
-      }
+  /**
+   * 비밀번호 틀림
+   */
+  public void wrong_pw() {
+    JOptionPane.showMessageDialog(this, "비밀번호가 틀렸습니다.", "로그인", JOptionPane.ERROR_MESSAGE,
+        setImage.img_notFound);
+  }
 
-      /**
-       * 비밀번호 틀림
-       */
-      public void wrong_pw(){
-      }
+  /**
+   * 비밀번호 시도횟수 초과
+   */
+  public void over_fail_cnt() {
+    JOptionPane.showMessageDialog(this, "로그인 시도 횟수가 초과되었습니다.", "로그인", JOptionPane.ERROR_MESSAGE, setImage.img_notFound);
+  }
+
+  /**
+   * 아이디 틀림(계정없음)
+   */
+  public void wrong_id() {
+    JOptionPane.showMessageDialog(this, "계정을 찾을 수 없습니다.", "로그인", JOptionPane.ERROR_MESSAGE,
+        setImage.img_notFound);
+  }
 
   /**
    * ActionListener 메소드
@@ -171,6 +182,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
       userId = jtf_userId.getText();
       userPw = jtf_userPw.getText();
       String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
+      String pwCheck = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$"; // 비밀번호 형식(8~16자 숫자,영문자포함)
       // 아이디를 입력하지 않았을 경우
       if ("".equals(userId) || " example@email.com".equals(userId)) {
         JOptionPane.showMessageDialog(this, "이메일을 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
@@ -184,6 +196,11 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
       else if ("".equals(userPw) || " password".equals(userPw)) {
         JOptionPane.showMessageDialog(this, "비밀번호를 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
+      // 비밀번호 형식이 아닐 경우
+      else if (!Pattern.matches(pwCheck, userPw)) {
+        JOptionPane.showMessageDialog(this, "비밀번호는 8~16자의 숫자, 영문자로 입력해주세요", "로그인",
+            JOptionPane.WARNING_MESSAGE, setImage.img_info);
+      }
       // 형식에 맞게 입력했을경우 DB에서 확인
       else {
         try {
@@ -194,24 +211,6 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
         } catch (Exception e2) {
           e2.printStackTrace();
         }
-
-        // 테스트용 if문
-        // 아이디, 비번이 맞을 경우
-        // if (userId.equals(dbId) && userPw.equals(dbPw)) {
-        //   this.dispose();
-        //   Main main = new Main();
-        //   main.initDisplay();
-        // }
-        // // 아이디는 맞는데 비번을 틀릴 경우
-        // else if (userId.equals(dbId) && !userPw.equals(dbPw)) {
-        //   JOptionPane.showMessageDialog(this, "비밀번호가 틀렸습니다..", "로그인", JOptionPane.ERROR_MESSAGE,
-        //       setImage.img_notFound);
-        // }
-        // // 전부 틀릴 경우
-        // else {
-        //   JOptionPane.showMessageDialog(this, "계정을 찾을 수 없습니다.", "로그인", JOptionPane.ERROR_MESSAGE,
-        //       setImage.img_notFound);
-        // }
       }
     }
     // 회원가입 버튼을 눌렀을 때
