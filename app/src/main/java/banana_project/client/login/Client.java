@@ -123,7 +123,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
    */
   public void init() {
     try {
-      socket = new Socket("192.168.10.72", 3000);
+      socket = new Socket("192.168.10.71", 3000);
       oos = new ObjectOutputStream(socket.getOutputStream()); // 말하기
       ois = new ObjectInputStream(socket.getInputStream()); // 듣기
       ClientThread clientThread = new ClientThread(this); // 클라이언트 스레드와 연결
@@ -170,6 +170,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   /**
    * ActionListener 메소드
    */
+
   @Override
   public void actionPerformed(ActionEvent e) {
     Object obj = e.getSource();
@@ -179,6 +180,8 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
       String userPw = jtf_userPw.getText();
       String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
       String pwCheck = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$"; // 비밀번호 형식(8~16자 숫자,영문자포함)
+      System.out.println("입력값" + userId);
+      System.out.println("입력값" + userPw);
       // 아이디를 입력하지 않았을 경우
       if ("".equals(userId) || " example@email.com".equals(userId)) {
         JOptionPane.showMessageDialog(this, "이메일을 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);

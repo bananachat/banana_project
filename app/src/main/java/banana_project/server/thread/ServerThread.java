@@ -76,8 +76,8 @@ public class ServerThread extends Thread {
     String msg = null;
     boolean isStop = false;
     try {
-      run_start: while (!isStop) {
-        msg = (String) ois.readObject(); // 클라이언트가 서버에게 전송한 메시지
+      while (!isStop) {
+        msg = String.valueOf(ois.readObject()); // 클라이언트가 서버에게 전송한 메시지
         server.jta_log.append(msg + "\n");
         server.jta_log.setCaretPosition(server.jta_log.getDocument().getLength());
         StringTokenizer st = null;
@@ -117,7 +117,6 @@ public class ServerThread extends Thread {
               default: {
                 oos.writeObject(Protocol.WRONG_ID);
               }
-                break run_start;
             }
           }
             break;
