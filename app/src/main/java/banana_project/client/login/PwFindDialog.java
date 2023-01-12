@@ -13,6 +13,7 @@ import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Pattern;
 
 public class PwFindDialog extends JDialog implements ActionListener {
   /**
@@ -90,14 +91,6 @@ public class PwFindDialog extends JDialog implements ActionListener {
     this.setLocationRelativeTo(pwFind.client);
     this.setResizable(false);
     this.setVisible(true);
-    // JOp 설정
-    UIManager UI = new UIManager();
-    UI.put("OptionPane.background", new Color(255, 230, 120));
-    UI.put("Panel.background", new Color(255, 230, 120));
-    UI.put("OptionPane.messageFont", setFontNJOp.b12);
-    UI.put("Button.background", new Color(130, 65, 60));
-    UI.put("Button.foreground", Color.white);
-    UI.put("Button.font", setFontNJOp.b12);
   }
 
   /**
@@ -110,9 +103,17 @@ public class PwFindDialog extends JDialog implements ActionListener {
     if (obj == jbtn_pwReset || obj == jtf_pwFirst || obj == jtf_pwSecond) {
       newPw = jtf_pwFirst.getText();
       String rePw = jtf_pwSecond.getText();
+      // 비밀번호 정규식
+      String pwCheck = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$"; // 비밀번호 형식(8~16자 숫자,영문자포함)
       // 비밀번호를 입력하지 않았을 경우
       if ("".equals(newPw) || "".equals(rePw)) {
-        JOptionPane.showMessageDialog(this, "비밀번호를 입력해주세요", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE, setImage.img_info);
+        JOptionPane.showMessageDialog(this, "비밀번호를 입력해주세요.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
+            setImage.img_info);
+      }
+      // 비밀번호 형식이 아닐 경우
+      else if (!Pattern.matches(pwCheck, newPw)) {
+        JOptionPane.showMessageDialog(this, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "로그인",
+            JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 비밀번호1,2가 틀릴 경우
       else if (!newPw.equals(rePw)) {

@@ -5,6 +5,7 @@ import java.awt.*;
 
 public class SetFontNJOp {
     // 폰트 설정
+    public static final Font p11 = new Font("맑은 고딕", Font.PLAIN, 11); // 보통 11폰트
     public static final Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통 12폰트
     public static final Font b12 = new Font("맑은 고딕", Font.BOLD, 12); // 볼드 12폰트
     public static final Font b14 = new Font("맑은 고딕", Font.BOLD, 14); // 볼드 14폰트

@@ -123,7 +123,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
    */
   public void init() {
     try {
-      socket = new Socket("192.168.10.71", 3000);
+      socket = new Socket("127.0.0.1", 3000);
       oos = new ObjectOutputStream(socket.getOutputStream()); // 말하기
       ois = new ObjectInputStream(socket.getInputStream()); // 듣기
       ClientThread clientThread = new ClientThread(this); // 클라이언트 스레드와 연결
@@ -178,26 +178,25 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     if (obj == jbtn_login || obj == jtf_userId || obj == jtf_userPw) {
       String userId = jtf_userId.getText();
       String userPw = jtf_userPw.getText();
+      // 아이디, 비밀번호 정규식
       String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
-      String pwCheck = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$"; // 비밀번호 형식(8~16자 숫자,영문자포함)
-      System.out.println("입력값" + userId);
-      System.out.println("입력값" + userPw);
+      String pwCheck = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$"; // 8~16자 숫자,영문자포함 8~16자 비밀번호
       // 아이디를 입력하지 않았을 경우
       if ("".equals(userId) || " example@email.com".equals(userId)) {
-        JOptionPane.showMessageDialog(this, "이메일을 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
+        JOptionPane.showMessageDialog(this, "이메일을 입력해주세요.", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 이메일 형식이 아닐 경우
       else if (!Pattern.matches(idCheck, userId)) {
-        JOptionPane.showMessageDialog(this, "example@email.com 형식으로 입력해주세요", "로그인",
+        JOptionPane.showMessageDialog(this, "example@email.com 형식으로 입력해주세요.", "로그인",
             JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 비밀번호를 입력하지 않았을 경우
       else if ("".equals(userPw) || " password".equals(userPw)) {
-        JOptionPane.showMessageDialog(this, "비밀번호를 입력해주세요", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
+        JOptionPane.showMessageDialog(this, "비밀번호를 입력해주세요.", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 비밀번호 형식이 아닐 경우
       else if (!Pattern.matches(pwCheck, userPw)) {
-        JOptionPane.showMessageDialog(this, "비밀번호는 8~16자의 숫자, 영문자로 입력해주세요", "로그인",
+        JOptionPane.showMessageDialog(this, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "로그인",
             JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 형식에 맞게 입력했을경우 DB에서 확인

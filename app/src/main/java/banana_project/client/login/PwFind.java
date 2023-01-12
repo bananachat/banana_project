@@ -127,28 +127,35 @@ public class PwFind implements ActionListener, FocusListener {
       userName = jtf_userName.getText();
       userId = jtf_userId.getText();
       userHp = jtf_userHp.getText();
+      String nameCheck = "^[가-힣]{2,6}$"; // 한글 이름 2~6자
       String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
-      String hpCheck = userHp.replaceAll("[^0-9]", "-"); // 숫자가 아닌 문자들을 -로 치환
+      String hpCheck = "^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$";
       // 이름을 입력하지 않았을 경우
       if (" 이름".equals(userName) || "".equals(userName)) {
-        JOptionPane.showMessageDialog(client, "이름을 입력해주세요", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE, setImage.img_info);
+        JOptionPane.showMessageDialog(client, "이름을 입력해주세요.", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE, setImage.img_info);
+      }
+      // 이름이 형식에 안맞음
+      else if (!Pattern.matches(nameCheck, userName)) {
+        JOptionPane.showMessageDialog(client, "이름은 2~6자의 한글로 입력해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
+            setImage.img_info);
       }
       // 이메일을 입력하지 않았을 경우
       else if (" example@email.com".equals(userId) || "".equals(userId)) {
-        JOptionPane.showMessageDialog(client, "이메일을 입력해주세요", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE, setImage.img_info);
+        JOptionPane.showMessageDialog(client, "이메일을 입력해주세요.", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE,
+            setImage.img_info);
       }
       // 이메일 형식이 아닐 경우
       else if (!Pattern.matches(idCheck, userId)) {
-        JOptionPane.showMessageDialog(client, "example@email.com 형식으로 입력해주세요", "비밀번호 찾기",
+        JOptionPane.showMessageDialog(client, "example@email.com 형식으로 입력해주세요.", "비밀번호 찾기",
             JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 핸드폰번호를 입력하지 않았을 경우
       else if (" 핸드폰 번호 (-없이 숫자만 입력)".equals(userHp) || "".equals(userHp)) {
-        JOptionPane.showMessageDialog(client, "핸드폰번호를 입력해주세요", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE,
+        JOptionPane.showMessageDialog(client, "핸드폰번호를 입력해주세요.", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE,
             setImage.img_info);
       }
-      // 핸드폰번호에 숫자가 아닌 것을 넣었을 경우
-      else if (hpCheck.contains("-")) {
+      // 핸드폰번호 형식이 아닐 경우
+      else if (!Pattern.matches(hpCheck, userHp)) {
         JOptionPane.showMessageDialog(client, "핸드폰번호는 -를 제외한 숫자만 입력해주세요.", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE,
             setImage.img_info);
       } else {
