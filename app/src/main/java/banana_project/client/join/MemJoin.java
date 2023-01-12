@@ -113,6 +113,10 @@ public class MemJoin implements ActionListener, FocusListener {
       jtf_nickName.setBorder(new LineBorder(Color.white, 8));
       jtf_userPw.setBorder(new LineBorder(Color.white, 8));
       jtf_userPwRe.setBorder(new LineBorder(Color.white, 8));
+
+      jtf_userName.setBorder(null);
+      jtf_userName.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
       // 아이디 중복검사 버튼 설정
       jbtn_checkId.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
       jbtn_checkId.setBorderPainted(false); // 아이디 중복검사 버튼 외곽 라인 없애기
@@ -285,6 +289,7 @@ public class MemJoin implements ActionListener, FocusListener {
       Object obj = e.getSource();
       // 이름 jtf를 클릭했을 때
       if (obj == jtf_userName) {
+         jtf_userName.setForeground(Color.black);
          if (" 바나나".equals(jtf_userName.getText())) {
             jtf_userName.setText("");
          }
