@@ -76,6 +76,7 @@ public class SqlQuarry {
     } // end of quInsert (INSERT문)
 
 
+
     /**
      * 오라클 UPDATE 쿼리문
      * -1 : 쿼리문 실패
