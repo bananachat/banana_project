@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class MemberLogic {
     // 로그 출력용
@@ -162,11 +163,11 @@ public class MemberLogic {
      * @param uservo 회원정보 객체
      * @return result 로그인 결과 프로토콜 반환
      */
-    public int loginUser(UserVO uservo) {
+    public Map<String, Object> loginUser(UserVO uservo) {
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                 new LogVO(Protocol.CLIENT_START, uservo.toString(), uservo.getUser_id()));
-        int result = -1;
-        String sql = "SELECT user_pw, salt, fail_cnt FROM TB_USER WHERE user_id = ?";
+        Map<String, Object> resultMap = new HashMap<>();
+        String sql = "SELECT user_id, user_pw, user_name, user_hp, user_nickname, salt, fail_cnt FROM TB_USER WHERE user_id = ?";
         try {
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
@@ -180,26 +181,31 @@ public class MemberLogic {
                     if (u_pw.equals(ep.getEncrypt(uservo.getUser_pw(), salt))) {
                         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                                 new LogVO(Protocol.LOGIN_S, uservo.toString(), uservo.getUser_id()));
-                        result = Protocol.LOGIN_S;
-                        return result;
+                        resultMap.put("result", Protocol.LOGIN_S);
+                        uservo.setUser_id(rs.getString("user_id"));
+                        uservo.setUser_pw(rs.getString("user_pw"));
+                        uservo.setUser_name(rs.getString("user_name"));
+                        uservo.setUser_hp(rs.getString("user_hp"));
+                        uservo.setUser_nickname(rs.getString("user_nickname"));
+                        resultMap.put("userVO", uservo);
+                        return resultMap;
                     } else {
                         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                                 new LogVO(Protocol.WRONG_PW, uservo.toString(), uservo.getUser_id()));
-
-                        result = Protocol.WRONG_PW;
-                        return result;
+                        resultMap.put("result", Protocol.WRONG_PW);
+                        return resultMap;
                     }
                 } else {
                     ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                             new LogVO(Protocol.OVER_FAIL_CNT, uservo.toString(), uservo.getUser_id()));
-                    result = Protocol.OVER_FAIL_CNT;
-                    return result;
+                    resultMap.put("result", Protocol.OVER_FAIL_CNT);
+                    return resultMap;
                 }
             } else {
                 ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                         new LogVO(Protocol.WRONG_ID, uservo.toString(), uservo.getUser_id()));
-                result = Protocol.WRONG_ID;
-                return result;
+                resultMap.put("result", Protocol.WRONG_ID);
+                return resultMap;
             }
         } catch (SQLException se) {
             se.printStackTrace();
@@ -213,8 +219,8 @@ public class MemberLogic {
             }
         }
         ll.writeLog(ConstantsLog.EXIT_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                new LogVO(result, uservo.toString(), uservo.getUser_id()));
-        return result;
+                new LogVO(ConstantsLog.EXIT_LOG, uservo.toString(), uservo.getUser_id()));
+        return resultMap;
     }
 
     public static void main(String[] args) {
