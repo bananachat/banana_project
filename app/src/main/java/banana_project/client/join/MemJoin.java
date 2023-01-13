@@ -38,7 +38,7 @@ public class MemJoin implements ActionListener, FocusListener {
    JButton jbtn_checkNick = new JButton("중복검사"); // 닉네임 중복검사 버튼
    JButton jbtn_join = new JButton("회원가입");// 회원가입 버튼
    JButton jbtn_cancel = new JButton("돌아가기");// 돌아가기 버튼
-   JButton jbtn_main = new JButton(setImage.img_existAcnt);// 회원가입 로고용 버튼
+   JButton jbtn_main = new JButton(setImage.img_join);// 회원가입 로고용 버튼
    // Jlb
    JLabel jlb_name = new JLabel("이름");
    JLabel jlb_hp = new JLabel("핸드폰번호");
@@ -101,11 +101,11 @@ public class MemJoin implements ActionListener, FocusListener {
       jtf_nickName.setForeground(Color.gray);
       jtf_userPw.setForeground(Color.gray);
       jtf_userPwRe.setForeground(Color.gray);
-      jtf_userName.setBounds(100, 145, 183, 40);
-      jtf_userHp.setBounds(100, 195, 183, 40);
-      jtf_userId.setBounds(100, 245, 183, 40);
-      jtf_nickName.setBounds(100, 295, 183, 40);
-      jtf_userPw.setBounds(100, 345, 183, 40);
+      jtf_userName.setBounds(100, 135, 183, 40);
+      jtf_userHp.setBounds(100, 187, 183, 40);
+      jtf_userId.setBounds(100, 239, 183, 40);
+      jtf_nickName.setBounds(100, 291, 183, 40);
+      jtf_userPw.setBounds(100, 343, 183, 40);
       jtf_userPwRe.setBounds(100, 395, 183, 40);
       jtf_userName.setBorder(new LineBorder(Color.white, 8));
       jtf_userId.setBorder(new LineBorder(Color.white, 8));
@@ -119,14 +119,14 @@ public class MemJoin implements ActionListener, FocusListener {
       jbtn_checkId.setBackground(new Color(130, 65, 60)); // 아이디 중복검사 버튼 색깔 넣기 (지정색)
       jbtn_checkId.setForeground(Color.WHITE); // 아이디 중복검사 버튼 텍스트 색깔 (흰색)
       jbtn_checkId.setFont(setFontNJOp.b12);
-      jbtn_checkId.setBounds(295, 247, 75, 36);
+      jbtn_checkId.setBounds(295, 241, 75, 36);
       // 닉네임 중복검사 버튼 설정
       jbtn_checkNick.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
       jbtn_checkNick.setBorderPainted(false); // 닉네임 중복검사 버튼 외곽 라인 없애기
       jbtn_checkNick.setBackground(new Color(130, 65, 60)); // 닉네임 중복검사 버튼 색깔 넣기 (지정색)
       jbtn_checkNick.setForeground(Color.WHITE); // 닉네임 중복검사 버튼 텍스트 색깔 (흰색)
       jbtn_checkNick.setFont(setFontNJOp.b12);
-      jbtn_checkNick.setBounds(295, 297, 75, 36);
+      jbtn_checkNick.setBounds(295, 293, 75, 36);
       // 돌아가기 버튼 설정
       jbtn_cancel.setBorderPainted(false);
       jbtn_cancel.setBackground(new Color(130, 65, 60));// 취소버튼 배경색
@@ -154,18 +154,18 @@ public class MemJoin implements ActionListener, FocusListener {
       jlb_pw.setFont(setFontNJOp.b12);
       jlb_pwRe.setFont(setFontNJOp.b12);
       jlb_pwtxt.setFont(setFontNJOp.p12);
-      jlb_name.setBounds(65, 145, 100, 40);
-      jlb_hp.setBounds(30, 195, 100, 40);
-      jlb_id.setBounds(53, 245, 100, 40);
-      jlb_nickName.setBounds(53, 295, 100, 40);
-      jlb_pw.setBounds(42, 345, 100, 40);
+      jlb_name.setBounds(65, 135, 100, 40);
+      jlb_hp.setBounds(30, 187, 100, 40);
+      jlb_id.setBounds(53, 239, 100, 40);
+      jlb_nickName.setBounds(53, 291, 100, 40);
+      jlb_pw.setBounds(42, 343, 100, 40);
       jlb_pwRe.setBounds(16, 395, 100, 40);
       jlb_pwtxt.setBounds(104, 426, 150, 40);
       // 로고 이미지 설정
       jbtn_main.setBackground(new Color(255, 230, 120));
       jbtn_main.setBorderPainted(false); // 버튼 외곽선 없애기
       jbtn_main.setFocusPainted(false); // 테스트 - 포커스없애기
-      jbtn_main.setBounds(50, 20, 300, 110); // 바나나 이미지 고정
+      jbtn_main.setBounds(85, 22, 210, 90); // 바나나 이미지 고정
       // Jp
       jp_join.setBackground(new Color(255, 230, 120));
       // Jf 설정

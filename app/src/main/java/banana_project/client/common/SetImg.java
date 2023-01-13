@@ -13,6 +13,8 @@ public class SetImg {
     public static final ImageIcon img_main = new ImageIcon(imgPath + "logo_main.png");
     // 찾기 로고 이미지
     public static final ImageIcon img_find = new ImageIcon(imgPath + "logo_find.png");
+    // 회원가입 로고 이미지
+    public static final ImageIcon img_join = new ImageIcon(imgPath + "logo_join.png");
 
     // JOption 아이콘
     // JOp 인포 이미지
