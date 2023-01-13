@@ -3,6 +3,7 @@ package banana_project.server.thread;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.google.common.collect.ImmutableBiMap.Builder;
@@ -94,10 +95,15 @@ public class ServerThread extends Thread {
             String userPw = st.nextToken();
             // DB와 같은지 체크
             server.jta_log.append("DB 체크 시작" + "\n");
-            int result = memberLogic.loginUser(UserVO.builder().user_id(userId).user_pw(userPw).build());
+
+            Map<String, Object> resultMap = memberLogic.loginUser(UserVO.builder().user_id(userId).user_pw(userPw).build());
+            int result = (Integer)resultMap.get("result");
+            // for(String key : resultMap.keySet()){
+            //   String value = String.valueOf(resultMap.get(key));
+            // }
             server.jta_log.append("Result: " + result + "\n");
             switch (result) {
-              // 로그인 성공 -> 아이디? 닉네임?
+              // 로그인 성공 -> 아이디
               case Protocol.LOGIN_S: {
                 oos.writeObject(Protocol.LOGIN_S
                     + Protocol.seperator + userId);
@@ -127,10 +133,10 @@ public class ServerThread extends Thread {
             String userName = st.nextToken();
             String userHp = st.nextToken();
             String nickName = st.nextToken();
-            int result = memberLogic.loginUser(UserVO.builder().user_id(userId).user_pw(userPw).user_name(userName)
-                .user_hp(userHp).user_nickname(nickName).build());
-            switch (result) {
-            }
+            // int result = memberLogic.loginUser(UserVO.builder().user_id(userId).user_pw(userPw).user_name(userName)
+            //     .user_hp(userHp).user_nickname(nickName).build());
+            // switch (result) {
+            // }
           }
           // case Protocol.WHISPER: {
           // String nickName = st.nextToken();// 보내는 넘

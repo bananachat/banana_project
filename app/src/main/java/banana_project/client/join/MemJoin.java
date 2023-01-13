@@ -113,10 +113,6 @@ public class MemJoin implements ActionListener, FocusListener {
       jtf_nickName.setBorder(new LineBorder(Color.white, 8));
       jtf_userPw.setBorder(new LineBorder(Color.white, 8));
       jtf_userPwRe.setBorder(new LineBorder(Color.white, 8));
-
-      jtf_userName.setBorder(null);
-      jtf_userName.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-
       // 아이디 중복검사 버튼 설정
       jbtn_checkId.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
       jbtn_checkId.setBorderPainted(false); // 아이디 중복검사 버튼 외곽 라인 없애기
@@ -168,6 +164,7 @@ public class MemJoin implements ActionListener, FocusListener {
       // 로고 이미지 설정
       jbtn_main.setBackground(new Color(255, 230, 120));
       jbtn_main.setBorderPainted(false); // 버튼 외곽선 없애기
+      jbtn_main.setFocusPainted(false); // 테스트 - 포커스없애기
       jbtn_main.setBounds(50, 20, 300, 110); // 바나나 이미지 고정
       // Jp
       jp_join.setBackground(new Color(255, 230, 120));

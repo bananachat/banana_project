@@ -44,7 +44,7 @@ public class ClientThread extends Thread {
         }
         // 프로토콜 switch문 시작
         switch (protocol) {
-          // 로그인 성공 -> 101#닉네임
+          // 로그인 성공 -> 101#아이디
           case Protocol.LOGIN_S: {
             userId = st.nextToken();
             client.login_s();

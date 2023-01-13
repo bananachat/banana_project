@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MemberLogic {
@@ -235,7 +236,7 @@ public class MemberLogic {
 //        System.out.println("결과값 : " + result);
 //        int result = ml.updateUser(uv);
 //        System.out.println("결과값 : " + result);
-        int result = ml.loginUser(uv);
-        System.out.println("결과값 : " + result);
+        // int result = ml.loginUser(uv);
+        // System.out.println("결과값 : " + result);
     }
 }
