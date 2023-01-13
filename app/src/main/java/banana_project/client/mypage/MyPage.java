@@ -57,8 +57,10 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
   Font b14 = new Font("맑은 고딕", Font.BOLD, 14);
   Font b25 = new Font("맑은 고딕", Font.BOLD, 25); // 볼드25폰트
   Font b20 = new Font("맑은 고딕", Font.BOLD, 20); // 볼드20폰트
-  Client client = new Client(); // 회원가입 프레임
-  Main main = new Main(); //메인화면 프레임
+  // Client client = new Client(); // 회원가입 프레임
+  Client client = null;// 회원가입 프레임
+  // Main main = new Main(); //메인화면 프레임
+  Main main = null; //메인화면 프레임
   // JDialog
   JDialog jd_resign = new JDialog();
   JPanel jp_resign = new JPanel(null);
@@ -68,14 +70,20 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
 
   // 생성자
   MyPage() {
+    initDisplay();
   }
 
   MyPage(Client client) {
+    this();
     this.client = client;
   }
   MyPage(Main main){
+    this();
     this.main = main;
   }
+  // MyPage(){
+
+  // }
 
   // 화면출력부
   public void initDisplay() {
@@ -149,7 +157,7 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
     this.setTitle("마이페이지");
     this.setIconImage(img_title.getImage());
     this.setBackground(new Color(255, 230, 120));
-    this.setVisible(true);
+    this.setVisible(false);
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.setSize(400, 600);
     this.setLocationRelativeTo(null);
@@ -275,11 +283,12 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
   }
 
   // 메인
-  public static void main(String[] args) {
-    Client c = new Client();
-    Main m = new Main();
-    MyPage myPage = new MyPage(c);
-    new MyPage(m);
-    myPage.initDisplay();
-  }// end of main
+//   public static void main(String[] args) {
+//     Client c = new Client();
+//     Main m = new Main();
+//     MyPage myPage = new MyPage(c);
+//     new MyPage(m);
+//     myPage.initDisplay();
+//   }// end of main
+
 }// end of class
