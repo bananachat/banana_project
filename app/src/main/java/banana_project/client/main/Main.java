@@ -1,6 +1,7 @@
 package banana_project.client.main;
 
 import banana_project.client.common.*;
+import banana_project.client.mypage.MyPage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +11,13 @@ import java.util.Vector;
 
 public class Main extends JFrame implements ActionListener, MouseListener {
     ////////////////////////// [선언부] //////////////////////////
+    MyPage myPage = null;                                       // 마이페이지 선언
+    FListDialog flDialog = null;                            // "친구 추가" 다이얼로그
+
     String logMsg = "";                                     // 로그 기록용
     SetImg setImg = new SetImg();                     // 이미지 설정
 
     // [NORTH]
-    FListDialog flDialog = null;                            // "친구 추가" 다이얼로그
     JButton jbtn_myPage = new JButton("마이페이지");
     JButton jbtn_firChan = new JButton("친구 추가");   // "친구추가 | 새 채팅"으로 텍스트 변환
 
@@ -137,8 +140,9 @@ public class Main extends JFrame implements ActionListener, MouseListener {
         if(obj == jbtn_myPage) {
             // 마이페이지 클릭
             System.out.println("jbtn_myPage(마이페이지클릭) 클릭");
-            // TODO: 마이페이지 로직
 
+            myPage = new MyPage(this);
+            myPage.setVisible(true);
         }
         // Main 내 이벤트 발생
         else if (obj == jbtn_firChan) {
