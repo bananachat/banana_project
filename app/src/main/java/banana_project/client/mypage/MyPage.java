@@ -22,7 +22,7 @@ import javax.swing.border.LineBorder;
 import banana_project.client.login.Client;
 import banana_project.client.main.Main;
 
-public class MyPage extends JFrame implements ActionListener, FocusListener {
+public class MyPage  implements ActionListener, FocusListener {
   /**
    * 서버 연결부 선언
    */
@@ -74,7 +74,8 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
   }
 
   public MyPage(Client client) {
-    this();
+    // this();
+    // client.initDisplay();
     this.client = client;
   }
   public MyPage(Main main){
@@ -154,15 +155,25 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
     jp_mypage.add(jlb_mypage);
     jlb_mypage.setFont(b25);
     jlb_mypage.setBounds(20, 35, 150, 45);
-    this.setTitle("마이페이지");
-    this.setIconImage(img_title.getImage());
-    this.setBackground(new Color(255, 230, 120));
-    this.setVisible(false);
-    this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-    this.setSize(400, 600);
-    this.setLocationRelativeTo(null);
-    this.setResizable(false);
-    this.add(jp_mypage);
+    // this.setTitle("마이페이지");
+    // this.setIconImage(img_title.getImage());
+    // this.setBackground(new Color(255, 230, 120));
+    // this.setVisible(false);
+    // this.setSize(400, 600);
+    // this.setLocationRelativeTo(null);
+    // this.setResizable(false);
+    // this.add(jp_mypage);
+    client.setTitle("마이페이지");
+    client.setIconImage(img_title.getImage());
+    // client.setBackground(new Color(255, 230, 120));
+    client.setVisible(true);
+    client.setSize(400, 600); //지워도 되는 것
+    client.setLocationRelativeTo(null);
+    client.setDefaultCloseOperation(client.EXIT_ON_CLOSE); //지워도 되는 것
+    // client.setResizable(false);
+    client.add(jp_mypage);
+    client.revalidate();
+    
     // JOp 설정
     UIManager UI = new UIManager();
     UI.put("OptionPane.background", new Color(255, 230, 120));
@@ -204,16 +215,16 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
     }
     // 확인버튼을 눌렀을 때
     if(obj == jbtn_save){
-      JOptionPane.showMessageDialog(this, "변경이 완료되었습니다.","수정",JOptionPane.INFORMATION_MESSAGE, img_confirm);
-      this.dispose();
+      JOptionPane.showMessageDialog(client, "변경이 완료되었습니다.","수정",JOptionPane.INFORMATION_MESSAGE, img_confirm);
+      // this.dispose();
       main.initDisplay();
     }
     // jdialog 속 탈퇴하기 버튼 눌렀을 때
     if (obj == jbtn_realresign) {
-      JOptionPane.showMessageDialog(this, "탈퇴가 완료되었습니다.", "탈퇴", JOptionPane.WARNING_MESSAGE, img_delete);
-      this.dispose();
+      JOptionPane.showMessageDialog(client, "탈퇴가 완료되었습니다.", "탈퇴", JOptionPane.WARNING_MESSAGE, img_delete);
+      // this.dispose();
       jd_resign.dispose();
-      main.dispose();
+      // main.dispose();
       client.initDisplay();
     }
   }
@@ -284,12 +295,14 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
   }
 
   // 메인
-//   public static void main(String[] args) {
-//     Client c = new Client();
-//     Main m = new Main();
-//     MyPage myPage = new MyPage(c);
-//     new MyPage(m);
-//     myPage.initDisplay();
-//   }// end of main
+  public static void main(String[] args) {
+    Client c = new Client();
+    // Main m = new Main();
+    MyPage myPage = new MyPage(c);
+    myPage.initDisplay();
+    // MyPage myPage = new MyPage();
+    // new MyPage(m);
+    // myPage.initDisplay();
+  }// end of main
 
 }// end of class
