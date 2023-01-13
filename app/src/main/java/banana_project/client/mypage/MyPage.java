@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import banana_project.client.login.Client;
+import banana_project.client.main.Main;
 
 public class MyPage extends JFrame implements ActionListener, FocusListener {
   /**
@@ -37,6 +38,7 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
   ImageIcon img_info = new ImageIcon(imgPath + "mini_info.png"); // JOp 인포 이미지
   ImageIcon img_notFound = new ImageIcon(imgPath + "mini_notFound.png"); // JOp 취소 이미지
   ImageIcon img_delete = new ImageIcon(imgPath + "mini_delete.png");
+  ImageIcon img_confirm = new ImageIcon(imgPath + "mini_confirm.png");
   // 선언부
   JTextField jtf_userName = new JTextField("이름"); // 이름
   JTextField jtf_userHP = new JTextField("핸드폰번호"); // 핸드폰번호
@@ -56,6 +58,7 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
   Font b25 = new Font("맑은 고딕", Font.BOLD, 25); // 볼드25폰트
   Font b20 = new Font("맑은 고딕", Font.BOLD, 20); // 볼드20폰트
   Client client = new Client(); // 회원가입 프레임
+  Main main = new Main(); //메인화면 프레임
   // JDialog
   JDialog jd_resign = new JDialog();
   JPanel jp_resign = new JPanel(null);
@@ -69,6 +72,9 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
 
   MyPage(Client client) {
     this.client = client;
+  }
+  MyPage(Main main){
+    this.main = main;
   }
 
   // 화면출력부
@@ -183,11 +189,17 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     Object obj = e.getSource();
+    //중복확인 버튼 눌렀을 때
     // 탈퇴하기 버튼을 눌렀을 때
     if (obj == jbtn_resign) {
       jd_resign.setVisible(true);
     }
     // 확인버튼을 눌렀을 때
+    if(obj == jbtn_save){
+      JOptionPane.showMessageDialog(this, "변경이 완료되었습니다.","수정",JOptionPane.INFORMATION_MESSAGE, img_confirm);
+      this.dispose();
+      main.initDisplay();
+    }
     // jdialog 속 탈퇴하기 버튼 눌렀을 때
     if (obj == jbtn_realresign) {
       JOptionPane.showMessageDialog(this, "탈퇴가 완료되었습니다.", "탈퇴", JOptionPane.WARNING_MESSAGE, img_delete);
@@ -265,7 +277,9 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
   // 메인
   public static void main(String[] args) {
     Client c = new Client();
+    Main m = new Main();
     MyPage myPage = new MyPage(c);
+    new MyPage(m);
     myPage.initDisplay();
   }// end of main
 }// end of class
