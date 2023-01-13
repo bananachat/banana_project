@@ -6,6 +6,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 public class SqlQuarry {
     // DB 연결 변수
@@ -181,4 +184,68 @@ public class SqlQuarry {
 
         return result;
     } // end of quDelete (DELETE문)
+
+
+
+    // TODO: select 메소드 작성 중 - 취소 가능성
+
+    public List<Object> quSelect(String[] columns, String table, String whereClause) {
+        // 리턴값
+        List<Object> lResult = new ArrayList<>();
+        // 쿼리결과 기본 false
+        Boolean result = false;
+
+        // 컬럼 파라미터 설정
+        String column = "";
+        for (int i=0; i<columns.length-1; i++) {
+            column += columns[i] + ", ";
+        }
+        column = columns[columns.length-1];
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ? FROM ? WHERE ? ");
+
+        try {
+            conn = dbMgr.getConnection();
+            pstmt = conn.prepareStatement(sql.toString());
+
+            pstmt.setString(1, column);
+            pstmt.setString(2, table);
+            pstmt.setString(3, whereClause);
+
+            // 쿼리 동작 레코드 수
+            // 성공: 1 / 실패: -1
+            result = pstmt.execute();
+
+            rs = pstmt.executeQuery();
+            System.out.println("쿼리결과 : " + rs.toString());
+
+
+            for (int i=0; i<columns.length; i++) {
+//                Vector<String> row+"i" = new Vector<String>();
+            }
+
+            while (rs.next()) {
+                for (int i=0; i<columns.length; i++) {
+
+                }
+            }
+
+
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // DB 사용한 자원 반납
+            try {
+                dbMgr.freeConnection(conn, pstmt, rs);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return lResult;
+    } // end of quSelect (SELECT문)
 }
