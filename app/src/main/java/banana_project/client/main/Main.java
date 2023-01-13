@@ -129,7 +129,8 @@ public class Main implements ActionListener, MouseListener {
 
     ////////////////////////// [메인메소드] //////////////////////////
     public static void main(String[] args) {
-        Main main = new Main();
+        Client c = new Client();
+        Main main = new Main(c);
         System.out.println("생성자 시작");
         System.out.println("화면 출력");
         main.initDisplay();

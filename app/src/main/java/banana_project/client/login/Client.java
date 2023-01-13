@@ -184,11 +184,11 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
       if ("".equals(userId) || " example@email.com".equals(userId)) {
         JOptionPane.showMessageDialog(this, "이메일을 입력해주세요.", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
-      // 이메일 형식이 아닐 경우
-      else if (!Pattern.matches(idCheck, userId)) {
-        JOptionPane.showMessageDialog(this, "example@email.com 형식으로 입력해주세요.", "로그인",
-            JOptionPane.WARNING_MESSAGE, setImage.img_info);
-      }
+      // // 이메일 형식이 아닐 경우
+      // else if (!Pattern.matches(idCheck, userId)) {
+      //   JOptionPane.showMessageDialog(this, "example@email.com 형식으로 입력해주세요.", "로그인",
+      //       JOptionPane.WARNING_MESSAGE, setImage.img_info);
+      // }
       // 비밀번호를 입력하지 않았을 경우
       else if ("".equals(userPw) || " password".equals(userPw)) {
         JOptionPane.showMessageDialog(this, "비밀번호를 입력해주세요.", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
