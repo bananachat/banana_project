@@ -69,15 +69,15 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
   JButton jbtn_realresign = new JButton("탈퇴하기");
 
   // 생성자
-  MyPage() {
+  public MyPage() {
     initDisplay();
   }
 
-  MyPage(Client client) {
+  public MyPage(Client client) {
     this();
     this.client = client;
   }
-  MyPage(Main main){
+  public MyPage(Main main){
     this();
     this.main = main;
   }
@@ -213,6 +213,7 @@ public class MyPage extends JFrame implements ActionListener, FocusListener {
       JOptionPane.showMessageDialog(this, "탈퇴가 완료되었습니다.", "탈퇴", JOptionPane.WARNING_MESSAGE, img_delete);
       this.dispose();
       jd_resign.dispose();
+      main.dispose();
       client.initDisplay();
     }
   }
