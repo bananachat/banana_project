@@ -1,5 +1,6 @@
 package banana_project.client.login;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,8 +31,10 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
    * 서버 연결부 선언
    */
   Socket socket = null;
-  ObjectOutputStream oos = null;// 말하기
+  public ObjectOutputStream oos = null;// 말하기
   ObjectInputStream ois = null;// 듣기
+  MemJoin memJoin = null;
+  public Main main = null;
 
   /**
    * 화면부 선언
@@ -42,8 +45,8 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   // JP
   public JPanel jp_login = new JPanel(null);
   // Jtf
-  JTextField jtf_userId = new JTextField(" example@email.com"); // 아이디 입력창
-  JPasswordField jtf_userPw = new JPasswordField(" password"); // 비밀번호 입력창
+  JTextField jtf_userId = new JTextField("example@email.com"); // 아이디 입력창
+  JPasswordField jtf_userPw = new JPasswordField("password"); // 비밀번호 입력창
   // Jbtn
   JButton jbtn_login = new JButton("로그인"); // 로그인 버튼
   JButton jbtn_join = new JButton("회원가입"); // 회원가입 버튼
@@ -75,11 +78,11 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     jp_login.add(jbtn_main);
     // Jtf 설정
     jtf_userId.setForeground(Color.gray);
-    jtf_userPw.setForeground(Color.gray);
+    jtf_userPw.setForeground(Color.lightGray);
     jtf_userId.setBounds(60, 300, 270, 45);
     jtf_userPw.setBounds(60, 360, 270, 45);
-    jtf_userId.setBorder(new LineBorder(Color.white, 8));
-    jtf_userPw.setBorder(new LineBorder(Color.white, 8));
+    jtf_userId.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_userPw.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     // 로그인 버튼 설정
     jbtn_login.setBorderPainted(false);
     jbtn_login.setBackground(new Color(130, 65, 60));
@@ -137,9 +140,11 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
    * 로그인성공
    */
   public void login_s() {
-    // this.dispose();
-    this.setVisible(false);
-    Main main = new Main(this);
+    jtf_userId.setText("example@email.com");
+    jtf_userPw.setText("password");
+    jtf_userId.setForeground(Color.gray);
+    jtf_userPw.setForeground(Color.lightGray);
+    main = new Main(this);
     main.initDisplay();
   }
 
@@ -170,7 +175,6 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   /**
    * ActionListener 메소드
    */
-
   @Override
   public void actionPerformed(ActionEvent e) {
     Object obj = e.getSource();
@@ -178,19 +182,19 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     if (obj == jbtn_login || obj == jtf_userId || obj == jtf_userPw) {
       String userId = jtf_userId.getText();
       String userPw = jtf_userPw.getText();
-      // 아이디, 비밀번호 정규식
+      // 아이디 정규식
       String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
       // 아이디를 입력하지 않았을 경우
-      if ("".equals(userId) || " example@email.com".equals(userId)) {
+      if ("".equals(userId) || "example@email.com".equals(userId)) {
         JOptionPane.showMessageDialog(this, "이메일을 입력해주세요.", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
-      // // 이메일 형식이 아닐 경우
-      // else if (!Pattern.matches(idCheck, userId)) {
-      //   JOptionPane.showMessageDialog(this, "example@email.com 형식으로 입력해주세요.", "로그인",
-      //       JOptionPane.WARNING_MESSAGE, setImage.img_info);
-      // }
+      // 이메일 형식이 아닐 경우
+      else if (!Pattern.matches(idCheck, userId)) {
+        JOptionPane.showMessageDialog(this, "example@email.com 형식으로 입력해주세요.", "로그인",
+            JOptionPane.WARNING_MESSAGE, setImage.img_info);
+      }
       // 비밀번호를 입력하지 않았을 경우
-      else if ("".equals(userPw) || " password".equals(userPw)) {
+      else if ("".equals(userPw) || "password".equals(userPw)) {
         JOptionPane.showMessageDialog(this, "비밀번호를 입력해주세요.", "로그인", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 형식에 맞게 입력했을경우 DB에서 확인
@@ -207,7 +211,11 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     }
     // 회원가입 버튼을 눌렀을 때
     else if (obj == jbtn_join) {
-      MemJoin memJoin = new MemJoin(this);
+      jtf_userId.setText("example@email.com");
+      jtf_userPw.setText("password");
+      jtf_userId.setForeground(Color.gray);
+      jtf_userPw.setForeground(Color.lightGray);
+      memJoin = new MemJoin(this);
       memJoin.initDisplay();
     }
   }
@@ -224,11 +232,19 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     Object obj = e.getSource();
     // 아이디찾기 라벨 눌렀을 때
     if (obj == jlb_findId) {
+      jtf_userId.setText("example@email.com");
+      jtf_userPw.setText("password");
+      jtf_userId.setForeground(Color.gray);
+      jtf_userPw.setForeground(Color.lightGray);
       IdFind idFind = new IdFind(this);
       idFind.initDisplay();
     }
     // 비밀번호찾기 라벨 눌렀을 때
     else if (obj == jlb_findPw) {
+      jtf_userId.setText("example@email.com");
+      jtf_userPw.setText("password");
+      jtf_userId.setForeground(Color.gray);
+      jtf_userPw.setForeground(Color.lightGray);
       PwFind pwfind = new PwFind(this);
       pwfind.initDisplay();
     }
@@ -255,14 +271,14 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     // 아이디 jtf를 클릭했을 때
     if (obj == jtf_userId) {
       jtf_userId.setForeground(Color.black);
-      if (" example@email.com".equals(jtf_userId.getText())) {
+      if ("example@email.com".equals(jtf_userId.getText())) {
         jtf_userId.setText("");
       }
     }
     // 비밀번호 jtf를 클릭했을 때
     else if (obj == jtf_userPw) {
       jtf_userPw.setForeground(Color.black);
-      if (" password".equals(jtf_userPw.getText())) {
+      if ("password".equals(jtf_userPw.getText())) {
         jtf_userPw.setText("");
       }
     }
@@ -275,14 +291,14 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     if (obj == jtf_userId) {
       if ("".equals(jtf_userId.getText())) {
         jtf_userId.setForeground(Color.gray);
-        jtf_userId.setText(" example@email.com");
+        jtf_userId.setText("example@email.com");
       }
     }
     // 비밀번호 jtf를 공백으로두고 벗어났을 때
     else if (obj == jtf_userPw) {
       if ("".equals(jtf_userPw.getText())) {
-        jtf_userPw.setForeground(Color.gray);
-        jtf_userPw.setText(" password");
+        jtf_userPw.setForeground(Color.lightGray);
+        jtf_userPw.setText("password");
       }
     }
   }

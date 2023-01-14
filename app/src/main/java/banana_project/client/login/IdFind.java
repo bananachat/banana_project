@@ -1,5 +1,6 @@
 package banana_project.client.login;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -35,8 +36,8 @@ public class IdFind implements ActionListener, FocusListener {
   // JP
   JPanel jp_idFind = new JPanel(null);
   // Jtf
-  JTextField jtf_userName = new JTextField(" 이름"); // 이름 입력창
-  JTextField jtf_userHp = new JTextField(" 핸드폰 번호 (-없이 숫자만 입력)"); // 전화번호 입력창
+  JTextField jtf_userName = new JTextField("이름"); // 이름 입력창
+  JTextField jtf_userHp = new JTextField("핸드폰 번호 (-없이 숫자만 입력)"); // 전화번호 입력창
   // Jbtn
   JButton jbtn_back = new JButton("돌아가기"); // 돌아가기 버튼
   JButton jbtn_findId = new JButton("아이디 찾기"); // 아이디찾기 버튼
@@ -75,8 +76,8 @@ public class IdFind implements ActionListener, FocusListener {
     jtf_userHp.setFont(setFontNJOp.p12);
     jtf_userName.setBounds(60, 300, 270, 45);
     jtf_userHp.setBounds(60, 360, 270, 45);
-    jtf_userName.setBorder(new LineBorder(Color.white, 8));
-    jtf_userHp.setBorder(new LineBorder(Color.white, 8));
+    jtf_userName.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_userHp.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     // 돌아가기 버튼 설정
     jbtn_back.setBorderPainted(false);
     jbtn_back.setBackground(new Color(130, 65, 60));
@@ -118,19 +119,13 @@ public class IdFind implements ActionListener, FocusListener {
       userName = jtf_userName.getText();
       userHp = jtf_userHp.getText();
       // 이름, 핸드폰번호 정규식
-      String nameCheck = "^[가-힣]{2,6}$"; // 한글 이름 2~6자
       String hpCheck = "^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$";
       // 이름을 입력하지 않았을 경우
-      if (" 이름".equals(userName) || "".equals(userName)) {
+      if ("이름".equals(userName) || "".equals(userName)) {
         JOptionPane.showMessageDialog(client, "이름을 입력해주세요.", "아이디 찾기", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
-      // 이름이 형식에 안맞음
-      else if (!Pattern.matches(nameCheck, userName)) {
-        JOptionPane.showMessageDialog(client, "이름은 2~6자의 한글로 입력해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
-            setImage.img_info);
-      }
       // 핸드폰번호를 입력하지 않았을 경우
-      else if (" 핸드폰 번호 (-없이 숫자만 입력)".equals(userHp) || "".equals(userHp)) {
+      else if ("핸드폰 번호 (-없이 숫자만 입력)".equals(userHp) || "".equals(userHp)) {
         JOptionPane.showMessageDialog(client, "핸드폰번호를 입력해주세요.", "아이디 찾기", JOptionPane.WARNING_MESSAGE,
             setImage.img_info);
       }
@@ -139,6 +134,11 @@ public class IdFind implements ActionListener, FocusListener {
         JOptionPane.showMessageDialog(client, "핸드폰번호는 -를 제외한 숫자만 입력해주세요.", "아이디 찾기", JOptionPane.WARNING_MESSAGE,
             setImage.img_info);
       } else {
+        // 이름과 핸드폰번호 DB로 보내기
+        try {
+        } catch (Exception e2) {
+          e2.printStackTrace();
+        }
         // 테스트용 if문
         // 이름, 전화번호가 맞을 경우
         if (userName.equals(dbName) && userHp.equals(dbHp)) {
@@ -163,14 +163,14 @@ public class IdFind implements ActionListener, FocusListener {
     // 이름 jtf를 클릭했을 때
     if (obj == jtf_userName) {
       jtf_userName.setForeground(Color.black);
-      if (" 이름".equals(jtf_userName.getText())) {
+      if ("이름".equals(jtf_userName.getText())) {
         jtf_userName.setText("");
       }
     }
     // 핸드폰번호 jtf를 클릭했을 때
     else if (obj == jtf_userHp) {
       jtf_userHp.setForeground(Color.black);
-      if (" 핸드폰 번호 (-없이 숫자만 입력)".equals(jtf_userHp.getText())) {
+      if ("핸드폰 번호 (-없이 숫자만 입력)".equals(jtf_userHp.getText())) {
         jtf_userHp.setText("");
       }
     }
@@ -183,14 +183,14 @@ public class IdFind implements ActionListener, FocusListener {
     if (obj == jtf_userName) {
       if ("".equals(jtf_userName.getText())) {
         jtf_userName.setForeground(Color.gray);
-        jtf_userName.setText(" 이름");
+        jtf_userName.setText("이름");
       }
     }
     // 핸드폰번호 jtf를 공백으로두고 벗어났을 때
     else if (obj == jtf_userHp) {
       if ("".equals(jtf_userHp.getText())) {
         jtf_userHp.setForeground(Color.gray);
-        jtf_userHp.setText(" 핸드폰 번호 (-없이 숫자만 입력)");
+        jtf_userHp.setText("핸드폰 번호 (-없이 숫자만 입력)");
       }
     }
   }

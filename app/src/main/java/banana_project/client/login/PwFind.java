@@ -1,5 +1,6 @@
 package banana_project.client.login;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,13 +20,6 @@ public class PwFind implements ActionListener, FocusListener {
    * 서버 연결부 선언
    */
   Client client = null;
-  String userName = null; // 유저가 입력한 이름
-  String userId = null; // 유저가 입력한 아이디
-  String userHp = null; // 유저가 입력한 핸드폰번호
-  // 테스트용 이름, 아이디, 핸드폰번호
-  String dbName = "바나나";
-  String dbId = "banana@email.com";
-  String dbHp = "01012341234";
 
   /**
    * 화면부 선언
@@ -36,9 +30,9 @@ public class PwFind implements ActionListener, FocusListener {
   // JP
   JPanel jp_pwFind = new JPanel(null);
   // jtf
-  JTextField jtf_userName = new JTextField(" 이름");
-  JTextField jtf_userId = new JTextField(" example@email.com");
-  JTextField jtf_userHp = new JTextField(" 핸드폰 번호 (-없이 숫자만 입력)");
+  JTextField jtf_userName = new JTextField("이름");
+  JTextField jtf_userId = new JTextField("example@email.com");
+  JTextField jtf_userHp = new JTextField("핸드폰 번호 (-없이 숫자만 입력)");
   // Jbtn
   JButton jbtn_back = new JButton("돌아가기"); // 돌아가기 버튼
   JButton jbtn_findPw = new JButton("비밀번호 찾기"); // 비밀번호찾기 버튼
@@ -83,9 +77,9 @@ public class PwFind implements ActionListener, FocusListener {
     jtf_userName.setBounds(60, 285, 270, 45);
     jtf_userId.setBounds(60, 345, 270, 45);
     jtf_userHp.setBounds(60, 405, 270, 45);
-    jtf_userName.setBorder(new LineBorder(Color.white, 8));
-    jtf_userId.setBorder(new LineBorder(Color.white, 8));
-    jtf_userHp.setBorder(new LineBorder(Color.white, 8));
+    jtf_userName.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_userId.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_userHp.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     // 돌아가기 버튼 설정
     jbtn_back.setBorderPainted(false);
     jbtn_back.setBackground(new Color(130, 65, 60));
@@ -124,23 +118,17 @@ public class PwFind implements ActionListener, FocusListener {
     }
     // 비밀번호찾기 버튼을 눌렀을 때
     else if (obj == jbtn_findPw || obj == jtf_userName || obj == jtf_userId || obj == jtf_userHp) {
-      userName = jtf_userName.getText();
-      userId = jtf_userId.getText();
-      userHp = jtf_userHp.getText();
-      String nameCheck = "^[가-힣]{2,6}$"; // 한글 이름 2~6자
+      String userName = jtf_userName.getText();
+      String userId = jtf_userId.getText();
+      String userHp = jtf_userHp.getText();
       String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
       String hpCheck = "^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$";
       // 이름을 입력하지 않았을 경우
-      if (" 이름".equals(userName) || "".equals(userName)) {
+      if ("이름".equals(userName) || "".equals(userName)) {
         JOptionPane.showMessageDialog(client, "이름을 입력해주세요.", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
-      // 이름이 형식에 안맞음
-      else if (!Pattern.matches(nameCheck, userName)) {
-        JOptionPane.showMessageDialog(client, "이름은 2~6자의 한글로 입력해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
-            setImage.img_info);
-      }
       // 이메일을 입력하지 않았을 경우
-      else if (" example@email.com".equals(userId) || "".equals(userId)) {
+      else if ("example@email.com".equals(userId) || "".equals(userId)) {
         JOptionPane.showMessageDialog(client, "이메일을 입력해주세요.", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE,
             setImage.img_info);
       }
@@ -150,7 +138,7 @@ public class PwFind implements ActionListener, FocusListener {
             JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 핸드폰번호를 입력하지 않았을 경우
-      else if (" 핸드폰 번호 (-없이 숫자만 입력)".equals(userHp) || "".equals(userHp)) {
+      else if ("핸드폰 번호 (-없이 숫자만 입력)".equals(userHp) || "".equals(userHp)) {
         JOptionPane.showMessageDialog(client, "핸드폰번호를 입력해주세요.", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE,
             setImage.img_info);
       }
@@ -158,8 +146,13 @@ public class PwFind implements ActionListener, FocusListener {
       else if (!Pattern.matches(hpCheck, userHp)) {
         JOptionPane.showMessageDialog(client, "핸드폰번호는 -를 제외한 숫자만 입력해주세요.", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE,
             setImage.img_info);
-      } else {
+      }
+      // 이름, 아이디, 핸드폰번호 DB조회
+      else {
         // 테스트용 if문
+        String dbName = "바나나";
+        String dbId = "banana@email.com";
+        String dbHp = "01012341234";
         // 이름, 아이디, 전화번호가 맞을 경우
         if (userName.equals(dbName) && userId.equals(dbId) && userHp.equals(dbHp)) {
           PwFindDialog pwFindDialog = new PwFindDialog(this);
@@ -183,21 +176,21 @@ public class PwFind implements ActionListener, FocusListener {
     // 이름 jtf를 클릭했을 때
     if (obj == jtf_userName) {
       jtf_userName.setForeground(Color.black);
-      if (" 이름".equals(jtf_userName.getText())) {
+      if ("이름".equals(jtf_userName.getText())) {
         jtf_userName.setText("");
       }
     }
     // 아이디 jtf를 클릭했을 때
     else if (obj == jtf_userId) {
       jtf_userId.setForeground(Color.black);
-      if (" example@email.com".equals(jtf_userId.getText())) {
+      if ("example@email.com".equals(jtf_userId.getText())) {
         jtf_userId.setText("");
       }
     }
     // 핸드폰번호 jtf를 클릭했을 때
     else if (obj == jtf_userHp) {
       jtf_userHp.setForeground(Color.black);
-      if (" 핸드폰 번호 (-없이 숫자만 입력)".equals(jtf_userHp.getText())) {
+      if ("핸드폰 번호 (-없이 숫자만 입력)".equals(jtf_userHp.getText())) {
         jtf_userHp.setText("");
       }
     }
@@ -210,21 +203,21 @@ public class PwFind implements ActionListener, FocusListener {
     if (obj == jtf_userName) {
       if ("".equals(jtf_userName.getText())) {
         jtf_userName.setForeground(Color.gray);
-        jtf_userName.setText(" 이름");
+        jtf_userName.setText("이름");
       }
     }
     // 아이디 jtf를 공백으로두고 벗어났을 때
     else if (obj == jtf_userId) {
       if ("".equals(jtf_userId.getText())) {
         jtf_userId.setForeground(Color.gray);
-        jtf_userId.setText(" example@email.com");
+        jtf_userId.setText("example@email.com");
       }
     }
     // 핸드폰번호 jtf를 공백으로두고 벗어났을 때
     else if (obj == jtf_userHp) {
       if ("".equals(jtf_userHp.getText())) {
         jtf_userHp.setForeground(Color.gray);
-        jtf_userHp.setText(" 핸드폰 번호 (-없이 숫자만 입력)");
+        jtf_userHp.setText("핸드폰 번호 (-없이 숫자만 입력)");
       }
     }
   }

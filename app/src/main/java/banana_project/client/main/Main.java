@@ -20,7 +20,7 @@ public class Main implements ActionListener, MouseListener {
     SetImg setImg = new SetImg(); // 이미지 설정
 
     // JP
-    JPanel jp_main = new JPanel(null);
+    public JPanel jp_main = new JPanel(null);
 
     // [NORTH]
     JButton jbtn_myPage = new JButton("마이페이지");
@@ -45,22 +45,17 @@ public class Main implements ActionListener, MouseListener {
     Font b14 = new Font("맑은 코딕", Font.BOLD, 14); // 볼드 14폰트
 
     ////////////////////////// [생성자] //////////////////////////
-    public Main() {
+    public Main(Client client) {
+        this.client = client;
         // JList 생성
         for (int i = 0; i < 100; i++) { // TODO: DB 테이블 정보를 받아와야한다 (현재 임의리스트)
             dlm.addElement(Integer.toString(i));
         }
         jl_list = new JList(dlm);
-    } // end of Main()
-
-    public Main(Client client) {
-        this.client = client;
     }
 
     ////////////////////////// [화면 출력] //////////////////////////
     public void initDisplay() {
-        // this.setLayout(null);
-
         // [north]
         jbtn_myPage.addActionListener(this); // jbtn_myPage 설정
         jbtn_myPage.setBounds(10, 10, 175, 40);
@@ -109,30 +104,16 @@ public class Main implements ActionListener, MouseListener {
         jp_main.add(jbtn_chat);
 
         // [창 설정]
-        // this.setIconImage(setImg.img_title.getImage());
-        // this.getContentPane().setBackground(new Color(255, 230, 120));
-        // this.setSize(400, 600);
         client.setTitle("친구 목록");
-        // this.setLocationRelativeTo(null); // 가운데 위치 -> 수정.위치변경했습니다!
-        // this.setResizable(false);
         client.setContentPane(jp_main);
         client.setVisible(true);
-
-        // JFrame 종료 시 이벤트
-        // this.addWindowListener(new WindowAdapter() {
-        //     public void windowClosing(WindowEvent e) {
-        //         System.out.println("종료합니다.");
-        //         System.exit(0);
-        //     }
-        // });
-    } // end of initDisplay()
+    }
 
     ////////////////////////// [메인메소드] //////////////////////////
     public static void main(String[] args) {
         Client c = new Client();
         Main main = new Main(c);
-        System.out.println("생성자 시작");
-        System.out.println("화면 출력");
+        c.initDisplay();
         main.initDisplay();
 
     } // end of main()
@@ -145,9 +126,8 @@ public class Main implements ActionListener, MouseListener {
         if (obj == jbtn_myPage) {
             // 마이페이지 클릭
             System.out.println("jbtn_myPage(마이페이지클릭) 클릭");
-
             myPage = new MyPage(client);
-            // myPage.setVisible(true);
+            myPage.initDisplay();
         }
         // Main 내 이벤트 발생
         else if (obj == jbtn_firChan) {
@@ -215,21 +195,17 @@ public class Main implements ActionListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-
     }
 }

@@ -1,16 +1,18 @@
 package banana_project.client.login;
 
 import java.awt.Color;
+
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.UIManager;
-import javax.swing.border.LineBorder;
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
+import banana_project.server.thread.Protocol;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.Pattern;
@@ -20,7 +22,6 @@ public class PwFindDialog extends JDialog implements ActionListener {
    * 서버연결부 선언
    */
   PwFind pwFind = null;
-  String newPw = null; // 유저가 재설정한 비밀번호
 
   /**
    * 화면부 선언
@@ -63,30 +64,30 @@ public class PwFindDialog extends JDialog implements ActionListener {
     jp_pwReset.add(jtf_pwSecond);
     jp_pwReset.add(jbtn_pwReset);
     // Jtf 설정
-    jtf_pwFirst.setBounds(75, 90, 250, 45);
-    jtf_pwSecond.setBounds(75, 190, 250, 45);
-    jtf_pwFirst.setBorder(new LineBorder(Color.white, 8));
-    jtf_pwSecond.setBorder(new LineBorder(Color.white, 8));
+    jtf_pwFirst.setBounds(50, 90, 235, 45);
+    jtf_pwSecond.setBounds(50, 190, 235, 45);
+    jtf_pwFirst.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_pwSecond.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     // 비밀번호 재설정 버튼
     jbtn_pwReset.setBorderPainted(false);
     jbtn_pwReset.setBackground(new Color(130, 65, 60));
     jbtn_pwReset.setForeground(Color.white);
     jbtn_pwReset.setFont(setFontNJOp.b14);
-    jbtn_pwReset.setBounds(110, 265, 180, 45);
+    jbtn_pwReset.setBounds(85, 270, 160, 45);
     // Jlb 설정
     jlb_pwFirst.setForeground(new Color(135, 90, 75));
     jlb_pwSecond.setForeground(new Color(135, 90, 75));
     jlb_pwFirst.setFont(setFontNJOp.b12);
     jlb_pwSecond.setFont(setFontNJOp.b12);
-    jlb_pwFirst.setBounds(75, 50, 90, 45);
-    jlb_pwSecond.setBounds(75, 150, 120, 45);
+    jlb_pwFirst.setBounds(50, 50, 90, 45);
+    jlb_pwSecond.setBounds(50, 150, 120, 45);
     // Jp 설정
     jp_pwReset.setBackground(new Color(255, 230, 120));
     // JDg 설정
     this.setTitle("비밀번호 재설정");
     this.setIconImage(setImage.img_title.getImage()); // 타이틀창 이미지
     this.setContentPane(jp_pwReset);
-    this.setSize(400, 400);
+    this.setSize(350, 400);
     this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     this.setLocationRelativeTo(pwFind.client);
     this.setResizable(false);
@@ -101,7 +102,7 @@ public class PwFindDialog extends JDialog implements ActionListener {
     Object obj = e.getSource();
     // 비밀번호 재설정 버튼을 눌렀을 때
     if (obj == jbtn_pwReset || obj == jtf_pwFirst || obj == jtf_pwSecond) {
-      newPw = jtf_pwFirst.getText();
+      String newPw = jtf_pwFirst.getText();
       String rePw = jtf_pwSecond.getText();
       // 비밀번호 정규식
       String pwCheck = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$"; // 비밀번호 형식(8~16자 숫자,영문자포함)
@@ -115,7 +116,7 @@ public class PwFindDialog extends JDialog implements ActionListener {
         JOptionPane.showMessageDialog(this, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "로그인",
             JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
-      // 비밀번호1,2가 틀릴 경우
+      // 비밀번호1,2가 다를 경우
       else if (!newPw.equals(rePw)) {
         JOptionPane.showMessageDialog(this, "비밀번호가 일치하지 않습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
             setImage.img_notFound);

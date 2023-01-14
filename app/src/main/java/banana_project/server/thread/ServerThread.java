@@ -89,18 +89,15 @@ public class ServerThread extends Thread {
         }
         server.jta_log.append("Protocol: " + protocol + "\n");
         switch (protocol) {
-          // 클라이언트 시작
+          // 클라이언트 시작 100#아이디#비밀번호
           case Protocol.CLIENT_START: {
             String userId = st.nextToken();
             String userPw = st.nextToken();
             // DB와 같은지 체크
             server.jta_log.append("DB 체크 시작" + "\n");
-
-            Map<String, Object> resultMap = memberLogic.loginUser(UserVO.builder().user_id(userId).user_pw(userPw).build());
-            int result = (Integer)resultMap.get("result");
-            // for(String key : resultMap.keySet()){
-            //   String value = String.valueOf(resultMap.get(key));
-            // }
+            Map<String, Object> resultMap = memberLogic
+                .loginUser(UserVO.builder().user_id(userId).user_pw(userPw).build());
+            int result = (Integer) resultMap.get("result");
             server.jta_log.append("Result: " + result + "\n");
             switch (result) {
               // 로그인 성공 -> 아이디
@@ -126,18 +123,48 @@ public class ServerThread extends Thread {
             }
           }
             break;
-          // 회원가입 시작
+          // 아이디 중복확인
+          // case Protocol.MAIL_CHK: {
+          //   String userId = st.nextToken();
+          // }
+          //   break;
+          // 닉네임 중복확인
+          // case Protocol.NICK_CHK: {
+          //   String userNick = st.nextToken();
+          // }
+          //   break;
+          // 회원가입 시작 200#아이디#비밀번호#이름#핸드폰번호#닉네임
           case Protocol.SIGN_UP: {
             String userId = st.nextToken();
             String userPw = st.nextToken();
             String userName = st.nextToken();
             String userHp = st.nextToken();
-            String nickName = st.nextToken();
-            // int result = memberLogic.loginUser(UserVO.builder().user_id(userId).user_pw(userPw).user_name(userName)
-            //     .user_hp(userHp).user_nickname(nickName).build());
-            // switch (result) {
-            // }
+            String userNick = st.nextToken();
+            // DB등록 및 체크
+            server.jta_log.append("DB 체크 시작" + "\n");
+            int result = memberLogic.joinUser(UserVO.builder().user_id(userId).user_pw(userPw).user_name(userName)
+                .user_hp(userHp).user_nickname(userNick).build());
+            server.jta_log.append("Result: " + result + "\n");
+            switch (result) {
+              // 이미 존재하는 계정
+              case 0: {
+                oos.writeObject(Protocol.EXIST_ACNT);
+              }
+                break;
+              // 회원가입 성공
+              case 1: {
+                oos.writeObject(Protocol.SIGN_SUS
+                    + Protocol.seperator + userName);
+              }
+                break;
+              // 회원가입 실패
+              case -1: {
+                oos.writeObject(Protocol.SIGN_ERR);
+              }
+                break;
+            }
           }
+            break;
           // case Protocol.WHISPER: {
           // String nickName = st.nextToken();// 보내는 넘
           // // insert here - 받는 넘

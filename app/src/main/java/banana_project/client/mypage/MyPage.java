@@ -1,94 +1,77 @@
 package banana_project.client.mypage;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import javax.swing.ImageIcon;
+
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
+
+import banana_project.client.common.SetFontNJOp;
+import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
 import banana_project.client.main.Main;
 
-public class MyPage  implements ActionListener, FocusListener {
+public class MyPage implements ActionListener, FocusListener {
   /**
    * 서버 연결부 선언
    */
-  Socket socket = null;
-  ObjectOutputStream oos = null;// 말하기
-  ObjectInputStream ois = null;// 듣기
-  String userId = null; // 유저입력 아이디
-  String userPw = null; // 유저입력 비밀번호
-  // 이미지
-  String imgPath = "./app\\src\\main\\java\\banana_project\\image\\"; // 경로
-  ImageIcon img_main = new ImageIcon(imgPath + "logo_main.png"); // 메인 로고 이미지
-  ImageIcon img_title = new ImageIcon(imgPath + "logo_title.png"); // 타이틀창 이미지
-  ImageIcon img_info = new ImageIcon(imgPath + "mini_info.png"); // JOp 인포 이미지
-  ImageIcon img_notFound = new ImageIcon(imgPath + "mini_notFound.png"); // JOp 취소 이미지
-  ImageIcon img_delete = new ImageIcon(imgPath + "mini_delete.png");
-  ImageIcon img_confirm = new ImageIcon(imgPath + "mini_confirm.png");
-  // 선언부
+  Client client = null;// 회원가입 프레임
+  Main main = null; // 메인화면 프레임
+  boolean nickTnF = false;
+
+  /**
+   * 화면부 선언
+   */
+  // 이미지, 폰트, JOp 세팅 불러오기
+  SetImg setImage = new SetImg();
+  SetFontNJOp setFontNJOp = new SetFontNJOp();
+  // JP
+  JPanel jp_mypage = new JPanel(null);
+  // Jtf
   JTextField jtf_userName = new JTextField("이름"); // 이름
   JTextField jtf_userHP = new JTextField("핸드폰번호"); // 핸드폰번호
   JTextField jtf_userId = new JTextField("아이디(이메일)"); // 아이디
   JTextField jtf_Nickname = new JTextField("닉네임"); // 닉네임
+  JPasswordField jtf_userPw = new JPasswordField("password");
+  JPasswordField jtf_userPwcheck = new JPasswordField("password");
+  JTextField jtf_userStatMsg = new JTextField("상태메시지를 입력하세요.");
+  // Jbtn
   JButton jbtn_checkNick = new JButton("중복확인"); // 닉네임 중복체크버튼
-  JTextField jtf_userPw = new JTextField("비밀번호", 10); // 비밀번호
-  JTextField jtf_userPwcheck = new JTextField("비밀번호 확인", 10); // 비밀번호 확인
-  JTextField jtf_userStatMsg = new JTextField("상태메시지를 입력하세요."); // 상태메시지
-  JButton jbtn_resign = new JButton("탈퇴하기"); // 탈퇴버튼
-  JButton jbtn_save = new JButton("확인"); // 확인버튼
-  JPanel jp_mypage = new JPanel(null);
+  JButton jbtn_resign = new JButton("탈퇴하기"); // 탈퇴 버튼
+  JButton jbtn_save = new JButton("확인"); // 확인 버튼
+  // Jlb
   JLabel jlb_mypage = new JLabel("마이페이지");
-  Font p12 = new Font("맑은 고딕", Font.PLAIN, 12);
-  Font b12 = new Font("맑은 고딕", Font.BOLD, 12);
-  Font b14 = new Font("맑은 고딕", Font.BOLD, 14);
-  Font b25 = new Font("맑은 고딕", Font.BOLD, 25); // 볼드25폰트
-  Font b20 = new Font("맑은 고딕", Font.BOLD, 20); // 볼드20폰트
-  // Client client = new Client(); // 회원가입 프레임
-  Client client = null;// 회원가입 프레임
-  // Main main = new Main(); //메인화면 프레임
-  Main main = null; //메인화면 프레임
   // JDialog
   JDialog jd_resign = new JDialog();
   JPanel jp_resign = new JPanel(null);
-  JLabel jlb_resign = new JLabel("비밀번호 확인");
-  JTextField jtf_resign = new JTextField("비밀번호를 입력해주세요.");
+  JPasswordField jtf_resign = new JPasswordField();
   JButton jbtn_realresign = new JButton("탈퇴하기");
+  JLabel jlb_resign = new JLabel("비밀번호 확인");
 
-  // 생성자
-  public MyPage() {
-    initDisplay();
-  }
-
+  /**
+   * 생성자
+   * 
+   * @param client
+   */
   public MyPage(Client client) {
-    // this();
-    // client.initDisplay();
     this.client = client;
   }
-  public MyPage(Main main){
-    this();
-    this.main = main;
-  }
-  // MyPage(){
 
-  // }
-
-  // 화면출력부
+  /**
+   * 화면부 메소드
+   */
   public void initDisplay() {
-    // 액션
+    // 이벤트리스너
     jbtn_checkNick.addActionListener(this);
     jbtn_save.addActionListener(this);
     jbtn_resign.addActionListener(this);
@@ -100,142 +83,169 @@ public class MyPage  implements ActionListener, FocusListener {
     jtf_userPwcheck.addFocusListener(this);
     jtf_userStatMsg.addActionListener(this);
     jtf_userStatMsg.addFocusListener(this);
-    // jdalog 액션
+    // jdalog 이벤트리스너
     jtf_resign.addFocusListener(this);
     jtf_resign.addActionListener(this);
     jbtn_realresign.addActionListener(this);
-    //
-    jp_mypage.add("Center", jtf_userName);
-    jtf_userName.setBounds(95, 100, 180, 40);
+    // 패널에 추가
+    jp_mypage.add(jtf_userName);
+    jp_mypage.add(jtf_userHP);
+    jp_mypage.add(jtf_userId);
+    jp_mypage.add(jtf_Nickname);
+    jp_mypage.add(jtf_userPw);
+    jp_mypage.add(jtf_userPwcheck);
+    jp_mypage.add(jtf_userStatMsg);
+    jp_mypage.add(jbtn_checkNick);
+    jp_mypage.add(jbtn_resign);
+    jp_mypage.add(jbtn_save);
+    jp_mypage.add(jlb_mypage);
+    // Jtf 설정
     jtf_userName.setForeground(Color.GRAY);
-    jtf_userName.setEditable(false);
-    jp_mypage.add("Center", jtf_userHP);
-    jtf_userHP.setBounds(95, 150, 180, 40);
     jtf_userHP.setForeground(Color.GRAY);
-    jtf_userHP.setEditable(false);
-    jp_mypage.add("Center", jtf_userId);
-    jtf_userId.setBounds(95, 200, 180, 40);
     jtf_userId.setForeground(Color.GRAY);
-    jtf_userId.setEditable(false);
-    jp_mypage.add("Center", jtf_Nickname);
-    jtf_Nickname.setBounds(95, 250, 180, 40);
-    jtf_Nickname.setBorder(new LineBorder(Color.white, 8));
     jtf_Nickname.setForeground(Color.GRAY);
-    jp_mypage.add("Center", jbtn_checkNick);
-    jbtn_checkNick.setBounds(280, 250, 95, 40);
+    jtf_userPw.setForeground(Color.lightGray);
+    jtf_userPwcheck.setForeground(Color.lightGray);
+    jtf_userStatMsg.setForeground(Color.GRAY);
+    jtf_userName.setBounds(95, 100, 180, 40);
+    jtf_userHP.setBounds(95, 150, 180, 40);
+    jtf_userId.setBounds(95, 200, 180, 40);
+    jtf_Nickname.setBounds(95, 250, 180, 40);
+    jtf_userPw.setBounds(95, 300, 180, 40);
+    jtf_userPwcheck.setBounds(95, 350, 180, 40);
+    jtf_userStatMsg.setBounds(95, 400, 180, 40);
+    jtf_userName.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_userHP.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_userId.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_Nickname.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_userPw.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_userPwcheck.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_userStatMsg.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    jtf_userName.setEditable(false);
+    jtf_userHP.setEditable(false);
+    jtf_userId.setEditable(false);
+    // 닉네임 중복확인 버튼 설정
     jbtn_checkNick.setBorderPainted(false);
     jbtn_checkNick.setBackground(new Color(130, 65, 60));
     jbtn_checkNick.setForeground(Color.WHITE);
-    jbtn_checkNick.setFont(b14);
-    jp_mypage.add("Center", jtf_userPw);
-    jtf_userPw.setBounds(95, 300, 180, 40);
-    jtf_userPw.setBorder(new LineBorder(Color.white, 8));
-    jtf_userPw.setForeground(Color.GRAY);
-    jp_mypage.add("Center", jtf_userPwcheck);
-    jtf_userPwcheck.setBounds(95, 350, 180, 40);
-    jtf_userPwcheck.setBorder(new LineBorder(Color.white, 8));
-    jtf_userPwcheck.setForeground(Color.GRAY);
-    jp_mypage.add(jtf_userStatMsg);
-    jtf_userStatMsg.setBounds(95, 400, 180, 40);
-    jtf_userStatMsg.setBorder(new LineBorder(Color.white, 8));
-    jtf_userStatMsg.setForeground(Color.GRAY);
-    jp_mypage.add(jbtn_resign);
-    jbtn_resign.setBounds(75, 470, 100, 40);
+    jbtn_checkNick.setFont(setFontNJOp.b14);
+    jbtn_checkNick.setBounds(280, 250, 95, 40);
+    // 탈퇴하기 버튼 설정
     jbtn_resign.setBorderPainted(false);
     jbtn_resign.setBackground(new Color(130, 65, 60));
     jbtn_resign.setForeground(Color.WHITE);
-    jbtn_resign.setFont(b14);
-    jp_mypage.add(jbtn_save);
-    jbtn_save.setBounds(200, 470, 100, 40);
+    jbtn_resign.setFont(setFontNJOp.b14);
+    jbtn_resign.setBounds(75, 470, 100, 40);
+    // 확인 버튼 설정
     jbtn_save.setBorderPainted(false);
     jbtn_save.setBackground(new Color(130, 65, 60));
     jbtn_save.setForeground(Color.WHITE);
-    jbtn_save.setFont(b14);
-    jp_mypage.setBackground(new Color(255, 230, 120));
-    jp_mypage.add(jlb_mypage);
-    jlb_mypage.setFont(b25);
+    jbtn_save.setFont(setFontNJOp.b14);
+    jbtn_save.setBounds(200, 470, 100, 40);
+    // Jlb 설정
+    jlb_mypage.setFont(setFontNJOp.b25);
     jlb_mypage.setBounds(20, 35, 150, 45);
-    // this.setTitle("마이페이지");
-    // this.setIconImage(img_title.getImage());
-    // this.setBackground(new Color(255, 230, 120));
-    // this.setVisible(false);
-    // this.setSize(400, 600);
-    // this.setLocationRelativeTo(null);
-    // this.setResizable(false);
-    // this.add(jp_mypage);
+    // JP 설정
+    jp_mypage.setBackground(new Color(255, 230, 120));
+    // JF 설정
     client.setTitle("마이페이지");
-    client.setIconImage(img_title.getImage());
-    // client.setBackground(new Color(255, 230, 120));
+    client.setContentPane(jp_mypage);
     client.setVisible(true);
-    client.setSize(400, 600); //지워도 되는 것
-    client.setLocationRelativeTo(null);
-    client.setDefaultCloseOperation(client.EXIT_ON_CLOSE); //지워도 되는 것
-    // client.setResizable(false);
-    client.add(jp_mypage);
-    client.revalidate();
-    
-    // JOp 설정
-    UIManager UI = new UIManager();
-    UI.put("OptionPane.background", new Color(255, 230, 120));
-    UI.put("Panel.background", new Color(255, 230, 120));
-    UI.put("OptionPane.messageFont", b12);
-    UI.put("Button.background", new Color(130, 65, 60));
-    UI.put("Button.foreground", Color.white);
-    UI.put("Button.font", b12);
-    // jd_resign
-    jp_resign.setBackground(new Color(255, 230, 120));
-    jp_resign.add(jlb_resign);
-    jlb_resign.setBounds(100, 100, 150, 30);
-    jlb_resign.setFont(b20);
+
+    // Jdg_resign 설정
+    // 패널에 추가
     jp_resign.add(jtf_resign);
-    jtf_resign.setBounds(70, 150, 200, 40);
-    jtf_resign.setBorder(new LineBorder(Color.white, 8));
-    jtf_resign.setForeground(Color.GRAY);
     jp_resign.add(jbtn_realresign);
+    jp_resign.add(jlb_resign);
+    // Jtf 설정
+    jlb_resign.setBounds(100, 100, 150, 30);
+    jlb_resign.setFont(setFontNJOp.b20);
+    jtf_resign.setBounds(70, 150, 200, 40);
+    jtf_resign.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     jbtn_realresign.setBounds(120, 220, 100, 40);
     jbtn_realresign.setBorderPainted(false);
     jbtn_realresign.setBackground(new Color(130, 65, 60));
     jbtn_realresign.setForeground(Color.WHITE);
-    jbtn_realresign.setFont(b14);
+    jbtn_realresign.setFont(setFontNJOp.b14);
+    // JP 설정
+    jp_resign.setBackground(new Color(255, 230, 120));
+    // Jdg 설정
+    jd_resign.setTitle("회원탈퇴");
+    jd_resign.setIconImage(setImage.img_title.getImage());
     jd_resign.setContentPane(jp_resign);
     jd_resign.setSize(350, 400);
-    jd_resign.setTitle("탈퇴하기");
-    jd_resign.setIconImage(img_delete.getImage());
+    jd_resign.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    jd_resign.setLocationRelativeTo(client);
+    jd_resign.setResizable(false);
     jd_resign.setVisible(false);
-    jd_resign.setLocationRelativeTo(null);
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
     Object obj = e.getSource();
-    //중복확인 버튼 눌렀을 때
-    // 탈퇴하기 버튼을 눌렀을 때
-    if (obj == jbtn_resign) {
-      jd_resign.setVisible(true);
+    // 중복확인 버튼 눌렀을 때
+    if (obj == jbtn_checkNick) {
+      String userNick = jtf_Nickname.getText();
+      // try {
+      // client.oos.writeObject(Protocol.NICK_CHK
+      // + Protocol.seperator + userNick);
+      // } catch (IOException e) {
+      // e.printStackTrace();
+      // }
+      nickTnF = true;
+      JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "마이페이지", JOptionPane.WARNING_MESSAGE,
+          setImage.img_confirm);
     }
     // 확인버튼을 눌렀을 때
-    if(obj == jbtn_save){
-      JOptionPane.showMessageDialog(client, "변경이 완료되었습니다.","수정",JOptionPane.INFORMATION_MESSAGE, img_confirm);
-      // this.dispose();
-      main.initDisplay();
+    if (obj == jbtn_save) {
+      String userNick = jtf_Nickname.getText();
+      String pwFirst = jtf_userPw.getText();
+      String pwSecond = jtf_userPwcheck.getText();
+      String message = jtf_userStatMsg.getText();
+      if (!nickTnF) {
+        JOptionPane.showMessageDialog(client, "닉네임 중복확인을 해주세요", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+            setImage.img_info);
+      }
+      // 비밀번호 1, 2가 다를 경우
+      else if (!pwFirst.equals(pwSecond)) {
+        JOptionPane.showMessageDialog(client, "비밀번호가 일치하지 않습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+            setImage.img_notFound);
+      } else if (!userNick.equals(obj) || !pwFirst.equals(obj) || !message.equals(obj)) {
+        // DB로 정보 업데이트
+        JOptionPane.showMessageDialog(client, "변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+            setImage.img_confirm);
+        client.setContentPane(client.main.jp_main);
+        client.setTitle("친구 목록");
+        client.revalidate();
+      } else {
+        client.setContentPane(client.main.jp_main);
+        client.setTitle("친구 목록");
+        client.revalidate();
+      }
     }
-    // jdialog 속 탈퇴하기 버튼 눌렀을 때
-    if (obj == jbtn_realresign) {
-      JOptionPane.showMessageDialog(client, "탈퇴가 완료되었습니다.", "탈퇴", JOptionPane.WARNING_MESSAGE, img_delete);
-      // this.dispose();
-      jd_resign.dispose();
-      // main.dispose();
-      client.initDisplay();
+    // 탈퇴하기 버튼을 눌렀을 때
+    else if (obj == jbtn_resign) {
+      jd_resign.setVisible(true);
+    }
+    // JDg 속 탈퇴하기 버튼 눌렀을 때
+    else if (obj == jbtn_realresign) {
+      if (jtf_resign.getText().equals(obj)) {
+        JOptionPane.showMessageDialog(jd_resign, "탈퇴가 완료되었습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
+            setImage.img_delete);
+        jd_resign.dispose();
+        client.setContentPane(client.jp_login);
+        client.setTitle("바나나톡");
+        client.revalidate();
+      } else {
+        JOptionPane.showMessageDialog(jd_resign, "비밀번호가 일치하지 않습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
+            setImage.img_notFound);
+      }
     }
   }
 
   @Override
   public void focusGained(FocusEvent e) {
     Object obj = e.getSource();
-    // 닉네임 클릭했을 때
-    if (obj == jtf_Nickname) {
-      jtf_Nickname.setText("");
-    }
     // 비밀번호 클릭했을 때
     if (obj == jtf_userPw) {
       jtf_userPw.setText("");
@@ -244,65 +254,36 @@ public class MyPage  implements ActionListener, FocusListener {
     if (obj == jtf_userPwcheck) {
       jtf_userPwcheck.setText("");
     }
-    // 상태메세지 클릭했을 때
-    if (obj == jtf_userStatMsg) {
-      jtf_userStatMsg.setText("");
-    }
-    // 탈퇴하기 비밀번호를 클릭했을 때
-    if (obj == jtf_resign) {
-      jtf_resign.setText("");
-    }
   }
 
   @Override
   public void focusLost(FocusEvent e) {
     Object obj = e.getSource();
-    // 닉네임 jtf를 공백으로 두고 벗어났을 때
-    if (obj == jtf_Nickname) {
-      if ("".equals(jtf_Nickname.getText())) {
-        jtf_Nickname.setForeground(Color.gray);
-        jtf_Nickname.setText("닉네임");
-      }
-    }
     // 비밀번호 jtf를 공백으로 두고 벗어났을 때
     if (obj == jtf_userPw) {
       if ("".equals(jtf_userPw.getText())) {
         jtf_userPw.setForeground(Color.GRAY);
-        jtf_userPw.setText("비밀번호");
+        jtf_userPw.setText("password");
       }
     }
     // 비밀번호 확인 jtf를 공백으로 두고 벗어났을 때
     if (obj == jtf_userPwcheck) {
       if ("".equals(jtf_userPwcheck.getText())) {
         jtf_userPwcheck.setForeground(Color.gray);
-        jtf_userPwcheck.setText("비밀번호 확인");
-      }
-    }
-    // 상태메세지 jtf를 공백으로 두고 벗어났을 때
-    if (obj == jtf_userStatMsg) {
-      if ("".equals(jtf_userStatMsg.getText())) {
-        jtf_userStatMsg.setForeground(Color.gray);
-        jtf_userStatMsg.setText("상태메시지를 입력하세요.");
-      }
-    }
-    // 탈퇴하기 비밀번호를 공백으로 두고 벗어났을 때
-    if (obj == jtf_resign) {
-      if ("".equals(jtf_resign.getText())) {
-        jtf_resign.setForeground(Color.GRAY);
-        jtf_resign.setText("비밀번호를 입력해주세요.");
+        jtf_userPwcheck.setText("password");
       }
     }
   }
 
-  // 메인
+  /**
+   * 테스트용메인
+   * 
+   * @param args
+   */
   public static void main(String[] args) {
     Client c = new Client();
-    // Main m = new Main();
     MyPage myPage = new MyPage(c);
+    c.initDisplay();
     myPage.initDisplay();
-    // MyPage myPage = new MyPage();
-    // new MyPage(m);
-    // myPage.initDisplay();
-  }// end of main
-
-}// end of class
+  }
+}

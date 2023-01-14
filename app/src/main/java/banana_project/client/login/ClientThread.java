@@ -7,6 +7,7 @@ import javax.swing.text.AttributeSet.ColorAttribute;
 
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
+import banana_project.client.join.MemJoin;
 import banana_project.server.thread.Protocol;
 import lombok.Builder.Default;
 
@@ -17,6 +18,7 @@ public class ClientThread extends Thread {
   Client client = null;
   // 테스트용 유저정보
   String userId = null;
+  String userName = null;
   String nickName = null;
 
   /**
@@ -63,6 +65,22 @@ public class ClientThread extends Thread {
           // 아이디 틀림(계정없음)
           case Protocol.WRONG_ID: {
             client.wrong_id();
+          }
+            break;
+          // 이미 존재하는 계정
+          case Protocol.EXIST_ACNT: {
+            client.memJoin.exist_acnt();
+          }
+            break;
+          // 회원가입 성공
+          case Protocol.SIGN_SUS: {
+            userName = st.nextToken();
+            client.memJoin.sign_sus(userName);
+          }
+            break;
+          // 회원가입 실패
+          case Protocol.SIGN_ERR: {
+            client.memJoin.sign_err();
           }
             break;
         }

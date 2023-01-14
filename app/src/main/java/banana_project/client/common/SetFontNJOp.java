@@ -9,6 +9,8 @@ public class SetFontNJOp {
     public static final Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통 12폰트
     public static final Font b12 = new Font("맑은 고딕", Font.BOLD, 12); // 볼드 12폰트
     public static final Font b14 = new Font("맑은 고딕", Font.BOLD, 14); // 볼드 14폰트
+    public static final Font b25 = new Font("맑은 고딕", Font.BOLD, 25); // 볼드25폰트
+    public static final Font b20 = new Font("맑은 고딕", Font.BOLD, 20); // 볼드20폰트
 
     // JOp 설정
     public static final Object opBack = new UIManager().put("OptionPane.background", new Color(255, 230, 120));

@@ -64,7 +64,6 @@ public class Server extends JFrame implements Runnable, ActionListener {
     boolean isStop = false;
     try {
       serverSocket = new ServerSocket(3000);
-      System.out.println("123");
       jta_log.append("Server Ready ...\n");
       while (!isStop) {
         socket = serverSocket.accept();
