@@ -125,14 +125,14 @@ public class ServerThread extends Thread {
             break;
           // 아이디 중복확인
           // case Protocol.MAIL_CHK: {
-          //   String userId = st.nextToken();
+          // String userId = st.nextToken();
           // }
-          //   break;
+          // break;
           // 닉네임 중복확인
           // case Protocol.NICK_CHK: {
-          //   String userNick = st.nextToken();
+          // String userNick = st.nextToken();
           // }
-          //   break;
+          // break;
           // 회원가입 시작 200#아이디#비밀번호#이름#핸드폰번호#닉네임
           case Protocol.SIGN_UP: {
             String userId = st.nextToken();

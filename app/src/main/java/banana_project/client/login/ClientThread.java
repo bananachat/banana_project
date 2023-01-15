@@ -16,10 +16,6 @@ public class ClientThread extends Thread {
    * 서버연결부 선언
    */
   Client client = null;
-  // 테스트용 유저정보
-  String userId = null;
-  String userName = null;
-  String nickName = null;
 
   /**
    * 생성자
@@ -48,7 +44,7 @@ public class ClientThread extends Thread {
         switch (protocol) {
           // 로그인 성공 -> 101#아이디
           case Protocol.LOGIN_S: {
-            userId = st.nextToken();
+            String userId = st.nextToken();
             client.login_s();
           }
             break;
@@ -74,7 +70,7 @@ public class ClientThread extends Thread {
             break;
           // 회원가입 성공
           case Protocol.SIGN_SUS: {
-            userName = st.nextToken();
+            String userName = st.nextToken();
             client.memJoin.sign_sus(userName);
           }
             break;
