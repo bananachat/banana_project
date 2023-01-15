@@ -34,6 +34,8 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   ObjectInputStream ois = null;// 듣기
   MemJoin memJoin = null;
   public Main main = null;
+  // 유저아이디
+  String userId = null;
 
   /**
    * 화면부 선언
@@ -179,7 +181,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     Object obj = e.getSource();
     // 로그인 버튼을 눌렀을 때
     if (obj == jbtn_login || obj == jtf_userId || obj == jtf_userPw) {
-      String userId = jtf_userId.getText();
+      userId = jtf_userId.getText();
       String userPw = jtf_userPw.getText();
       // 아이디 정규식
       String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식

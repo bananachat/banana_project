@@ -299,7 +299,7 @@ public class MyPage implements ActionListener, FocusListener {
       jd_resign.setVisible(true);
     }
     // JDg 속 탈퇴하기 버튼 눌렀을 때
-    else if (obj == jbtn_realresign) {
+    else if (obj == jbtn_realresign || obj == jtf_resignId || obj == jtf_resignPw) {
       String userId = jtf_resignId.getText();
       String userPw = jtf_resignPw.getText();
       // 아이디가 로그인 아이디와 다를경우
