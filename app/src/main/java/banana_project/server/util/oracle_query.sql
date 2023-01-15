@@ -12,7 +12,8 @@ CREATE TABLE TB_USER
     ins_date	    DATE	        DEFAULT	SYSDATE,
     upd_date	    DATE	        DEFAULT	SYSDATE,
     login_date	    DATE	        DEFAULT	SYSDATE,
-    salt            VARCHAR2(128)   NOT NULL
+    salt            VARCHAR2(128)   NOT NULL,
+    status          NUMBER(2)       DEFAULT 0   NOT NULL
 );
 COMMENT ON TABLE TB_USER IS '사용자 정보';
 COMMENT ON COLUMN TB_USER.user_id IS '사용자 ID(이메일)';
@@ -25,6 +26,7 @@ COMMENT ON COLUMN TB_USER.ins_date IS '가입 날짜 (예. 2022-12-26)';
 COMMENT ON COLUMN TB_USER.upd_date IS '계정 수정 날짜 (예. 2022-12-26)';
 COMMENT ON COLUMN TB_USER.login_date IS '로그인 시간 (예. 2022-12-26)';
 COMMENT ON COLUMN TB_USER.salt IS '비밀번호 암호화용 코드';
+COMMENT ON COLUMN TB_USER.status IS '회원 상태(탈퇴 구분)';
 
 
 CREATE TABLE TB_CHAT_LIST

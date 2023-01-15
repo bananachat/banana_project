@@ -7,7 +7,7 @@ public class Protocol {
     //          [로그인]           //
     public static final int CLIENT_START = 100;     // 클라이언트 시작
     public static final int LOGIN_S = 101;          // 로그인 성공
-    public static final int WRONG_ID = 102;         // 아이디가 틀림
+    public static final int WRONG_ID = 102;         // 존재하지 않는 아이디
     public static final int WRONG_PW = 103;         // 패스워드 틀림
     public static final int OVER_FAIL_CNT = 104;       // 비밀번호 실패 횟수 초과
 

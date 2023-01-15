@@ -93,27 +93,5 @@ public class LogLogic {
                     (sec < 10 ? "0" + sec : "" + sec);
         }
     }
-
-    /**
-     * 테스트용 메인 -> 삭제예정
-     * 로그 설정 방법
-     */
-    public static void main(String[] args) {
-        LogLogic logLogic = new LogLogic();
-        // 유저 정보 관리 / 채팅 로그 -> LOGVO 객체에 값을 세팅한 후에 writeLog(LOGVO)를 불러서 사용
-        // Thread.currentThread().getStackTrace()[1].getMethodName()로 현재 메소드 이름 가져올 수 있음
-        logLogic.writeLog(ConstantsLog.COMMON_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                new LogVO("2020-03-13", 200, "정보를 담은 VO", ""));
-        // 메소드 ENTER 메소드
-        // 각 메소드 시작 부분에 넣어줄 것
-        logLogic.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                new LogVO("2020-03-14", 300, "대충 회원가입 메소드()", "tomato"));
-        // 메소드 EXIT 메소드
-        // 각 메소드 종료 부분(return 전)에 넣어줄 것
-        logLogic.writeLog(ConstantsLog.EXIT_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                new LogVO("2020-03-15", 400, "친구 어쩌고 메소드()", "lemon"));
-        logLogic.writeLog(7, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                new LogVO("2020-03-15", 400, "회원 가입 메소드 이름()", "lemon"));
-    }
 }
 

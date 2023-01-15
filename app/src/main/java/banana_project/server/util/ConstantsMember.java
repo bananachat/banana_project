@@ -9,4 +9,7 @@ public class ConstantsMember {
     public static final int TYPE_HP = 3;
 
 
+    public static final int DELETE_ACCOUNT = 1;
+
+
 }
