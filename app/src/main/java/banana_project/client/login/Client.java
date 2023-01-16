@@ -32,10 +32,9 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   Socket socket = null;
   public ObjectOutputStream oos = null;// 말하기
   ObjectInputStream ois = null;// 듣기
+  ClientThread clientThread = null;
   MemJoin memJoin = null;
   public Main main = null;
-  // 유저아이디
-  String userId = null;
 
   /**
    * 화면부 선언
@@ -127,10 +126,11 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
    */
   public void init() {
     try {
+      // socket = new Socket("192.168.10.72", 3000);
       socket = new Socket("127.0.0.1", 3000);
       oos = new ObjectOutputStream(socket.getOutputStream()); // 말하기
       ois = new ObjectInputStream(socket.getInputStream()); // 듣기
-      ClientThread clientThread = new ClientThread(this); // 클라이언트 스레드와 연결
+      clientThread = new ClientThread(this); // 클라이언트 스레드와 연결
       clientThread.start(); // clientThread의 run() 호출
     } catch (Exception e) {
       System.out.println(e.toString());
@@ -140,13 +140,13 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   /**
    * 로그인성공
    */
-  public void login_s() {
+  public void login_s(String userId) {
     jtf_userId.setText("example@email.com");
     jtf_userPw.setText("password");
     jtf_userId.setForeground(Color.gray);
     jtf_userPw.setForeground(Color.lightGray);
     main = new Main(this);
-    main.initDisplay();
+    main.initDisplay(userId);
   }
 
   /**
@@ -181,7 +181,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     Object obj = e.getSource();
     // 로그인 버튼을 눌렀을 때
     if (obj == jbtn_login || obj == jtf_userId || obj == jtf_userPw) {
-      userId = jtf_userId.getText();
+      String userId = jtf_userId.getText();
       String userPw = jtf_userPw.getText();
       // 아이디 정규식
       String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식

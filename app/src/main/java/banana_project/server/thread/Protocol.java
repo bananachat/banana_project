@@ -17,7 +17,7 @@ public class Protocol {
     public static final int EXIST_MAIL=202;     	//이메일 중복 존재
     public static final int NICK_CHK=203;	        //닉네임 중복 체크
     public static final int EXIST_NICK=204;	        //닉네임 중복 존재
-    public static final int ACNT_CHK=205;	        //계정(이름, 핸드폰번호) 중복 체크
+    public static final int ACNT_CHK=205;	        //계정(핸드폰번호) 중복 체크
     public static final int EXIST_ACNT=206;     	//계정 중복 존재
     public static final int SIGN_SUS=207;	        //회원가입 성공
     public static final int SIGN_ERR=208;	        //회원가입 실패

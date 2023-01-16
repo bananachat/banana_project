@@ -3,6 +3,8 @@ package banana_project.client.main;
 import banana_project.client.common.*;
 import banana_project.client.login.Client;
 import banana_project.client.mypage.MyPage;
+import banana_project.server.logic.MemberLogic;
+import banana_project.server.vo.UserVO;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -19,6 +21,8 @@ public class Main implements ActionListener, MouseListener {
     FListDialog flDialog = null; // "친구 추가" 다이얼로그
     Client client = null;
     String logMsg = ""; // 로그 기록용
+    // 유저정보
+    String userId = null;
 
     /**
      * 화면부 선언
@@ -35,7 +39,7 @@ public class Main implements ActionListener, MouseListener {
     JButton jbtn_firChan = new JButton("친구 추가"); // "친구추가 | 새 채팅"으로 텍스트 변환
 
     // [CENTER]
-    JLabel jlb_secChan = new JLabel("친구 목록"); // "친구 목록 | 채팅 목록"으로 텍스트 변환
+    JLabel jlb_secChan = new JLabel("친구"); // "친구 목록 | 채팅 목록"으로 텍스트 변환
     JPanel jp_center = new JPanel(); // 리스트 출력
     JScrollPane jsp_display = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -59,7 +63,10 @@ public class Main implements ActionListener, MouseListener {
     }
 
     ////////////////////////// [화면 출력] //////////////////////////
-    public void initDisplay() {
+    public void initDisplay(String userId) {
+        this.userId = userId;
+        // 테스트용 아이디출력
+        System.out.println(userId);
         // [north]
         jbtn_myPage.addActionListener(this); // jbtn_myPage 설정
         jbtn_myPage.setBorderPainted(false);
@@ -80,19 +87,18 @@ public class Main implements ActionListener, MouseListener {
         // [center]
         jlb_secChan.setForeground(new Color(135, 90, 75));
         jlb_secChan.setFont(setFontNJOp.b12);
-        jlb_secChan.setBounds(25, 73, 200, 20);
+        jlb_secChan.setBounds(23, 73, 200, 20);
         jp_main.add(jlb_secChan);
 
         // 중앙 리스트 출력
         jsp_display.setBorder(new LineBorder(Color.white, 0));
-        jsp_display.setBounds(20, 95, 340, 390);
+        jsp_display.setBounds(20, 96, 340, 389);
         jsp_display.getVerticalScrollBar().setUnitIncrement(16);
 
         jl_list.addMouseListener(this);
         jl_list.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         jl_list.setFont(setFontNJOp.b16);
         jl_list.setForeground(new Color(135, 90, 75));
-
         jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
         jp_center.add(jl_list);
         jp_main.add(jsp_display);
@@ -148,9 +154,9 @@ public class Main implements ActionListener, MouseListener {
     ////////////////////////// [테스트용 메인메소드] //////////////////////////
     public static void main(String[] args) {
         Client c = new Client();
-        Main main = new Main(c);
+        Main m = new Main(c);
         c.initDisplay();
-        main.initDisplay();
+        m.initDisplay("테스트");
     } // end of main()
 
     ////////////////////////// [이벤트] //////////////////////////
@@ -183,7 +189,7 @@ public class Main implements ActionListener, MouseListener {
             System.out.println("jbtn_myPage(내 화면) 클릭");
             client.setTitle("친구 목록");
             jbtn_firChan.setText("친구 추가");
-            jlb_secChan.setText("친구 목록");
+            jlb_secChan.setText("친구");
             jsp_display.getVerticalScrollBar().setValue(0);
 
             // 활성화 버튼 색 변경
@@ -195,10 +201,11 @@ public class Main implements ActionListener, MouseListener {
         }
         // 채팅목록 버튼 클릭
         else if (obj == jbtn_chat) {
+            UserVO userVO = new UserVO();
             System.out.println("jbtn_chat(채팅방) 클릭");
             client.setTitle("채팅 목록");
             jbtn_firChan.setText("새 채팅");
-            jlb_secChan.setText("채팅 목록");
+            jlb_secChan.setText("채팅방");
             jsp_display.getVerticalScrollBar().setValue(0);
 
             // 활성화 버튼 색 변경

@@ -5,6 +5,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+
+import banana_project.client.common.SetFontNJOp;
+import banana_project.client.common.SetImg;
+import banana_project.client.login.Client;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,39 +21,34 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     ////////////////////////// [선언부] //////////////////////////
     Main main = null;
 
+    /**
+     * 화면부 선언
+     */
+    // 이미지, 폰트, JOp 세팅 불러오기
+    SetImg setImage = new SetImg();
+    SetFontNJOp setFontNJOp = new SetFontNJOp();
+    // JP
+    JPanel jp_fListDialog = new JPanel(null);
+
     // [NORTH]
-    JPanel jp_north = new JPanel();
-    JTextField jtf_search = new JTextField(28);
+    JTextField jtf_search = new JTextField("친구 이름를 입력하세요", 20);
     JButton jbtn_search = new JButton("검색");
 
     // [CENTER]
     JPanel jp_center = new JPanel();
     JScrollPane jsp_display = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
     // 친구리스트를 JList로
     DefaultListModel<String> dlm = new DefaultListModel<String>();
     JList<String> jl_list = null;
     Vector<String> copy_list = new Vector<>(); // 선택한 친구들 리스트
 
     // SOUTH
-    JPanel jp_south = new JPanel();
     JButton jbtn_add = new JButton("추가");
 
-    Font p12 = new Font("맑은 코딕", Font.PLAIN, 12); // 보통 12폰트
-    Font b12 = new Font("맑은 코딕", Font.BOLD, 12); // 볼드 12폰트
-    Font b14 = new Font("맑은 코딕", Font.BOLD, 14); // 볼드 14폰트
-
     ////////////////////////// [생성자] //////////////////////////
-    public FListDialog() {
-        // TEST -다이얼로그 자체 컴파일용
-        this.getContentPane().setBackground(new Color(255, 230, 120));
-        this.setSize(400, 300);
-        this.setLocation(850, 500);
-        this.setVisible(false);
-    }
-
     public FListDialog(Main main) {
-        this();
         this.main = main;
     }
 
@@ -59,7 +59,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
      * 친구리스트(JList) 생성
      */
     public void createList() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             dlm.addElement(Integer.toString(i));
         }
         jl_list = new JList(dlm);
@@ -75,39 +75,42 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
      */
     public void setDialog(String title, boolean isView) {
         // [North]
-        jp_north.setLayout(new BorderLayout());
-        jp_north.setBounds(30, 30, 340, 50);
-        jp_north.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
         jtf_search.addActionListener(this); // jtf_search : 친구 검색
         jtf_search.addFocusListener(this);
-        jtf_search.setForeground(Color.GRAY);
-        jtf_search.setText("친구 이름를 입력하세요");
         jtf_search.requestFocus(false);
-        jp_north.add("West", jtf_search);
+        jtf_search.setForeground(Color.GRAY);
+        jtf_search.setBounds(20, 20, 228, 35);
+        jtf_search.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        jp_fListDialog.add(jtf_search);
 
-        jbtn_search.setSize(50, 40); // jbtn_search : 친구 검색 버튼
+        jbtn_search.addActionListener(this);
+        jbtn_search.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jbtn_search.setBorderPainted(false);
         jbtn_search.setBackground(new Color(130, 65, 60));
         jbtn_search.setForeground(Color.WHITE);
-        jbtn_search.setFont(b12);
-        jbtn_search.addActionListener(this);
-        jp_north.add("East", jbtn_search);
+        jbtn_search.setFont(setFontNJOp.b12);
+        jbtn_search.setBounds(260, 20, 55, 35);
+        jp_fListDialog.add(jbtn_search);
 
         // [Center]
-        jsp_display.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        jsp_display.getVerticalScrollBar().setUnitIncrement(16);
-        jp_center.removeAll();
-
         // 친구 리스트 출력
+        jp_center.removeAll();
         createList();
-        jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
+
+        jsp_display.setBorder(new LineBorder(Color.white, 0));
+        jsp_display.setBounds(20, 75, 294, 225);
+        jsp_display.getVerticalScrollBar().setUnitIncrement(16);
 
         // 리스트로 출력
         // jl_list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION); // 단일
         // 선택 모드
         jl_list.addListSelectionListener(this);
+        jl_list.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        jl_list.setFont(setFontNJOp.b16);
+        jl_list.setForeground(new Color(135, 90, 75));
+        jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
         jp_center.add(jl_list);
+        jp_fListDialog.add(jsp_display);
 
         // 스크롤바 설정
         jsp_display.getVerticalScrollBar().setBackground(Color.white);
@@ -135,21 +138,22 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         });
 
         // [South]
-        jp_south.setLayout(new BorderLayout());
-        jp_south.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        jbtn_add.setSize(50, 40);
+        jbtn_add.addActionListener(this);
+        jbtn_add.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jbtn_add.setBorderPainted(false);
         jbtn_add.setBackground(new Color(130, 65, 60));
         jbtn_add.setForeground(Color.WHITE);
-        jbtn_add.setFont(b12);
-        jbtn_add.addActionListener(this);
-        jp_south.add("East", jbtn_add);
+        jbtn_add.setFont(setFontNJOp.b12);
+        jbtn_add.setBounds(258, 313, 55, 35);
+        jp_fListDialog.add(jbtn_add);
 
-        this.add(jp_north, BorderLayout.NORTH);
-        this.add(jsp_display, BorderLayout.CENTER);
-        this.add(jp_south, BorderLayout.SOUTH);
-        this.setResizable(false);
         this.setTitle(title);
+        this.setIconImage(setImage.img_title.getImage()); // 타이틀창 이미지
+        this.setContentPane(jp_fListDialog);
+        this.setSize(350, 400);
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.setLocationRelativeTo(main.client);
+        this.setResizable(false);
         this.setVisible(isView);
     }
 
@@ -264,5 +268,17 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 jtf_search.setText("친구 이름를 입력하세요");
             }
         }
+    }
+
+    /**
+     * 테스트용 메인
+     * 
+     * @param args
+     */
+    public static void main(String[] args) {
+        Client c = new Client();
+        Main m = new Main(c);
+        c.initDisplay();
+        m.initDisplay("test");
     }
 }
