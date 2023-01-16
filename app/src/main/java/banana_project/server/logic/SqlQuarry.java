@@ -22,11 +22,11 @@ public class SqlQuarry {
      * @param table         테이블 명
      * @param columns       컬럼명 배열
      * @param values        밸류값 배열
-     * @return result       -1 : 쿼리문 실패 / 1  : 레코드 1개 생성
+     * @return result       0 : 쿼리문 실패 / 1  : 레코드 1개 생성
      */
     public int quInsert(String table, String[] columns, String[] values) {
-        // 리턴값 기본 -1
-        int result = -1;
+        // 리턴값 기본 0
+        int result = 0;
 
         // 컬럼 파라미터 설정
         String column = "";
@@ -55,7 +55,7 @@ public class SqlQuarry {
             pstmt.setString(3, value);
 
             // 쿼리 동작 레코드 수
-            // 성공: 1 / 실패: -1
+            // 성공: 1 / 실패: 0
             result = pstmt.executeUpdate();
 
         } catch (SQLException se) {
@@ -83,11 +83,11 @@ public class SqlQuarry {
      * @param columns           해당컬럼 배열
      * @param chgValues         변경할값 배열
      * @param whereClause       조건절 (ex. user_name='홍길동' AND user_id='hong')
-     * @return result           -1 : 쿼리문 실패 / 1  : 레코드 1개 생성
+     * @return result           0 : 쿼리문 실패 / 1  : 레코드 1개 생성
      */
     public  int quUpdate(String table, String[] columns, String[] chgValues, String whereClause) {
-        // 리턴값 기본 -1
-        int result = -1;
+        // 리턴값 기본 0
+        int result = 0;
 
         // 컬럼 파라미터 설정
         String column = "";
@@ -116,7 +116,7 @@ public class SqlQuarry {
             pstmt.setString(4, whereClause);
 
             // 쿼리 동작 레코드 수
-            // 성공: 1 / 실패: -1
+            // 성공: 1 / 실패: 0
             result = pstmt.executeUpdate();
 
         } catch (SQLException se) {
@@ -141,11 +141,11 @@ public class SqlQuarry {
      *
      * @param table             테이블 명
      * @param whereClause       조건절 (ex. user_name='홍길동' AND user_id='hong')
-     * @return result           -1 : 쿼리문 실패 / 1  : 레코드 1개 생성
+     * @return result           0 : 쿼리문 실패 / 1  : 레코드 1개 생성
      */
     public int quDelete(String table, String whereClause) {
-        // 리턴값 기본 -1
-        int result = -1;
+        // 리턴값 기본 0
+        int result = 0;
 
         StringBuilder sql = new StringBuilder();
         sql.append("DELETE FROM ? WHERE ? ");
@@ -158,7 +158,7 @@ public class SqlQuarry {
             pstmt.setString(2, whereClause);
 
             // 쿼리 동작 레코드 수
-            // 성공: 1 / 실패: -1
+            // 성공: 1 / 실패: 0
             result = pstmt.executeUpdate();
 
         } catch (SQLException se) {
@@ -221,10 +221,12 @@ public class SqlQuarry {
 
         // 컬럼 파라미터 설정
         String column = "";
+        Map<String, Object> mCols = new HashMap<String, Object>();
         for (int i=0; i<columns.length-1; i++) {
             column += columns[i] + ", ";
+            mCols.put(columns[i], "");
         }
-        column = columns[columns.length-1];
+        mCols.put(columns[columns.length-1], "");
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ? FROM ? WHERE ? ");
