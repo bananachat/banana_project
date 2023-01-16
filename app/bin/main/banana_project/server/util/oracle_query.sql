@@ -32,11 +32,12 @@ COMMENT ON COLUMN TB_USER.status IS '회원 상태(탈퇴 구분)';
 CREATE TABLE TB_CHAT_LIST
 (
     chat_no	        NUMBER(32)	    PRIMARY KEY,
-    chat_title	    VARCHAR2(32)	DEFAULT	'새 채팅'  NOT NULL
+    chat_title	    VARCHAR2(512)	DEFAULT	'새 채팅'  NOT NULL
 );
 COMMENT ON TABLE TB_CHAT_LIST IS '채팅방 목록';
 COMMENT ON COLUMN TB_CHAT_LIST.chat_no IS '채팅방 번호; auto_increment';
 COMMENT ON COLUMN TB_CHAT_LIST.chat_title IS '채팅 타이틀(초대된 사람 이름)';
+ALTER TABLE TB_CHAT_LIST MODIFY (chat_title VARCHAR2(512));
 
 
 CREATE TABLE TB_CHAT_CONTENTS

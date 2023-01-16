@@ -80,12 +80,22 @@ public class ClientThread extends Thread {
             client.memJoin.exist_mail();
           }
             break;
-          // 이미 존재하는 닉네임
-          case Protocol.EXIST_NICK: {
-
+          // 사용가능한 닉네임
+          case Protocol.NICK_CHK: {
+            client.memJoin.nick_chk();
           }
             break;
-          // 이미 존재하는 계정
+          // 이미 존재하는 닉네임
+          case Protocol.EXIST_NICK: {
+            client.memJoin.exist_nick();
+          }
+            break;
+          // 사용 가능한 계정(핸드폰)
+          case Protocol.ACNT_CHK: {
+            client.memJoin.acnt_chk();
+          }
+            break;
+          // 이미 존재하는 계정(핸드폰 중복)
           case Protocol.EXIST_ACNT: {
             client.memJoin.exist_acnt();
           }

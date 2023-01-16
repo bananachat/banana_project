@@ -19,6 +19,10 @@ public class MemJoin implements ActionListener, FocusListener {
     * 서버 연결부 선언
     */
    Client client = null;
+   // 중복체크
+   boolean idTnF = false;
+   boolean nickTnF = false;
+   boolean hpTnF = false;
 
    /**
     * 화면부 선언
@@ -49,9 +53,6 @@ public class MemJoin implements ActionListener, FocusListener {
    JLabel jlb_pw = new JLabel("비밀번호");
    JLabel jlb_pwRe = new JLabel("비밀번호 확인");
    JLabel jlb_pwtxt = new JLabel("숫자, 영문자포함 8~16자리");
-   // 중복체크
-   boolean idTnF = false;
-   boolean nickTnF = false;
 
    /**
     * 생성자
@@ -181,14 +182,6 @@ public class MemJoin implements ActionListener, FocusListener {
       client.setVisible(true);
    }
 
-   // 단위테스트용
-   public static void main(String[] args) {
-      Client c = new Client();
-      MemJoin m = new MemJoin(c);
-      c.initDisplay();
-      m.initDisplay();
-   }
-
    /**
     * 사용 가능한 아이디 메소드
     */
@@ -202,15 +195,41 @@ public class MemJoin implements ActionListener, FocusListener {
     * 이미 존재하는 아이디 메소드
     */
    public void exist_mail() {
+      idTnF = false;
       JOptionPane.showMessageDialog(client, "이미 존재하는 아이디입니다.", "회원가입",
             JOptionPane.WARNING_MESSAGE, setImage.img_exist);
    }
 
    /**
-    * 이미 존재하는 계정 메소드
+    * 사용 가능한 닉네임 메소드
+    */
+   public void nick_chk() {
+      nickTnF = true;
+      JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "회원가입", JOptionPane.WARNING_MESSAGE,
+            setImage.img_confirm);
+   }
+
+   /**
+    * 이미 존재하는 닉네임 메소드
+    */
+   public void exist_nick() {
+      idTnF = false;
+      JOptionPane.showMessageDialog(client, "이미 존재하는 닉네임입니다.", "회원가입",
+            JOptionPane.WARNING_MESSAGE, setImage.img_exist);
+   }
+
+   /**
+    * 사용 가능한 계정(핸드폰번호) 메소드
+    */
+   public void acnt_chk() {
+      hpTnF = true;
+   }
+
+   /**
+    * 이미 존재하는 계정(핸드폰번호) 메소드
     */
    public void exist_acnt() {
-      JOptionPane.showMessageDialog(client, "이미 존재하는 계정입니다.\n 아이디찾기를 진행해주세요.", "회원가입", JOptionPane.ERROR_MESSAGE,
+      JOptionPane.showMessageDialog(client, "이미 등록된 핸드폰번호입니다.", "회원가입", JOptionPane.ERROR_MESSAGE,
             setImage.img_existAcnt);
    }
 
@@ -325,12 +344,20 @@ public class MemJoin implements ActionListener, FocusListener {
          // 그 외의 경우 회원가입 시도
          else {
             try {
-               client.oos.writeObject(Protocol.SIGN_UP
-                     + Protocol.seperator + userId
-                     + Protocol.seperator + userPw
-                     + Protocol.seperator + userName
-                     + Protocol.seperator + userHp
-                     + Protocol.seperator + userNick);
+               // 핸드폰번호 중복검사
+               if (!hpTnF) {
+                  client.oos.writeObject(Protocol.ACNT_CHK
+                        + Protocol.seperator + userHp);
+               }
+               // 모든게 확인되면 회원가입
+               else {
+                  client.oos.writeObject(Protocol.SIGN_UP
+                        + Protocol.seperator + userId
+                        + Protocol.seperator + userPw
+                        + Protocol.seperator + userName
+                        + Protocol.seperator + userHp
+                        + Protocol.seperator + userNick);
+               }
             } catch (IOException e) {
                e.printStackTrace();
             }
@@ -348,16 +375,13 @@ public class MemJoin implements ActionListener, FocusListener {
       }
       // 닉네임 중복확인 버튼을 눌렀을 때
       else if (obj == jbtn_checkNick) {
-         // String userNick = jtf_nickName.getText();
-         // try {
-         // client.oos.writeObject(Protocol.NICK_CHK
-         // + Protocol.seperator + userNick);
-         // } catch (IOException e) {
-         // e.printStackTrace();
-         // }
-         nickTnF = true;
-         JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "회원가입", JOptionPane.WARNING_MESSAGE,
-               setImage.img_confirm);
+         String userNick = jtf_nickName.getText();
+         try {
+            client.oos.writeObject(Protocol.NICK_CHK
+                  + Protocol.seperator + userNick);
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
       }
       // 돌아가기 버튼을 눌렀을 때
       else if (obj == jbtn_cancel) {
@@ -408,4 +432,15 @@ public class MemJoin implements ActionListener, FocusListener {
       }
    }
 
+   /**
+    * 단위테스트용 메인
+    * 
+    * @param args
+    */
+   public static void main(String[] args) {
+      Client c = new Client();
+      MemJoin m = new MemJoin(c);
+      c.initDisplay();
+      m.initDisplay();
+   }
 }

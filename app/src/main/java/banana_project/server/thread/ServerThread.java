@@ -155,12 +155,45 @@ public class ServerThread extends Thread {
             break;
           // 닉네임 중복확인 203#닉네임
           case Protocol.NICK_CHK: {
-            String wuserNick = st.nextToken();
+            String userNick = st.nextToken();
+            // DB와 같은지 체크
+            server.jta_log.append("DB 체크 시작" + "\n");
+            int result = memberLogic.checkDuplId(UserVO.builder().user_nickname(userNick).build());
+            server.jta_log.append("Result: " + result + "\n");
+            // 체크 결과 switch문
+            switch (result) {
+              // 닉네임 중복 아님
+              case 1: {
+                oos.writeObject(Protocol.NICK_CHK);
+              }
+                break;
+              // 닉네임 중복됨
+              case -1: {
+                oos.writeObject(Protocol.EXIST_NICK);
+              }
+                break;
+            }
           }
             break;
           // 계정(핸드폰번호) 중복확인 206#핸드폰번호
-          case Protocol.EXIST_ACNT: {
+          case Protocol.ACNT_CHK: {
             String userHp = st.nextToken();
+            server.jta_log.append("DB 체크 시작" + "\n");
+            int result = memberLogic.checkDuplId(UserVO.builder().user_hp(userHp).build());
+            server.jta_log.append("Result: " + result + "\n");
+            // 체크 결과 switch문
+            switch (result) {
+              // 핸드폰 중복 아님
+              case 1: {
+                oos.writeObject(Protocol.ACNT_CHK);
+              }
+                break;
+              // 핸드폰 중복됨
+              case -1: {
+                oos.writeObject(Protocol.EXIST_ACNT);
+              }
+                break;
+            }
           }
             break;
           // 회원가입 시작 200#아이디#비밀번호#이름#핸드폰번호#닉네임
@@ -176,11 +209,6 @@ public class ServerThread extends Thread {
                 .user_hp(userHp).user_nickname(userNick).build());
             server.jta_log.append("Result: " + result + "\n");
             switch (result) {
-              // 이미 존재하는 계정
-              case 0: {
-                oos.writeObject(Protocol.EXIST_ACNT);
-              }
-                break;
               // 회원가입 성공
               case 1: {
                 oos.writeObject(Protocol.SIGN_SUS
