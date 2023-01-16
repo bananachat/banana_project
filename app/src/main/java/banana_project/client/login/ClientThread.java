@@ -42,10 +42,13 @@ public class ClientThread extends Thread {
         }
         // 프로토콜 switch문 시작
         switch (protocol) {
+          /**
+           * Client 스레드
+           */
           // 로그인 성공 -> 101#아이디
           case Protocol.LOGIN_S: {
             String userId = st.nextToken();
-            client.login_s();
+            client.login_s(userId);
           }
             break;
           // 비밀번호 틀림
@@ -61,6 +64,25 @@ public class ClientThread extends Thread {
           // 아이디 틀림(계정없음)
           case Protocol.WRONG_ID: {
             client.wrong_id();
+          }
+            break;
+
+          /**
+           * MemJoin 스레드
+           */
+          // 사용가능한 아이디
+          case Protocol.MAIL_CHK: {
+            client.memJoin.mail_chk();
+          }
+            break;
+          // 이미 존재하는 아이디
+          case Protocol.EXIST_MAIL: {
+            client.memJoin.exist_mail();
+          }
+            break;
+          // 이미 존재하는 닉네임
+          case Protocol.EXIST_NICK: {
+
           }
             break;
           // 이미 존재하는 계정

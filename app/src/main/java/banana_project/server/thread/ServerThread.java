@@ -89,6 +89,9 @@ public class ServerThread extends Thread {
         }
         server.jta_log.append("Protocol: " + protocol + "\n");
         switch (protocol) {
+          /**
+           * Client 스레드
+           */
           // 클라이언트 시작 100#아이디#비밀번호
           case Protocol.CLIENT_START: {
             String userId = st.nextToken();
@@ -99,6 +102,7 @@ public class ServerThread extends Thread {
                 .loginUser(UserVO.builder().user_id(userId).user_pw(userPw).build());
             int result = (Integer) resultMap.get("result");
             server.jta_log.append("Result: " + result + "\n");
+            // 체크 결과 switch문
             switch (result) {
               // 로그인 성공 -> 아이디
               case Protocol.LOGIN_S: {
@@ -123,16 +127,42 @@ public class ServerThread extends Thread {
             }
           }
             break;
-          // 아이디 중복확인
-          // case Protocol.MAIL_CHK: {
-          // String userId = st.nextToken();
-          // }
-          // break;
-          // 닉네임 중복확인
-          // case Protocol.NICK_CHK: {
-          // String userNick = st.nextToken();
-          // }
-          // break;
+
+          /**
+           * MemJoin 스레드
+           */
+          // 아이디 중복확인 201#이메일
+          case Protocol.MAIL_CHK: {
+            String userId = st.nextToken();
+            // DB와 같은지 체크
+            server.jta_log.append("DB 체크 시작" + "\n");
+            int result = memberLogic.checkDuplId(UserVO.builder().user_id(userId).build());
+            server.jta_log.append("Result: " + result + "\n");
+            // 체크 결과 switch문
+            switch (result) {
+              // 아이디 중복 아님
+              case 1: {
+                oos.writeObject(Protocol.MAIL_CHK);
+              }
+                break;
+              // 아이디 중복됨
+              case -1: {
+                oos.writeObject(Protocol.EXIST_MAIL);
+              }
+                break;
+            }
+          }
+            break;
+          // 닉네임 중복확인 203#닉네임
+          case Protocol.NICK_CHK: {
+            String wuserNick = st.nextToken();
+          }
+            break;
+          // 계정(핸드폰번호) 중복확인 206#핸드폰번호
+          case Protocol.EXIST_ACNT: {
+            String userHp = st.nextToken();
+          }
+            break;
           // 회원가입 시작 200#아이디#비밀번호#이름#핸드폰번호#닉네임
           case Protocol.SIGN_UP: {
             String userId = st.nextToken();

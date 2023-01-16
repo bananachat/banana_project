@@ -71,7 +71,6 @@ public class MemJoin implements ActionListener, FocusListener {
       jbtn_cancel.addActionListener(this);
       jbtn_checkId.addActionListener(this);
       jbtn_checkNick.addActionListener(this);
-      jbtn_main.addActionListener(this);
       jtf_userName.addActionListener(this);
       jtf_userId.addActionListener(this);
       jtf_userHp.addActionListener(this);
@@ -188,6 +187,23 @@ public class MemJoin implements ActionListener, FocusListener {
       MemJoin m = new MemJoin(c);
       c.initDisplay();
       m.initDisplay();
+   }
+
+   /**
+    * 사용 가능한 아이디 메소드
+    */
+   public void mail_chk() {
+      idTnF = true;
+      JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "회원가입",
+            JOptionPane.WARNING_MESSAGE, setImage.img_confirm);
+   }
+
+   /**
+    * 이미 존재하는 아이디 메소드
+    */
+   public void exist_mail() {
+      JOptionPane.showMessageDialog(client, "이미 존재하는 아이디입니다.", "회원가입",
+            JOptionPane.WARNING_MESSAGE, setImage.img_exist);
    }
 
    /**
@@ -322,16 +338,13 @@ public class MemJoin implements ActionListener, FocusListener {
       }
       // 아이디 중복확인 버튼을 눌렀을 때
       else if (obj == jbtn_checkId) {
-         // String userId = jtf_userId.getText();
-         // try {
-         // client.oos.writeObject(Protocol.MAIL_CHK
-         // + Protocol.seperator + userId);
-         // } catch (IOException e) {
-         // e.printStackTrace();
-         // }
-         idTnF = true;
-         JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "회원가입", JOptionPane.WARNING_MESSAGE,
-               setImage.img_confirm);
+         String userId = jtf_userId.getText();
+         try {
+            client.oos.writeObject(Protocol.MAIL_CHK
+                  + Protocol.seperator + userId);
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
       }
       // 닉네임 중복확인 버튼을 눌렀을 때
       else if (obj == jbtn_checkNick) {
@@ -394,4 +407,5 @@ public class MemJoin implements ActionListener, FocusListener {
          }
       }
    }
+
 }
