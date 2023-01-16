@@ -15,6 +15,8 @@ public class SetImg {
     public static final ImageIcon img_find = new ImageIcon(imgPath + "logo_find.png");
     // 회원가입 로고 이미지
     public static final ImageIcon img_join = new ImageIcon(imgPath + "logo_join.png");
+    //채팅방 바탕화면 이미지
+    public static final ImageIcon img_room_back = new ImageIcon(imgPath + "room_back.png");
 
     // JOption 아이콘
     // JOp 인포 이미지

@@ -2,6 +2,9 @@ package banana_project.client.room;
 
 import java.util.Calendar;
 import javax.swing.*;
+
+import banana_project.client.common.SetImg;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,15 +15,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import banana_project.client.main.Main;
+
+
 public class Pchat extends JFrame implements ActionListener {
     // 선언부
     private Socket socket = new Socket();
     private PrintWriter out;
     private BufferedReader in;
     // 배경이미지
-    String imgPath = "이미지주소";
-    ImageIcon iicon = new ImageIcon(imgPath + "bg.png");
+    SetImg setImage = new SetImg();
+    String imgPath = "imgPath = app\\src\\main\\java\\banana_project\\image\\";
+    ImageIcon iicon = new ImageIcon(imgPath + "room_back.png");
     Container con = this.getContentPane();
     // 채팅창
     JTextArea chatArea = new JTextArea();
@@ -28,7 +33,7 @@ public class Pchat extends JFrame implements ActionListener {
     JButton jbtn_send = new JButton("보내기");
     JButton jbtn_back = new JButton("이전");
     JPanel jp_center = new JPanel();
-    JPanel jp_south = new JPanel();
+    JPanel jp_south = new JPanel(null);
     JPanel jp_north = new JPanel();
     JPanel timepanel=new JPanel();
     JScrollPane jsp = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -89,7 +94,6 @@ public class Pchat extends JFrame implements ActionListener {
         chatArea.setEditable(false);
         // 상단 조정
         this.add("North",jp_north);
-        //jp_north.setLayout(null); 이거 하면 자꾸 다 사라져요...
         timepanel.setLayout(new FlowLayout());
         timepanel.add(timeLabel);
         jp_north.add(timepanel);
