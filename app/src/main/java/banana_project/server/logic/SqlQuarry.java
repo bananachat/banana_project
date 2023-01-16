@@ -6,9 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class SqlQuarry {
     // DB 연결 변수
@@ -20,13 +18,11 @@ public class SqlQuarry {
 
     /**
      * 오라클 INSERT 쿼리문
-     * -1 : 쿼리문 실패
-     * 1  : 레코드 1개 생성
      *
      * @param table         테이블 명
      * @param columns       컬럼명 배열
      * @param values        밸류값 배열
-     * @return result
+     * @return result       -1 : 쿼리문 실패 / 1  : 레코드 1개 생성
      */
     public int quInsert(String table, String[] columns, String[] values) {
         // 리턴값 기본 -1
@@ -82,14 +78,12 @@ public class SqlQuarry {
 
     /**
      * 오라클 UPDATE 쿼리문
-     * -1 : 쿼리문 실패
-     * 1  : 레코드 1개 생성
      *
      * @param table             테이블 명
-     * @param columns            해당컬럼 배열
-     * @param chgValues           변경할값 배열
+     * @param columns           해당컬럼 배열
+     * @param chgValues         변경할값 배열
      * @param whereClause       조건절 (ex. user_name='홍길동' AND user_id='hong')
-     * @return result
+     * @return result           -1 : 쿼리문 실패 / 1  : 레코드 1개 생성
      */
     public  int quUpdate(String table, String[] columns, String[] chgValues, String whereClause) {
         // 리턴값 기본 -1
@@ -144,12 +138,10 @@ public class SqlQuarry {
 
     /**
      * 오라클 DELETE 쿼리문
-     * -1 : 쿼리문 실패
-     * 1  : 레코드 1개 생성
      *
      * @param table             테이블 명
      * @param whereClause       조건절 (ex. user_name='홍길동' AND user_id='hong')
-     * @return result
+     * @return result           -1 : 쿼리문 실패 / 1  : 레코드 1개 생성
      */
     public int quDelete(String table, String whereClause) {
         // 리턴값 기본 -1
@@ -186,9 +178,41 @@ public class SqlQuarry {
     } // end of quDelete (DELETE문)
 
 
+    /**
+     * 오라클 SELECT 쿼리문 (결과유무)
+     *
+     * @param sql               쿼리문
+     * @return result           false: 쿼리문 실패 / true: 레코드 1개 생성
+     */
+    public boolean quSelect(String sql) {
+        boolean result = false;
+
+        try {
+            conn = dbMgr.getConnection();
+            pstmt = conn.prepareStatement(sql);
+
+            // 쿼리 동작 레코드 수
+            // 성공: true / 실패: false
+            result = pstmt.execute();
+
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // DB 사용한 자원 반납
+            try {
+                dbMgr.freeConnection(conn, pstmt);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return result;
+    } // end of quSelect (SELECT문 - 존재 유무)
+
 
     // TODO: select 메소드 작성 중 - 취소 가능성
-
     public List<Object> quSelect(String[] columns, String table, String whereClause) {
         // 리턴값
         List<Object> lResult = new ArrayList<>();
@@ -222,12 +246,14 @@ public class SqlQuarry {
 
 
             for (int i=0; i<columns.length; i++) {
-//                Vector<String> row+"i" = new Vector<String>();
+                List<Map> lrow = new ArrayList<Map>();
             }
 
             while (rs.next()) {
                 for (int i=0; i<columns.length; i++) {
-
+                    Map<String, String> mColumn = new HashMap<String, String>();
+                    mColumn.put("columns[i]", rs.getString(columns[i]));
+//                    lrow.add(mColumn);
                 }
             }
 
@@ -248,4 +274,5 @@ public class SqlQuarry {
 
         return lResult;
     } // end of quSelect (SELECT문)
+
 }
