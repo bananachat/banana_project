@@ -19,6 +19,7 @@ import java.util.Map;
 //채팅저장하기
 //채팅삭제
 
+
 public class ChatLogic {
     //로그출력용
     LogLogic ll =new LogLogic();
