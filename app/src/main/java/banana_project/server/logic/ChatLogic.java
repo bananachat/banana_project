@@ -6,7 +6,6 @@ import banana_project.server.util.DBConnectionMgr;
 import banana_project.server.vo.ChatContentsVO;
 import banana_project.server.vo.ChatLogVO;
 import banana_project.server.vo.LogVO;
-import com.sun.source.tree.TryTree;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,6 +32,11 @@ public class ChatLogic {
     ResultSet rs = null;
     public ChatLogic(){}
 
+    /**
+     * 채팅내용불러오기
+     * @param chatnum
+     * @return
+     */
     public List<ChatContentsVO> ChatCall(int chatnum){
         //리턴값
         List<ChatContentsVO> crs = new ArrayList<>();
@@ -42,7 +46,7 @@ public class ChatLogic {
 
         //로그작성
         ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
-            ,new LogVO(700, "Room number :"+chatnum, ""));
+            ,new LogVO(Protocol.CHAT_START, "Room number :"+chatnum, ""));////////유저아이디 어찌 가져올지??
         String sql= "select * from tb_chat_contents where chat_no=?";
 
         try{
@@ -65,6 +69,8 @@ public class ChatLogic {
             se.printStackTrace();
             System.out.println("SQLException :" + se.getMessage());
             System.out.println("쿼리문 : " + sql.toString());
+            ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
+                    ,new LogVO(Protocol.WRONG_NUM, "Wrong Room number :"+chatnum, ""));
         }finally{
             // DB 사용한 자원 반납
             try {
@@ -77,11 +83,17 @@ public class ChatLogic {
         return crs;
     }//end of ChatCall
 
-    public int insertChat(ChatContentsVO chatconvo) {//성공은 1, 실패는 0
+    /**
+     * 채팅내용 디비에 저장
+     * @param chatconvo
+     * @return
+     */
+    public int insertChat(ChatContentsVO chatconvo) { //성공은 1, 실패는 0
+        //리턴값 기본 -1
         int result= -1;
         //로그저장-프로토콜 Save_Chat : 707
         ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
-                ,new LogVO(707, "Room number :"+chatnum, ""));
+                ,new LogVO(Protocol.SAVE_CHAT, "Room number :"+chatconvo.getChat_no(), ""));
         String sql= "insert into TB_CHAT_CONTENTS (chat_date, chat_contents, user_id,chat_no)values(?,?,?,?)";
         try {
             con=dbMgr.getConnection();
@@ -93,17 +105,52 @@ public class ChatLogic {
             result=pst.executeUpdate();
         }catch(SQLException se) {
             se.printStackTrace();
+            System.out.println("SQLException :" + se.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
+            //대화 저장 실패 로그
             ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    new LogVO(Protocol.SIGN_ERR, chatconvo.toString(), chatconvo.getUser_id()));
-        } finally {
+                    new LogVO(Protocol.SAVE_FAIL, chatconvo.toString(), chatconvo.getUser_id()));
+        } finally {//사용반납
             try {
                 dbMgr.freeConnection(con, pst, rs);
             } catch (Exception e) {
                 e.printStackTrace();
-
+            }
+        }//end of finally
         return result;
     }//end of insertChat
+
+    //채팅내용삭제하고싶다...
+
+    /**
+     * 채팅내용삭제
+     * @param chatconvo
+     */
+    public void delChatContents(ChatContentsVO chatconvo) {
+        ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
+               ,new LogVO(Protocol.DEL_CHAT, "Room number :"+chatconvo.getChat_no(), ""));
+        //결과값 기본
+        int result= -1;
+        String sql= "delete from TB_CHAT_CONTENTS where chat_no=?";///이래도 되나요?
+        try{
+            con=dbMgr.getConnection();
+            pst=con.prepareStatement(sql);
+            pst.setInt(1,chatconvo.getChat_no());////은재고수님께질문
+            result=pst.executeUpdate();
+        }catch(SQLException se){
+            se.printStackTrace();
+            System.out.println("SQLException :" + se.getMessage());
+        }catch(Exception e) {
+            e.printStackTrace();
+        }finally {//사용반납
+            try {
+                dbMgr.freeConnection(con, pst, rs);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }//end of finally
+
+    }//end of delChat
 
 }

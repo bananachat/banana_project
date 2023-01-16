@@ -72,4 +72,8 @@ public class Protocol {
     public static final int	EXIT_MEM = 706;     	//채팅방에서 나감(채팅방 삭제했을 때)
     public static final int	SAVE_CHAT = 707;    	//대화저장
     public static final int	WRONG_NUM = 708;    	//잘못된 채팅방 번호
+    public static final int	SAVE_FAIL = 708;    	//대화저장실패
+
+
+
 }
