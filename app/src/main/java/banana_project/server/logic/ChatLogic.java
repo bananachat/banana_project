@@ -39,12 +39,10 @@ public class ChatLogic {
      * @param chatnum
      * @return
      */
-    public List<ChatContentsVO> ChatCall(int chatnum){
+    public List<ChatContentsVO> ChatCall(int chatnum){ //채팅방 넘버만 간단하게 받아오기
         //리턴값
-        List<ChatContentsVO> crs = new ArrayList<>();
-        ChatContentsVO ccvo=null;
-        //쿼리결과 기본 false
-        //        Boolean result = false;
+        List<ChatContentsVO> crs = new ArrayList<>();//chatcontentsVO를 리스트에 넣어줄려고
+        ChatContentsVO ccvo=null; //sql로 디비에 있는거 받아서 담아주기
 
         //로그작성
         ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
@@ -54,7 +52,7 @@ public class ChatLogic {
         try{
             con=dbMgr.getConnection();
             pst=con.prepareStatement(sql);
-//            pst.setString(1,chatnum);?????????????????????????????
+            pst.setInt(1,chatnum);
             rs=pst.executeQuery();
             while(rs.next()){//대기하다가 오면 값넣어주기
                 String chat_date=rs.getString("chat_date");
@@ -96,14 +94,14 @@ public class ChatLogic {
         //로그저장-프로토콜 Save_Chat : 707
         ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
                 ,new LogVO(Protocol.SAVE_CHAT, "Room number :"+chatconvo.getChat_no(), ""));
-        String sql= "insert into TB_CHAT_CONTENTS (chat_date, chat_contents, user_id,chat_no)values(?,?,?,?)";
+        String sql= "insert into TB_CHAT_CONTENTS ( chat_contents, user_id,chat_no)values(?,?,?)";
         try {
             con=dbMgr.getConnection();
             pst=con.prepareStatement(sql);
-            pst.setString(1,chatconvo.getChat_date());
-            pst.setString(2,chatconvo.getChat_content());
-            pst.setString(3,chatconvo.getUser_id());
-            pst.setInt(4,chatconvo.getChat_no());
+//            pst.setString(1,chatconvo.getChat_date());
+            pst.setString(1,chatconvo.getChat_content());
+            pst.setString(2,chatconvo.getUser_id());
+            pst.setInt(3,chatconvo.getChat_no());
             result=pst.executeUpdate();// 실행문에 따라서 성공하면 1건만 바꾸니까 1이 들어올것이다.
         }catch(SQLException se) {
             se.printStackTrace();
@@ -128,9 +126,11 @@ public class ChatLogic {
 
     /**
      * 채팅방 나가기
+     * 결과가 성공하면 0
+     * 플래그는 1이 들어간다.
      * @param chatlistvo
      */
-    public void delChatContents(ChatUserListVO chatlistvo) {
+    public int delChatContents(ChatUserListVO chatlistvo) {
         ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
                ,new LogVO(Protocol.DEL_CHAT, "Room number :"+chatlistvo.getChat_no(), chatlistvo.getUser_id()));
         //결과값 기본
@@ -157,7 +157,25 @@ public class ChatLogic {
                 e.printStackTrace();
             }
         }//end of finally
-
+        return result;
     }//end of delChat
 
-}
+    public static void main(String[] args) {
+        ChatLogic cl=new ChatLogic();
+        ChatContentsVO ccvo=new ChatContentsVO();
+        ChatUserListVO cuser=new ChatUserListVO();
+        ccvo.setChat_no(11);
+        ccvo.setUser_id("test@domail.com");
+        ccvo.setChat_content("얘들아 우리 점심 머먹을까?^^");
+        cuser.setChat_no(11);
+        cuser.setUser_id("test@domail.com");
+//        int result=cl.insertChat(ccvo);
+//        List<ChatContentsVO> result =cl.ChatCall(11);
+        int result=cl.delChatContents(cuser);
+        System.out.println(result);
+
+
+    }
+
+    }
+
