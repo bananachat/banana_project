@@ -48,6 +48,7 @@ public class LogLogic {
      * 로그 파일 생성
      *
      * @param log_type 로그 타입
+     * @param methodName 해당 메소드의 이름
      * @param logVO 로그 정보를 담은 VO
      */
     public void writeLog(int log_type, String methodName, LogVO logVO) {

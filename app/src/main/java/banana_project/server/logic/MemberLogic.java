@@ -303,6 +303,7 @@ public class MemberLogic {
                         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                                 new LogVO(Protocol.WRONG_PW, uservo.toString(), uservo.getUser_id()));
                         resultMap.put("result", Protocol.WRONG_PW);
+                        uservo.setFail_cnt(fail_cnt);
                         updateFailCnt(uservo);
                         return resultMap;
                     }
@@ -440,7 +441,7 @@ public class MemberLogic {
         uv.setUser_id("test3@gmail.com");
         uv.setUser_pw("password");
         uv.setUser_name("tname3");
-        uv.setUser_hp("0103");
+        uv.setUser_hp("010-3333-3333");
         uv.setUser_nickname("빨리끝내자3");
         int result = ml.joinUser(uv);
 //        int result = ml.updateUser(uv);
@@ -450,6 +451,6 @@ public class MemberLogic {
 //        System.out.println("결과값 : " + result);
 //        result = Integer.parseInt(ml.loginUser(uv).get("result").toString());
         System.out.println("결과값 : " + result);
-        System.out.println(ml.findUserId(uv));
+//        System.out.println(ml.findUserId(uv));
     }
 }
