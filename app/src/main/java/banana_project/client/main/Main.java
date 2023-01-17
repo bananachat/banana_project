@@ -47,7 +47,7 @@ public class Main implements ActionListener, MouseListener {
 
     // 리스트를 JList 사용
     DefaultListModel<String> dlm = new DefaultListModel<String>();
-    JList<String> jl_list = new JList<String>(dlm);
+    JList<String> jl_list = null;
 
     // [SOUTH]
     JButton jbtn_friends = new JButton("친구리스트");
@@ -57,6 +57,7 @@ public class Main implements ActionListener, MouseListener {
     public Main(Client client, String userId) {
         this.client = client;
         this.userId = userId;
+        jl_list = new JList<String>(dlm);
         // 사용자의 친구목록 불러오기 500#아이디
         try {
             client.oos.writeObject(Protocol.PRT_FRDLIST
@@ -68,17 +69,17 @@ public class Main implements ActionListener, MouseListener {
 
     ////////////////////////// [화면 출력] //////////////////////////
     public void initDisplay() {
-
         // [north]
-        jbtn_myPage.addActionListener(this); // jbtn_myPage 설정
+        // jbtn_myPage 설정
+        jbtn_myPage.addActionListener(this);
         jbtn_myPage.setBorderPainted(false);
         jbtn_myPage.setBackground(new Color(130, 65, 60));
         jbtn_myPage.setForeground(Color.WHITE);
         jbtn_myPage.setFont(setFontNJOp.b14);
         jbtn_myPage.setBounds(20, 20, 160, 45);
         jp_main.add(jbtn_myPage);
-
-        jbtn_firChan.addActionListener(this); // jbtn_firChan 설정
+        // jbtn_firChan 설정
+        jbtn_firChan.addActionListener(this);
         jbtn_firChan.setBorderPainted(false);
         jbtn_firChan.setBackground(new Color(130, 65, 60));
         jbtn_firChan.setForeground(Color.WHITE);
@@ -87,24 +88,22 @@ public class Main implements ActionListener, MouseListener {
         jp_main.add(jbtn_firChan);
 
         // [center]
+        // 친구|채팅 Jlb설정
         jlb_secChan.setForeground(new Color(135, 90, 75));
         jlb_secChan.setFont(setFontNJOp.b12);
         jlb_secChan.setBounds(23, 73, 200, 20);
         jp_main.add(jlb_secChan);
-
         // 중앙 리스트 출력
         jsp_display.setBorder(new LineBorder(Color.white, 0));
         jsp_display.setBounds(20, 96, 340, 389);
         jsp_display.getVerticalScrollBar().setUnitIncrement(16);
-
         jl_list.addMouseListener(this);
-        jl_list.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        jl_list.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         jl_list.setFont(setFontNJOp.b16);
         jl_list.setForeground(new Color(135, 90, 75));
         jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
         jp_center.add(jl_list);
         jp_main.add(jsp_display);
-
         // 스크롤바 설정
         jsp_display.getVerticalScrollBar().setBackground(Color.white);
         jsp_display.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
@@ -131,15 +130,16 @@ public class Main implements ActionListener, MouseListener {
         });
 
         // [south]
-        jbtn_friends.addActionListener(this); // jbtn_friends 설정
+        // jbtn_friends 설정
+        jbtn_friends.addActionListener(this);
         jbtn_friends.setBorderPainted(false);
         jbtn_friends.setForeground(new Color(130, 65, 60));
         jbtn_friends.setBackground(Color.white);
         jbtn_friends.setFont(setFontNJOp.b14);
         jbtn_friends.setBounds(20, 500, 160, 45);
         jp_main.add(jbtn_friends);
-
-        jbtn_chat.addActionListener(this); // jbtn_chat 설정
+        // jbtn_chat 설정
+        jbtn_chat.addActionListener(this);
         jbtn_chat.setBorderPainted(false);
         jbtn_chat.setBackground(new Color(130, 65, 60));
         jbtn_chat.setForeground(Color.WHITE);
@@ -153,14 +153,22 @@ public class Main implements ActionListener, MouseListener {
         client.setVisible(true);
     }
 
-    //친구가 없을때 메소드
+    // 친구가 없을때 메소드
     public void nf_frdlist() {
-        dlm.addElement("친구가 없습니다.");;
+        jl_list.setFont(setFontNJOp.b14);
+        dlm.removeAllElements();
+        dlm.addElement("새로운 친구를 추가해보세요.");
+        jl_list.setEnabled(false);
     }
 
-    //친구가 있을때 메소드
-    public void prt_frdlist(String fList) {
-            dlm.addElement(fList);
+    // 친구가 있을때 메소드
+    public void prt_frdlist(Vector<String> fList) {
+        jl_list.setFont(setFontNJOp.b16);
+        jl_list.setEnabled(true);
+        dlm.removeAllElements();
+        for (int i = 0; i < fList.size(); i++) {
+            dlm.addElement(fList.get(i));
+        }
     }
 
     ////////////////////////// [이벤트] //////////////////////////
@@ -177,12 +185,14 @@ public class Main implements ActionListener, MouseListener {
         else if (obj == jbtn_firChan) {
             flDialog = new FListDialog(this);
             System.out.println("jbtn_firChan(" + jbtn_firChan.getText() + ") 클릭");
-
+            // 친구추가 버튼 클릭
             if ("친구 추가".equals(jbtn_firChan.getText())) {
                 System.out.println("친구추가 로직 시작...");
                 flDialog.setDialog(jbtn_firChan.getText(), true);
                 // TODO: 친구추가 로직
-            } else if ("새 채팅".equals(jbtn_firChan.getText())) {
+            }
+            // 새 채팅 버튼 클릭
+            else if ("새 채팅".equals(jbtn_firChan.getText())) {
                 System.out.println("새 채팅 로직 시작...");
                 flDialog.setDialog(jbtn_firChan.getText(), true);
                 // TODO: 새 채팅 로직
@@ -195,11 +205,16 @@ public class Main implements ActionListener, MouseListener {
             jbtn_firChan.setText("친구 추가");
             jlb_secChan.setText("친구");
             jsp_display.getVerticalScrollBar().setValue(0);
-
+            // 사용자의 친구목록 불러오기 500#아이디
+            try {
+                client.oos.writeObject(Protocol.PRT_FRDLIST
+                        + Protocol.seperator + userId);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
             // 활성화 버튼 색 변경
             jbtn_friends.setBackground(Color.white);
             jbtn_friends.setForeground(new Color(130, 65, 60));
-
             jbtn_chat.setBackground(new Color(130, 65, 60));
             jbtn_chat.setForeground(Color.WHITE);
         }
@@ -215,7 +230,6 @@ public class Main implements ActionListener, MouseListener {
             // 활성화 버튼 색 변경
             jbtn_chat.setBackground(Color.white);
             jbtn_chat.setForeground(new Color(130, 65, 60));
-
             jbtn_friends.setBackground(new Color(130, 65, 60));
             jbtn_friends.setForeground(Color.WHITE);
         }

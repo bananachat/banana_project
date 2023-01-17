@@ -2,6 +2,7 @@ package banana_project.client.login;
 
 import java.awt.Color;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.swing.text.AttributeSet.ColorAttribute;
 
@@ -156,8 +157,12 @@ public class ClientThread extends Thread {
             break;
           // 친구가 존재함 500 -> 친구
           case Protocol.PRT_FRDLIST: {
+            Vector<String> vList = new Vector<>();
+            while(st.hasMoreTokens()){
             String fList = st.nextToken();
-            client.main.prt_frdlist(fList);
+            vList.add(fList);
+          }
+            client.main.prt_frdlist(vList);
           }
             break;
 
