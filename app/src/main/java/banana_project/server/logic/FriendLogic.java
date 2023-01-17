@@ -115,8 +115,8 @@ public class FriendLogic {
             }
         }
 
-        for (int i = 0; i < vfList.size()-1; i++) {
-            friends += vfList.get(i) + ", ";
+        for(int i = 0; i < vfList.size()-1; i++) {
+            friends += vfList.get(i) + "#";
         }
         friends += vfList.get(vfList.size()-1);
 
