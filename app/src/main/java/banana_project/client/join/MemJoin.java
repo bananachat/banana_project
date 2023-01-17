@@ -216,7 +216,7 @@ public class MemJoin implements ActionListener, FocusListener {
     * 이미 존재하는 닉네임 메소드
     */
    public void exist_nick() {
-      idTnF = false;
+      nickTnF = false;
       JOptionPane.showMessageDialog(client, "이미 존재하는 닉네임입니다.", "회원가입",
             JOptionPane.WARNING_MESSAGE, setImage.img_exist);
    }

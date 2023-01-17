@@ -18,7 +18,7 @@ import java.util.Vector;
 
 public class Main implements ActionListener, MouseListener {
     ////////////////////////// [선언부] //////////////////////////
-    MyPage myPage = null; // 마이페이지 선언
+    public MyPage myPage = null; // 마이페이지 선언
     FListDialog flDialog = null; // "친구 추가" 다이얼로그
     Client client = null;
     String logMsg = ""; // 로그 기록용
@@ -169,7 +169,7 @@ public class Main implements ActionListener, MouseListener {
         Object obj = e.getSource();
         // 마이페이지 버튼 클릭
         if (obj == jbtn_myPage) {
-            myPage = new MyPage(client);
+            myPage = new MyPage(client, userId);
             myPage.initDisplay();
         }
         // Main 내 이벤트 발생

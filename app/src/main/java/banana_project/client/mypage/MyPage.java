@@ -19,14 +19,17 @@ import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
 import banana_project.client.main.Main;
+import banana_project.server.thread.Protocol;
 
-public class MyPage implements ActionListener, FocusListener {
+public class MyPage implements ActionListener {
   /**
    * 서버 연결부 선언
    */
   Client client = null;// 회원가입 프레임
   Main main = null; // 메인화면 프레임
+  String dbNick = null;
   boolean nickTnF = false;
+  String tempNick = null;
 
   /**
    * 화면부 선언
@@ -37,17 +40,17 @@ public class MyPage implements ActionListener, FocusListener {
   // JP
   JPanel jp_mypage = new JPanel(null);
   // Jtf
-  JTextField jtf_userName = new JTextField("바나나"); // 이름 입력창
-  JTextField jtf_userHp = new JTextField("010-1111-1111"); // 핸드폰번호 입력창
-  JTextField jtf_userId = new JTextField("banana@email.com"); // 아이디 입력창
+  JTextField jtf_userName = new JTextField(); // 이름 입력창
+  JTextField jtf_userHp = new JTextField(); // 핸드폰번호 입력창
+  JTextField jtf_userId = new JTextField(); // 아이디 입력창
   JTextField jtf_nickName = new JTextField(); // 닉네임 입력창
   JPasswordField jtf_userPw = new JPasswordField(); // 비밀번호 입력창
   JPasswordField jtf_userPwRe = new JPasswordField(); // 비밀번호 확인 입력창
-  JTextField jtf_userStatMsg = new JTextField("상태메시지를 입력해주세요.", 13); // 상태메시지 입력창
   // Jbtn
   JButton jbtn_checkNick = new JButton("중복확인"); // 닉네임 중복체크버튼
   JButton jbtn_resign = new JButton("탈퇴하기"); // 탈퇴 버튼
   JButton jbtn_save = new JButton("확인"); // 확인 버튼
+  JButton jbtn_main = new JButton(setImage.img_join);// 마이페이지 로고용 버튼
   // Jlb
   JLabel jlb_name = new JLabel("이름");
   JLabel jlb_hp = new JLabel("핸드폰번호");
@@ -56,8 +59,6 @@ public class MyPage implements ActionListener, FocusListener {
   JLabel jlb_pw = new JLabel("새로운 비밀번호");
   JLabel jlb_pwRe = new JLabel("비밀번호 확인");
   JLabel jlb_pwtxt = new JLabel("숫자, 영문자포함 8~16자리");
-  JLabel jlb_userStatMsg = new JLabel("상태메시지");
-
   // JDialog
   JDialog jd_resign = new JDialog();
   // JP
@@ -77,8 +78,15 @@ public class MyPage implements ActionListener, FocusListener {
    * 
    * @param client
    */
-  public MyPage(Client client) {
+  public MyPage(Client client, String userId) {
     this.client = client;
+    // 사용자정보 불러오기 504#아이디
+    try {
+      client.oos.writeObject(Protocol.BTN_MYPAGE
+          + Protocol.seperator + userId);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -92,8 +100,6 @@ public class MyPage implements ActionListener, FocusListener {
     jtf_nickName.addActionListener(this);
     jtf_userPw.addActionListener(this);
     jtf_userPwRe.addActionListener(this);
-    jtf_userStatMsg.addActionListener(this);
-    jtf_userStatMsg.addFocusListener(this);
     // 패널에 추가
     jp_mypage.add(jtf_userName);
     jp_mypage.add(jtf_userHp);
@@ -101,7 +107,6 @@ public class MyPage implements ActionListener, FocusListener {
     jp_mypage.add(jtf_nickName);
     jp_mypage.add(jtf_userPw);
     jp_mypage.add(jtf_userPwRe);
-    jp_mypage.add(jtf_userStatMsg);
     jp_mypage.add(jbtn_checkNick);
     jp_mypage.add(jbtn_resign);
     jp_mypage.add(jbtn_save);
@@ -112,7 +117,7 @@ public class MyPage implements ActionListener, FocusListener {
     jp_mypage.add(jlb_pw);
     jp_mypage.add(jlb_pwRe);
     jp_mypage.add(jlb_pwtxt);
-    jp_mypage.add(jlb_userStatMsg);
+    jp_mypage.add(jbtn_main);
     // Jtf 설정
     jtf_userName.setForeground(Color.gray);
     jtf_userId.setForeground(Color.gray);
@@ -120,21 +125,18 @@ public class MyPage implements ActionListener, FocusListener {
     jtf_nickName.setForeground(Color.black);
     jtf_userPw.setForeground(Color.black);
     jtf_userPwRe.setForeground(Color.black);
-    jtf_userStatMsg.setForeground(Color.gray);
-    jtf_userName.setBounds(105, 55, 183, 40);
-    jtf_userHp.setBounds(105, 110, 183, 40);
-    jtf_userId.setBounds(105, 165, 183, 40);
-    jtf_nickName.setBounds(105, 220, 183, 40);
-    jtf_userPw.setBounds(105, 275, 183, 40);
-    jtf_userPwRe.setBounds(105, 330, 183, 40);
-    jtf_userStatMsg.setBounds(105, 400, 183, 40);
+    jtf_userName.setBounds(105, 135, 183, 40);
+    jtf_userHp.setBounds(105, 187, 183, 40);
+    jtf_userId.setBounds(105, 239, 183, 40);
+    jtf_nickName.setBounds(105, 291, 183, 40);
+    jtf_userPw.setBounds(105, 343, 183, 40);
+    jtf_userPwRe.setBounds(105, 395, 183, 40);
     jtf_userName.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     jtf_userId.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     jtf_userHp.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     jtf_nickName.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     jtf_userPw.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     jtf_userPwRe.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-    jtf_userStatMsg.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     jtf_userName.setEditable(false);
     jtf_userHp.setEditable(false);
     jtf_userId.setEditable(false);
@@ -144,19 +146,19 @@ public class MyPage implements ActionListener, FocusListener {
     jbtn_checkNick.setBackground(new Color(130, 65, 60));
     jbtn_checkNick.setForeground(Color.WHITE);
     jbtn_checkNick.setFont(setFontNJOp.b12);
-    jbtn_checkNick.setBounds(298, 222, 75, 36);
+    jbtn_checkNick.setBounds(295, 293, 75, 36);
     // 탈퇴하기 버튼 설정
     jbtn_resign.setBorderPainted(false);
     jbtn_resign.setBackground(new Color(130, 65, 60));
     jbtn_resign.setForeground(Color.WHITE);
     jbtn_resign.setFont(setFontNJOp.b14);
-    jbtn_resign.setBounds(70, 475, 120, 45);
+    jbtn_resign.setBounds(70, 480, 120, 45);
     // 확인 버튼 설정
     jbtn_save.setBorderPainted(false);
     jbtn_save.setBackground(new Color(130, 65, 60));
     jbtn_save.setForeground(Color.WHITE);
     jbtn_save.setFont(setFontNJOp.b14);
-    jbtn_save.setBounds(210, 475, 120, 45);
+    jbtn_save.setBounds(210, 480, 120, 45);
     // Jlb 설정
     jlb_name.setForeground(new Color(135, 90, 75));
     jlb_hp.setForeground(new Color(135, 90, 75));
@@ -165,7 +167,6 @@ public class MyPage implements ActionListener, FocusListener {
     jlb_pw.setForeground(new Color(135, 90, 75));
     jlb_pwRe.setForeground(new Color(135, 90, 75));
     jlb_pwtxt.setForeground(new Color(135, 90, 75));
-    jlb_userStatMsg.setForeground(new Color(135, 90, 75));
     jlb_name.setFont(setFontNJOp.b12);
     jlb_hp.setFont(setFontNJOp.b12);
     jlb_id.setFont(setFontNJOp.b12);
@@ -173,22 +174,23 @@ public class MyPage implements ActionListener, FocusListener {
     jlb_pw.setFont(setFontNJOp.b12);
     jlb_pwRe.setFont(setFontNJOp.b12);
     jlb_pwtxt.setFont(setFontNJOp.p12);
-    jlb_userStatMsg.setFont(setFontNJOp.b12);
-    jlb_name.setBounds(71, 55, 100, 40);
-    jlb_hp.setBounds(36, 110, 100, 40);
-    jlb_id.setBounds(59, 165, 100, 40);
-    jlb_nickName.setBounds(59, 220, 100, 40);
-    jlb_pw.setBounds(10, 275, 100, 40);
-    jlb_pwRe.setBounds(20, 330, 100, 40);
-    jlb_pwtxt.setBounds(108, 360, 150, 40);
-    jlb_userStatMsg.setBounds(36, 400, 150, 40);
+    jlb_name.setBounds(71, 135, 100, 40);
+    jlb_hp.setBounds(36, 187, 100, 40);
+    jlb_id.setBounds(59, 239, 100, 40);
+    jlb_nickName.setBounds(59, 291, 100, 40);
+    jlb_pw.setBounds(10, 343, 100, 40);
+    jlb_pwRe.setBounds(20, 395, 100, 40);
+    jlb_pwtxt.setBounds(108, 426, 150, 40);
+    // 로고 이미지 설정
+    jbtn_main.setBackground(new Color(255, 230, 120));
+    jbtn_main.setBorderPainted(false); // 버튼 외곽선 없애기
+    jbtn_main.setBounds(85, 22, 210, 90); // 바나나 이미지 고정
     // JP 설정
     jp_mypage.setBackground(new Color(255, 230, 120));
     // JF 설정
     client.setTitle("마이페이지");
     client.setContentPane(jp_mypage);
     client.setVisible(true);
-
     // Jdg_resign 설정
     // 이벤트리스너
     jtf_resignId.addActionListener(this);
@@ -239,52 +241,117 @@ public class MyPage implements ActionListener, FocusListener {
     jd_resign.setVisible(false);
   }
 
+  /**
+   * 사용자 정보 마이페이지 출력 메소드
+   * 
+   * @param userName
+   * @param userHp
+   * @param userId2
+   * @param nickName
+   */
+  public void btn_mypage(String userName, String userHp, String userId, String nickName) {
+    jtf_userName.setText(userName);
+    jtf_userHp.setText(userHp);
+    jtf_userId.setText(userId);
+    jtf_nickName.setText(nickName);
+    dbNick = nickName;
+  }
+
+  /**
+   * 사용자 정보 불러오기 실패
+   */
+  public void nf_mypage() {
+    JOptionPane.showMessageDialog(client, "정보를 불러오지 못했습니다.", "마이페이지", JOptionPane.WARNING_MESSAGE,
+        setImage.img_delete);
+  }
+
+  /**
+   * 사용 가능한 닉네임
+   */
+  public void nick_mchk() {
+    nickTnF = true;
+    tempNick = jtf_nickName.getText();
+    JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "마이페이지", JOptionPane.WARNING_MESSAGE,
+        setImage.img_confirm);
+  }
+
+  /**
+   * 이미 있는 닉네임
+   */
+  public void exist_mnick() {
+    nickTnF = false;
+    JOptionPane.showMessageDialog(client, "이미 존재하는 닉네임입니다.", "마이페이지",
+        JOptionPane.WARNING_MESSAGE, setImage.img_exist);
+  }
+
+  /**
+   * 정보 수정 성공
+   * 
+   * @param newNick
+   */
+  public void edit_mypage(String newNick) {
+    JOptionPane.showMessageDialog(client, "변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+        setImage.img_confirm);
+    client.setContentPane(client.main.jp_main);
+    client.setTitle("친구 목록");
+    client.revalidate();
+  }
+
+  /**
+   * 정보 수정 실패
+   */
+  public void fail_mypage() {
+    JOptionPane.showMessageDialog(client, "정보 수정에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+        setImage.img_notFound);
+  }
+
+  /**
+   * ActionListener 메소드
+   */
   @Override
   public void actionPerformed(ActionEvent e) {
     Object obj = e.getSource();
-    // 중복확인 버튼 눌렀을 때
+    // 닉네임 중복확인 버튼 눌렀을 때
     if (obj == jbtn_checkNick) {
-      String userNick = jtf_nickName.getText();
-      // DB의 닉네임 중복검사
-      // try {
-      // client.oos.writeObject(Protocol.NICK_CHK
-      // + Protocol.seperator + userNick);
-      // } catch (IOException e) {
-      // e.printStackTrace();
-      // }
-      nickTnF = true;
-      JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "마이페이지", JOptionPane.WARNING_MESSAGE,
-          setImage.img_confirm);
+      String newNick = jtf_nickName.getText();
+      if (dbNick.equals(newNick)) {
+        JOptionPane.showMessageDialog(client, "기존에 사용하던 닉네임입니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+            setImage.img_notFound);
+      } else {
+        try {
+          client.oos.writeObject(Protocol.NICK_MCHK
+              + Protocol.seperator + newNick);
+        } catch (Exception e1) {
+          e1.printStackTrace();
+        }
+      }
     }
+
     // 확인버튼을 눌렀을 때
-    if (obj == jbtn_save || obj == jtf_nickName || obj == jtf_userPw || obj == jtf_userPwRe || obj == jtf_userStatMsg) {
+    if (obj == jbtn_save || obj == jtf_nickName || obj == jtf_userPw || obj == jtf_userPwRe) {
       String userNick = jtf_nickName.getText();
       String pwFirst = jtf_userPw.getText();
       String pwSecond = jtf_userPwRe.getText();
-      String statMsg = jtf_userStatMsg.getText();
-      // 상태메시지가 20자를 초과할 경우
-      if (statMsg.length() > 20) {
-        JOptionPane.showMessageDialog(client, "상태메시지는 20자 이하로 적어주세요.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-            setImage.img_info);
-      }
       // 비밀번호 1, 2가 다를 경우
-      else if (!pwFirst.equals(pwSecond)) {
+      if (!pwFirst.equals(pwSecond)) {
         JOptionPane.showMessageDialog(client, "비밀번호가 일치하지 않습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
             setImage.img_notFound);
       }
       // 입력내용이 DB와 다를 경우
-      else if (!userNick.equals("") || !pwFirst.equals("") || !statMsg.equals("상태메시지를 입력해주세요.")) {
+      else if (!dbNick.equals(userNick)) {
         // 아이디 중복확인 안했을 경우
         if (!nickTnF) {
           JOptionPane.showMessageDialog(client, "닉네임 중복확인을 해주세요", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
               setImage.img_info);
         } else {
-          // 비밀번호, 중복확인 후 DB로 정보 업데이트
-          JOptionPane.showMessageDialog(client, "변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-              setImage.img_confirm);
-          client.setContentPane(client.main.jp_main);
-          client.setTitle("친구 목록");
-          client.revalidate();
+          // DB로 변경된 정보 업데이트
+          try {
+            client.oos.writeObject(Protocol.EDIT_MYPAGE
+                + Protocol.seperator + userNick
+                + Protocol.seperator + pwFirst);
+          } catch (Exception e1) {
+            e1.printStackTrace();
+          }
         }
       }
       // 변경사항이 없는 경우
@@ -298,6 +365,7 @@ public class MyPage implements ActionListener, FocusListener {
     else if (obj == jbtn_resign) {
       jd_resign.setVisible(true);
     }
+
     // JDg 속 탈퇴하기 버튼 눌렀을 때
     else if (obj == jbtn_realresign || obj == jtf_resignId || obj == jtf_resignPw) {
       String userId = jtf_resignId.getText();
@@ -329,40 +397,13 @@ public class MyPage implements ActionListener, FocusListener {
   }
 
   /**
-   * FocusListener 메소드
-   */
-  @Override
-  public void focusGained(FocusEvent e) {
-    Object obj = e.getSource();
-    // 상태메시지 jtf를 클릭했을 때
-    if (obj == jtf_userStatMsg) {
-      jtf_userStatMsg.setForeground(Color.black);
-      if ("상태메시지를 입력해주세요.".equals(jtf_userStatMsg.getText())) {
-        jtf_userStatMsg.setText("");
-      }
-    }
-  }
-
-  @Override
-  public void focusLost(FocusEvent e) {
-    Object obj = e.getSource();
-    // 상태메시지 jtf를 공백으로두고 벗어났을 때
-    if (obj == jtf_userStatMsg) {
-      if ("".equals(jtf_userStatMsg.getText())) {
-        jtf_userStatMsg.setForeground(Color.gray);
-        jtf_userStatMsg.setText("상태메시지를 입력해주세요.");
-      }
-    }
-  }
-
-  /**
    * 테스트용메인
    * 
    * @param args
    */
   public static void main(String[] args) {
     Client c = new Client();
-    MyPage myPage = new MyPage(c);
+    MyPage myPage = new MyPage(c, "test");
     c.initDisplay();
     myPage.initDisplay();
   }

@@ -49,6 +49,11 @@ public class Protocol {
     public static final int	SEL_CHAT = 510; 	    //채팅방 더블클릭
     public static final int	DEL_FRIEND = 511;   	//친구 삭제
     public static final int	DEL_CHAT = 512; 	    //채팅방 삭제
+    public static final int	NF_MYPAGE = 513;    	//마이페이지 출력 실패
+    public static final int	NICK_MCHK = 514;    	//마이페이지 닉네임변경 중복체크
+    public static final int	EXIST_MNICK = 515;    	//마이페이지 닉네임변경 중복실패
+    public static final int	EDIT_MYPAGE = 516;    	//마이페이지 정보변경
+    public static final int	FAIL_MYPAGE = 517;    	//마이페이지 변경 실패
 
     //          [친구 검색]           //
     public static final int	PRT_USERS = 600; 	    //친구검색 출력(친구추가 → 검색한 값)

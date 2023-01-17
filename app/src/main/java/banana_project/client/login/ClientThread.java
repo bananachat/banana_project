@@ -31,7 +31,7 @@ public class ClientThread extends Thread {
     boolean isStop = false;
     while (!isStop) {
       try {
-        String msg = "";
+        String msg = null;
         msg = String.valueOf(client.ois.readObject()); // 서버스레드가 클라이언트에게 전송한 메시지
         StringTokenizer st = null;
         int protocol = 0;
@@ -160,6 +160,44 @@ public class ClientThread extends Thread {
             client.main.prt_frdlist(fList);
           }
             break;
+
+          /**
+           * MyPage 스레드
+           */
+          // 사용자 정보 가져오기 성공 504#이름#핸드폰번호#아이디#닉네임
+          case Protocol.BTN_MYPAGE: {
+            String userName = st.nextToken();
+            String userHp = st.nextToken();
+            String userId = st.nextToken();
+            String nickName = st.nextToken();
+            client.main.myPage.btn_mypage(userName, userHp, userId, nickName);
+          }
+            break;
+          // 가져오기 실패 513
+          case Protocol.NF_MYPAGE: {
+            client.main.myPage.nf_mypage();
+          }
+            break;
+          // 사용가능한 닉네임 514
+          case Protocol.NICK_MCHK: {
+            client.main.myPage.nick_mchk();
+          }
+            break;
+          // 이미 존재하는 닉네임 515
+          case Protocol.EXIST_MNICK: {
+            client.main.myPage.exist_mnick();
+          }
+            break;
+          // 사용자 정보 수정 성공 516
+          case Protocol.EDIT_MYPAGE: {
+            String newNick = st.nextToken();
+            client.main.myPage.edit_mypage(newNick);
+          }
+          // 사용자 정보 수정 실패 517
+          case Protocol.FAIL_MYPAGE: {
+            client.main.myPage.fail_mypage();
+          }
+
         } // end of switch
       } catch (Exception e) {
         e.printStackTrace();

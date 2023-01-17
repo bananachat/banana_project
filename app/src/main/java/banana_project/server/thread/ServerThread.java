@@ -220,15 +220,17 @@ public class ServerThread extends Thread {
             String userHp = st.nextToken();
             // DB등록 및 체크
             server.jta_log.append("아이디찾기 DB 체크 시작" + "\n");
-            UserVO user = memberLogic.findUserId(UserVO.builder().user_name(userName).user_hp(userHp).build());
+            UserVO userVO = memberLogic.findUserId(UserVO.builder().user_name(userName).user_hp(userHp).build());
             // 아이디 존재 303
-            if (user.getUser_id() != null) {
+            if (userVO.getUser_id() != null) {
+              server.jta_log.append("Result: " + Protocol.EXIST_FID + "\n");
               oos.writeObject(Protocol.EXIST_FID
                   + Protocol.seperator + userName
-                  + Protocol.seperator + user.getUser_id());
+                  + Protocol.seperator + userVO.getUser_id());
             }
             // 아이디가 존재하지 않음 302
             else {
+              server.jta_log.append("Result: " + Protocol.NF_FID + "\n");
               oos.writeObject(Protocol.NF_FID);
             }
           }
@@ -290,6 +292,81 @@ public class ServerThread extends Thread {
           }
             break;
 
+          /**
+           * MyPage 스레드
+           */
+          // 사용자 정보 가져오기 504#아이디
+          case Protocol.BTN_MYPAGE: {
+            String userId = st.nextToken();
+            // DB등록 및 체크
+            server.jta_log.append("사용자조회 DB 체크 시작" + "\n");
+            UserVO userVO = memberLogic.getUserInfo(UserVO.builder().user_id(userId).build());
+            String userName = userVO.getUser_name();
+            String userHp = userVO.getUser_hp();
+            String nickName = userVO.getUser_nickname();
+            // 값이 있을 경우
+            if (userHp != null) {
+              server.jta_log.append("Result: " + Protocol.BTN_MYPAGE + "\n");
+              oos.writeObject(Protocol.BTN_MYPAGE
+                  + Protocol.seperator + userName
+                  + Protocol.seperator + userHp
+                  + Protocol.seperator + userId
+                  + Protocol.seperator + nickName);
+            }
+            // 값이 없을 경우
+            else {
+              server.jta_log.append("Result: " + Protocol.NF_MYPAGE + "\n");
+              oos.writeObject(Protocol.NF_MYPAGE);
+            }
+          }
+            break;
+          // 새로운 닉네임 중복체크 514#닉네임
+          case Protocol.NICK_MCHK: {
+            String newNick = st.nextToken();
+            // DB와 같은지 체크
+            server.jta_log.append("닉네임 중복 DB 체크 시작" + "\n");
+            int result = memberLogic.checkDuplNickname(UserVO.builder().user_nickname(newNick).build());
+            server.jta_log.append("Result: " + result + "\n");
+            // 체크 결과 switch문
+            switch (result) {
+              // 새 닉네임 중복 아님 514
+              case 1: {
+                oos.writeObject(Protocol.NICK_MCHK);
+              }
+                break;
+              // 새 닉네임 중복됨 515
+              case -1: {
+                oos.writeObject(Protocol.EXIST_MNICK);
+              }
+                break;
+            }
+          }
+            break;
+          // 사용자 정보 변경 516#닉네임#비밀번호
+          case Protocol.EDIT_MYPAGE: {
+            String newNick = st.nextToken();
+            String newPw = st.nextToken();
+            // DB체크
+            server.jta_log.append("사용자 정보변경 DB 체크 시작" + "\n");
+            int result = memberLogic.updateUser(UserVO.builder().user_nickname(newNick).user_pw(newPw).build());
+            server.jta_log.append("Result: " + result + "\n");
+            // 체크 결과 switch문
+            switch (result) {
+              // 정보수정 성공
+              case 1: {
+                oos.writeObject(Protocol.EDIT_MYPAGE
+                    + Protocol.seperator + newNick);
+              }
+                break;
+              // 정보수정 실패
+              case 0, -1: {
+                oos.writeObject(Protocol.FAIL_MYPAGE);
+              }
+                break;
+            }
+          }
+            break;
+
           // case Protocol.WHISPER: {
           // String nickName = st.nextToken();// 보내는 넘
           // // insert here - 받는 넘
@@ -307,16 +384,6 @@ public class ServerThread extends Thread {
           // this.send(Protocol.WHISPER + Protocol.seperator + nickName +
           // Protocol.seperator + otherName
           // + Protocol.seperator + msg1);
-          // }
-          // break;
-          // case Protocol.CHANGE: {
-          // String nickName = st.nextToken();
-          // String afterName = st.nextToken();
-          // String message = st.nextToken();
-          // this.chatName = afterName;
-          // broadCasting(Protocol.CHANGE + Protocol.seperator + nickName +
-          // Protocol.seperator + afterName
-          // + Protocol.seperator + message);
           // }
           // break;
           // case Protocol.TALK_OUT: {
