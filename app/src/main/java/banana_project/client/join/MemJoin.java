@@ -346,7 +346,7 @@ public class MemJoin implements ActionListener, FocusListener {
                         setImage.img_info);
                }
                // 닉네임 중복검사 다시체크
-               else if (!tempId.equals(userId)) {
+               else if (!tempNick.equals(userNick)) {
                   JOptionPane.showMessageDialog(client, "닉네임 중복확인을 해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
                         setImage.img_info);
                }
