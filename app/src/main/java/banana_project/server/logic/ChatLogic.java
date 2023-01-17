@@ -4,20 +4,21 @@ import banana_project.server.thread.Protocol;
 import banana_project.server.util.ConstantsLog;
 import banana_project.server.util.DBConnectionMgr;
 import banana_project.server.vo.ChatContentsVO;
-import banana_project.server.vo.ChatLogVO;
+
 import banana_project.server.vo.LogVO;
+import banana_project.server.vo.ChatUserListVO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
+
 //채팅불러오기
 //채팅저장하기
-//채팅삭제
+//채팅방 나가기
 
 
 public class ChatLogic {
@@ -47,7 +48,7 @@ public class ChatLogic {
 
         //로그작성
         ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
-            ,new LogVO(Protocol.CHAT_START, "Room number :"+chatnum, ""));////////유저아이디 어찌 가져올지??
+            ,new LogVO(Protocol.CHAT_START, "Room number :"+chatnum, ""));
         String sql= "select * from tb_chat_contents where chat_no=?";
 
         try{
@@ -103,7 +104,7 @@ public class ChatLogic {
             pst.setString(2,chatconvo.getChat_content());
             pst.setString(3,chatconvo.getUser_id());
             pst.setInt(4,chatconvo.getChat_no());
-            result=pst.executeUpdate();
+            result=pst.executeUpdate();// 실행문에 따라서 성공하면 1건만 바꾸니까 1이 들어올것이다.
         }catch(SQLException se) {
             se.printStackTrace();
             System.out.println("SQLException :" + se.getMessage());
@@ -122,22 +123,27 @@ public class ChatLogic {
         return result;
     }//end of insertChat
 
-    //채팅내용삭제하고싶다...
+    //채팅방을 나가고 싶다.
+
 
     /**
-     * 채팅내용삭제
-     * @param chatconvo
+     * 채팅방 나가기
+     * @param chatlistvo
      */
-    public void delChatContents(ChatContentsVO chatconvo) {
+    public void delChatContents(ChatUserListVO chatlistvo) {
         ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
-               ,new LogVO(Protocol.DEL_CHAT, "Room number :"+chatconvo.getChat_no(), ""));
+               ,new LogVO(Protocol.DEL_CHAT, "Room number :"+chatlistvo.getChat_no(), chatlistvo.getUser_id()));
         //결과값 기본
         int result= -1;
-        String sql= "delete from TB_CHAT_CONTENTS where chat_no=?";///이래도 되나요?
+
+        //flag는 나가면 1 있으면 0
+        String sql= "update TB_CHAT_USER_LIST  set flag=1 where chat_no=? and user_id=?";///이래도 되나요?
         try{
             con=dbMgr.getConnection();
             pst=con.prepareStatement(sql);
-            pst.setInt(1,chatconvo.getChat_no());////은재고수님께질문
+            pst.setInt(1,chatlistvo.getChat_no());////은재고수님께질문-완
+            pst.setString(2,chatlistvo.getUser_id());
+
             result=pst.executeUpdate();
         }catch(SQLException se){
             se.printStackTrace();
