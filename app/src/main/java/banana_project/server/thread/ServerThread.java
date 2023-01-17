@@ -97,30 +97,30 @@ public class ServerThread extends Thread {
             String userId = st.nextToken();
             String userPw = st.nextToken();
             // DB와 같은지 체크
-            server.jta_log.append("DB 체크 시작" + "\n");
+            server.jta_log.append("로그인 DB 체크 시작" + "\n");
             Map<String, Object> resultMap = memberLogic
                 .loginUser(UserVO.builder().user_id(userId).user_pw(userPw).build());
             int result = (Integer) resultMap.get("result");
             server.jta_log.append("Result: " + result + "\n");
             // 체크 결과 switch문
             switch (result) {
-              // 로그인 성공 -> 아이디
+              // 로그인 성공 101 -> 아이디
               case Protocol.LOGIN_S: {
                 oos.writeObject(Protocol.LOGIN_S
                     + Protocol.seperator + userId);
               }
                 break;
-              // 비밀번호 틀림
+              // 비번 틀림 103
               case Protocol.WRONG_PW: {
                 oos.writeObject(Protocol.WRONG_PW);
               }
                 break;
-              // 비밀번호 시도횟수 초과
+              // 비번 시도횟수 초과 104
               case Protocol.OVER_FAIL_CNT: {
                 oos.writeObject(Protocol.OVER_FAIL_CNT);
               }
                 break;
-              // 아이디 틀림(계정없음) -> 디폴트로설정
+              // 계정없음 102 -> 디폴트로설정
               default: {
                 oos.writeObject(Protocol.WRONG_ID);
               }
@@ -131,21 +131,21 @@ public class ServerThread extends Thread {
           /**
            * MemJoin 스레드
            */
-          // 아이디 중복확인 201#이메일
+          // 아이디 중복확인 201#아이디
           case Protocol.MAIL_CHK: {
             String userId = st.nextToken();
             // DB와 같은지 체크
-            server.jta_log.append("DB 체크 시작" + "\n");
+            server.jta_log.append(" 아이디중복 DB 체크 시작" + "\n");
             int result = memberLogic.checkDuplId(UserVO.builder().user_id(userId).build());
             server.jta_log.append("Result: " + result + "\n");
             // 체크 결과 switch문
             switch (result) {
-              // 아이디 중복 아님
+              // 아이디 중복 아님 201
               case 1: {
                 oos.writeObject(Protocol.MAIL_CHK);
               }
                 break;
-              // 아이디 중복됨
+              // 아이디 중복됨 202
               case -1: {
                 oos.writeObject(Protocol.EXIST_MAIL);
               }
@@ -157,40 +157,19 @@ public class ServerThread extends Thread {
           case Protocol.NICK_CHK: {
             String userNick = st.nextToken();
             // DB와 같은지 체크
-            server.jta_log.append("DB 체크 시작" + "\n");
-            int result = memberLogic.checkDuplId(UserVO.builder().user_nickname(userNick).build());
+            server.jta_log.append("닉네임 중복 DB 체크 시작" + "\n");
+            int result = memberLogic.checkDuplNickname(UserVO.builder().user_nickname(userNick).build());
             server.jta_log.append("Result: " + result + "\n");
             // 체크 결과 switch문
             switch (result) {
-              // 닉네임 중복 아님
+              // 닉네임 중복 아님 203
               case 1: {
                 oos.writeObject(Protocol.NICK_CHK);
               }
                 break;
-              // 닉네임 중복됨
+              // 닉네임 중복됨 204
               case -1: {
                 oos.writeObject(Protocol.EXIST_NICK);
-              }
-                break;
-            }
-          }
-            break;
-          // 계정(핸드폰번호) 중복확인 206#핸드폰번호
-          case Protocol.ACNT_CHK: {
-            String userHp = st.nextToken();
-            server.jta_log.append("DB 체크 시작" + "\n");
-            int result = memberLogic.checkDuplId(UserVO.builder().user_hp(userHp).build());
-            server.jta_log.append("Result: " + result + "\n");
-            // 체크 결과 switch문
-            switch (result) {
-              // 핸드폰 중복 아님
-              case 1: {
-                oos.writeObject(Protocol.ACNT_CHK);
-              }
-                break;
-              // 핸드폰 중복됨
-              case -1: {
-                oos.writeObject(Protocol.EXIST_ACNT);
               }
                 break;
             }
@@ -204,18 +183,23 @@ public class ServerThread extends Thread {
             String userHp = st.nextToken();
             String userNick = st.nextToken();
             // DB등록 및 체크
-            server.jta_log.append("DB 체크 시작" + "\n");
+            server.jta_log.append("회원가입 DB 체크 시작" + "\n");
             int result = memberLogic.joinUser(UserVO.builder().user_id(userId).user_pw(userPw).user_name(userName)
                 .user_hp(userHp).user_nickname(userNick).build());
             server.jta_log.append("Result: " + result + "\n");
             switch (result) {
-              // 회원가입 성공
+              // 계정(핸드폰) 존재 206
+              case 0: {
+                oos.writeObject(Protocol.EXIST_ACNT);
+              }
+                break;
+              // 회원가입 성공 207 -> 이름
               case 1: {
                 oos.writeObject(Protocol.SIGN_SUS
                     + Protocol.seperator + userName);
               }
                 break;
-              // 회원가입 실패
+              // 회원가입 실패 208
               case -1: {
                 oos.writeObject(Protocol.SIGN_ERR);
               }
@@ -223,6 +207,54 @@ public class ServerThread extends Thread {
             }
           }
             break;
+
+          /**
+           * IdFind 스레드
+           */
+          // 아이디찾기 시작 300#이름#핸드폰번호
+          case Protocol.FID_START: {
+            String userName = st.nextToken();
+            String userHp = st.nextToken();
+            // DB등록 및 체크
+            server.jta_log.append("아이디찾기 DB 체크 시작" + "\n");
+            UserVO user = memberLogic.findUserId(UserVO.builder().user_name(userName).user_hp(userHp).build());
+            // 아이디가 존재 303
+            if (user.getUser_id() != null) {
+              oos.writeObject(Protocol.EXIST_FID
+                  + Protocol.seperator + userName
+                  + Protocol.seperator + user.getUser_id());
+            }
+            // 아이디가 존재하지 않음 302
+            else {
+              oos.writeObject(Protocol.NF_FID);
+            }
+          }
+            break;
+
+          /**
+           * PwFind 스레드
+           */
+          // 비밀번호찾기 시작 400#이름#아이디#핸드폰번호
+          case Protocol.FPW_START: {
+            String userName = st.nextToken();
+            String userId = st.nextToken();
+            String userHp = st.nextToken();
+            // DB등록 및 체크
+            server.jta_log.append("비밀번호찾기 DB 체크 시작" + "\n");
+            // 계정 존재 403
+            // 계정 존재하지 않음402
+          }
+            break;
+          /**
+           * PwFindDialog 스레드
+           */
+          // 비밀번호 재설정 404#아이디#새로운비번
+          case Protocol.RESET_PW: {
+            String userId = st.nextToken();
+            String userPw = st.nextToken();
+          }
+            break;
+
           // case Protocol.WHISPER: {
           // String nickName = st.nextToken();// 보내는 넘
           // // insert here - 받는 넘
@@ -258,7 +290,7 @@ public class ServerThread extends Thread {
           // broadCasting(Protocol.TALK_OUT + Protocol.seperator + nickName);
           // }
           // break run_start;
-        }// end of switch
+        } // end of switch
       } // end of while
     } catch (Exception e) {
       e.printStackTrace();

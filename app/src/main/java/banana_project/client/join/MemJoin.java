@@ -22,7 +22,6 @@ public class MemJoin implements ActionListener, FocusListener {
    // 중복체크
    boolean idTnF = false;
    boolean nickTnF = false;
-   boolean hpTnF = false;
 
    /**
     * 화면부 선언
@@ -219,13 +218,6 @@ public class MemJoin implements ActionListener, FocusListener {
    }
 
    /**
-    * 사용 가능한 계정(핸드폰번호) 메소드
-    */
-   public void acnt_chk() {
-      hpTnF = true;
-   }
-
-   /**
     * 이미 존재하는 계정(핸드폰번호) 메소드
     */
    public void exist_acnt() {
@@ -344,20 +336,13 @@ public class MemJoin implements ActionListener, FocusListener {
          // 그 외의 경우 회원가입 시도
          else {
             try {
-               // 핸드폰번호 중복검사
-               if (!hpTnF) {
-                  client.oos.writeObject(Protocol.ACNT_CHK
-                        + Protocol.seperator + userHp);
-               }
                // 모든게 확인되면 회원가입
-               else {
                   client.oos.writeObject(Protocol.SIGN_UP
                         + Protocol.seperator + userId
                         + Protocol.seperator + userPw
                         + Protocol.seperator + userName
                         + Protocol.seperator + userHp
                         + Protocol.seperator + userNick);
-               }
             } catch (IOException e) {
                e.printStackTrace();
             }

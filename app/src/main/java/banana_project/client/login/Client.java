@@ -34,6 +34,8 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   ObjectInputStream ois = null;// 듣기
   ClientThread clientThread = null;
   MemJoin memJoin = null;
+  IdFind idFind = null;
+  PwFind pwfind = null;
   public Main main = null;
 
   /**
@@ -201,7 +203,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
       // 형식에 맞게 입력했을경우 DB에서 확인
       else {
         try {
-          // 로그인 시도 -> 100#아이디#패스워드
+          // 로그인 시도 -> 100#아이디#비밀번호
           oos.writeObject(Protocol.CLIENT_START
               + Protocol.seperator + userId
               + Protocol.seperator + userPw);
@@ -237,7 +239,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
       jtf_userPw.setText("password");
       jtf_userId.setForeground(Color.gray);
       jtf_userPw.setForeground(Color.lightGray);
-      IdFind idFind = new IdFind(this);
+      idFind = new IdFind(this);
       idFind.initDisplay();
     }
     // 비밀번호찾기 라벨 눌렀을 때
@@ -246,7 +248,7 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
       jtf_userPw.setText("password");
       jtf_userId.setForeground(Color.gray);
       jtf_userPw.setForeground(Color.lightGray);
-      PwFind pwfind = new PwFind(this);
+      pwfind = new PwFind(this);
       pwfind.initDisplay();
     }
   }

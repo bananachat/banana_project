@@ -123,13 +123,16 @@ public class PwFindDialog extends JDialog implements ActionListener {
       }
       // 올바르게 입력하면 DB전송
       else {
-        JOptionPane.showMessageDialog(this, "비밀번호가 재설정되었습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
-            setImage.img_confirm);
-        this.dispose();
-        pwFind.client.setContentPane(pwFind.client.jp_login);
-        pwFind.client.revalidate();
         try {
-          // 비밀번호 재설정시 서버에 전달
+
+          // 받아온 아이디정보 추가할것!
+          pwFind.client.oos.writeObject(Protocol.RESET_PW
+              + Protocol.seperator + newPw);
+          JOptionPane.showMessageDialog(this, "비밀번호가 재설정되었습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
+              setImage.img_confirm);
+          this.dispose();
+          pwFind.client.setContentPane(pwFind.client.jp_login);
+          pwFind.client.revalidate();
         } catch (Exception e2) {
           e2.printStackTrace();
         }

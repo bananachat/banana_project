@@ -51,17 +51,17 @@ public class ClientThread extends Thread {
             client.login_s(userId);
           }
             break;
-          // 비밀번호 틀림
+          // 비번 틀림 103
           case Protocol.WRONG_PW: {
             client.wrong_pw();
           }
             break;
-          // 비밀번호 시도횟수 초과
+          // 비번 시도횟수 초과 104
           case Protocol.OVER_FAIL_CNT: {
             client.over_fail_cnt();
           }
             break;
-          // 아이디 틀림(계정없음)
+          // 계정없음 102
           case Protocol.WRONG_ID: {
             client.wrong_id();
           }
@@ -70,48 +70,74 @@ public class ClientThread extends Thread {
           /**
            * MemJoin 스레드
            */
-          // 사용가능한 아이디
+          // 사용가능한 아이디 201
           case Protocol.MAIL_CHK: {
             client.memJoin.mail_chk();
           }
             break;
-          // 이미 존재하는 아이디
+          // 이미 존재하는 아이디 202
           case Protocol.EXIST_MAIL: {
             client.memJoin.exist_mail();
           }
             break;
-          // 사용가능한 닉네임
+          // 사용가능한 닉네임 203
           case Protocol.NICK_CHK: {
             client.memJoin.nick_chk();
           }
             break;
-          // 이미 존재하는 닉네임
+          // 이미 존재하는 닉네임 204
           case Protocol.EXIST_NICK: {
             client.memJoin.exist_nick();
           }
             break;
-          // 사용 가능한 계정(핸드폰)
-          case Protocol.ACNT_CHK: {
-            client.memJoin.acnt_chk();
-          }
-            break;
-          // 이미 존재하는 계정(핸드폰 중복)
+          // 계정(핸드폰) 존재 206
           case Protocol.EXIST_ACNT: {
             client.memJoin.exist_acnt();
           }
             break;
-          // 회원가입 성공
+          // 회원가입 성공 207
           case Protocol.SIGN_SUS: {
             String userName = st.nextToken();
             client.memJoin.sign_sus(userName);
           }
             break;
-          // 회원가입 실패
+          // 회원가입 실패 208
           case Protocol.SIGN_ERR: {
             client.memJoin.sign_err();
           }
             break;
-        }
+
+          /**
+           * IdFind 스레드
+           */
+          // 아이디가 존재할 때
+          case Protocol.EXIST_FID: {
+            String userName = st.nextToken();
+            String userId = st.nextToken();
+            client.idFind.exist_fid(userName, userId);
+          }
+            break;
+          // 아이디가 존재하지 않을 때
+          case Protocol.NF_FID: {
+            client.idFind.nf_fid();
+          }
+
+          /**
+           * PwFind 스레드
+           */
+          // 계정이 존재할 때
+          case Protocol.EXIST_FACNT: {
+            // 아이디 받아오기 추가할것!!
+            client.pwfind.exist_facnt();
+          }
+            break;
+          // 계정이 존재하지 않을때
+          case Protocol.NF_FACNT: {
+            client.pwfind.nf_facnt();
+          }
+            break;
+
+        } // end of switch
       } catch (Exception e) {
         e.printStackTrace();
       }

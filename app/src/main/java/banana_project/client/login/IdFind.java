@@ -8,6 +8,8 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
+import banana_project.server.thread.Protocol;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,12 +22,6 @@ public class IdFind implements ActionListener, FocusListener {
    * 서버 연결부 선언
    */
   Client client = null;
-  String userName = null; // 유저입력 이름
-  String userHp = null; // 유저입력 핸드폰번호
-  // 테스트용 이름, 핸드폰번호, 아이디
-  String dbName = "바나나";
-  String dbHp = "01012341234";
-  String dbId = "banana@email.com";
 
   /**
    * 화면부 선언
@@ -103,6 +99,22 @@ public class IdFind implements ActionListener, FocusListener {
   }
 
   /**
+   * 존재하는 아이디 메소드
+   */
+  public void exist_fid(String UserName, String userId) {
+    JOptionPane.showMessageDialog(client,
+        UserName + "님의 아이디\n" + userId, "아이디 찾기", JOptionPane.INFORMATION_MESSAGE, setImage.img_confirm);
+  }
+
+  /**
+   * 존재하지 않는 아이디 메소드
+   */
+  public void nf_fid() {
+    JOptionPane.showMessageDialog(client, "계정을 찾을 수 없습니다.", "아이디 찾기", JOptionPane.ERROR_MESSAGE,
+        setImage.img_notFound);
+  }
+
+  /**
    * ActionListener 메소드
    */
   @Override
@@ -116,8 +128,8 @@ public class IdFind implements ActionListener, FocusListener {
     }
     // 아이디찾기 버튼을 눌렀을 때
     else if (obj == jbtn_findId || obj == jtf_userName || obj == jtf_userHp) {
-      userName = jtf_userName.getText();
-      userHp = jtf_userHp.getText();
+      String userName = jtf_userName.getText();
+      String userHp = jtf_userHp.getText();
       // 이름, 핸드폰번호 정규식
       String hpCheck = "^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$";
       // 이름을 입력하지 않았을 경우
@@ -136,19 +148,11 @@ public class IdFind implements ActionListener, FocusListener {
       } else {
         // 이름과 핸드폰번호 DB로 보내기
         try {
+          client.oos.writeObject(Protocol.FID_START
+              + Protocol.seperator + userName
+              + Protocol.seperator + userHp);
         } catch (Exception e2) {
           e2.printStackTrace();
-        }
-        // 테스트용 if문
-        // 이름, 전화번호가 맞을 경우
-        if (userName.equals(dbName) && userHp.equals(dbHp)) {
-          JOptionPane.showMessageDialog(client,
-              dbName + "님의 아이디\n" + dbId, "아이디 찾기", JOptionPane.INFORMATION_MESSAGE, setImage.img_confirm);
-        }
-        // 틀릴 경우
-        else {
-          JOptionPane.showMessageDialog(client, "계정을 찾을 수 없습니다.", "아이디 찾기", JOptionPane.ERROR_MESSAGE,
-              setImage.img_notFound);
         }
       }
     }

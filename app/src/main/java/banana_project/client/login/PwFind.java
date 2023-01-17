@@ -8,6 +8,8 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
+import banana_project.server.thread.Protocol;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -104,6 +106,18 @@ public class PwFind implements ActionListener, FocusListener {
     client.setVisible(true);
   }
 
+  // 비번찾기 계정이 존재할때 메소드
+  public void exist_facnt() {
+    PwFindDialog pwFindDialog = new PwFindDialog(this);
+    pwFindDialog.initDisplay();
+  }
+
+  // 비번찾기 계정이 존재하지 않을때 메소드
+  public void nf_facnt() {
+    JOptionPane.showMessageDialog(client, "계정이 존재하지 않습니다.", "비밀번호 찾기", JOptionPane.ERROR_MESSAGE,
+        setImage.img_notFound);
+  }
+
   /**
    * ActionListener 메소드
    */
@@ -149,19 +163,13 @@ public class PwFind implements ActionListener, FocusListener {
       }
       // 이름, 아이디, 핸드폰번호 DB조회
       else {
-        // 테스트용 if문
-        String dbName = "바나나";
-        String dbId = "banana@email.com";
-        String dbHp = "01012341234";
-        // 이름, 아이디, 전화번호가 맞을 경우
-        if (userName.equals(dbName) && userId.equals(dbId) && userHp.equals(dbHp)) {
-          PwFindDialog pwFindDialog = new PwFindDialog(this);
-          pwFindDialog.initDisplay();
-        }
-        // 틀릴 경우
-        else {
-          JOptionPane.showMessageDialog(client, "계정을 찾을 수 없습니다.", "비밀번호 찾기", JOptionPane.ERROR_MESSAGE,
-              setImage.img_notFound);
+        try {
+          client.oos.writeObject(Protocol.FPW_START
+              + Protocol.seperator + userName
+              + Protocol.seperator + userId
+              + Protocol.seperator + userHp);
+        } catch (Exception e2) {
+          e2.printStackTrace();
         }
       }
     }
