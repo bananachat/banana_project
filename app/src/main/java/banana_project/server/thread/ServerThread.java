@@ -218,7 +218,7 @@ public class ServerThread extends Thread {
             // DB등록 및 체크
             server.jta_log.append("아이디찾기 DB 체크 시작" + "\n");
             UserVO user = memberLogic.findUserId(UserVO.builder().user_name(userName).user_hp(userHp).build());
-            // 아이디가 존재 303
+            // 아이디 존재 303
             if (user.getUser_id() != null) {
               oos.writeObject(Protocol.EXIST_FID
                   + Protocol.seperator + userName

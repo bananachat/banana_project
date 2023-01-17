@@ -95,7 +95,7 @@ public class ClientThread extends Thread {
             client.memJoin.exist_acnt();
           }
             break;
-          // 회원가입 성공 207
+          // 회원가입 성공 207#이름
           case Protocol.SIGN_SUS: {
             String userName = st.nextToken();
             client.memJoin.sign_sus(userName);
@@ -110,17 +110,18 @@ public class ClientThread extends Thread {
           /**
            * IdFind 스레드
            */
-          // 아이디가 존재할 때
+          // 아이디 존재 303#이름#아이디
           case Protocol.EXIST_FID: {
             String userName = st.nextToken();
             String userId = st.nextToken();
             client.idFind.exist_fid(userName, userId);
           }
             break;
-          // 아이디가 존재하지 않을 때
+          // 아이디가 존재하지 않음 302
           case Protocol.NF_FID: {
             client.idFind.nf_fid();
           }
+            break;
 
           /**
            * PwFind 스레드

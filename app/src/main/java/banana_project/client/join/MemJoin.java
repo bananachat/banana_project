@@ -22,6 +22,8 @@ public class MemJoin implements ActionListener, FocusListener {
    // 중복체크
    boolean idTnF = false;
    boolean nickTnF = false;
+   String tempId = null;
+   String tempNick = null;
 
    /**
     * 화면부 선언
@@ -186,6 +188,7 @@ public class MemJoin implements ActionListener, FocusListener {
     */
    public void mail_chk() {
       idTnF = true;
+      tempId = jtf_userId.getText();
       JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "회원가입",
             JOptionPane.WARNING_MESSAGE, setImage.img_confirm);
    }
@@ -204,6 +207,7 @@ public class MemJoin implements ActionListener, FocusListener {
     */
    public void nick_chk() {
       nickTnF = true;
+      tempNick = jtf_nickName.getText();
       JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "회원가입", JOptionPane.WARNING_MESSAGE,
             setImage.img_confirm);
    }
@@ -336,13 +340,25 @@ public class MemJoin implements ActionListener, FocusListener {
          // 그 외의 경우 회원가입 시도
          else {
             try {
+               // 아이디 중복검사 다시체크
+               if (!tempId.equals(userId)) {
+                  JOptionPane.showMessageDialog(client, "아이디 중복확인을 해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
+                        setImage.img_info);
+               }
+               // 닉네임 중복검사 다시체크
+               else if (!tempId.equals(userId)) {
+                  JOptionPane.showMessageDialog(client, "닉네임 중복확인을 해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
+                        setImage.img_info);
+               }
                // 모든게 확인되면 회원가입
+               else {
                   client.oos.writeObject(Protocol.SIGN_UP
                         + Protocol.seperator + userId
                         + Protocol.seperator + userPw
                         + Protocol.seperator + userName
                         + Protocol.seperator + userHp
                         + Protocol.seperator + userNick);
+               }
             } catch (IOException e) {
                e.printStackTrace();
             }
