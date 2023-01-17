@@ -10,6 +10,7 @@ package banana_project.server.logic;
 
 import banana_project.server.util.ConstantsLog;
 import banana_project.server.util.DBConnectionMgr;
+import banana_project.server.vo.ChatListVO;
 import banana_project.server.vo.LogVO;
 import banana_project.server.vo.UserVO;
 
@@ -17,10 +18,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 
 public class ChatListLogic {
     // DB 연결 변수
@@ -39,27 +37,28 @@ public class ChatListLogic {
     int protocol = 0;
 
     // DB에서 가져온 채팅방 리스트
-    String[] chatNo = null;         // 채팅방 번호
-    String[] chatTitle = null;      // 채팅방 타이틀
+    String chatNo = null;         // 채팅방 번호
+    String chatTitle = null;      // 채팅방 타이틀
 
 
 
     /**
      * [채팅방 정보 출력]
-     * lResult[0] : 503: 채팅리스트 없음 | 502: 채팅리스트 출력,
-     * lResult[1] : 채팅방 번호,
-     * lResult[1] : 채팅방 타이틀,
+     * mResult[PROTOCOL] - 503: 채팅리스트 없음 | 502: 채팅리스트 출력,
+     * mResult[CHAT_LIST] - 채팅방 VO,
      *
      * @param uservo        사용자 정보
-     * @return              채팅방 리스트
+     * @return mResult      Map_채팅방 정보
      */
-    public List<Object> printChatList(UserVO uservo) {
-        System.out.println("ChatListLogic.printChatList() 메소드 시작");
+    public Map<String, Object> printChatList(UserVO uservo) {
+        System.out.println("ChatListLogic_printChatList() 메소드 시작");
         // NF_CHATLIST = 채팅리스트 없음
         protocol = 503;
 
         // 리턴값
-        List<Object> lResult = new ArrayList<>();
+        Map<String, Object> mResult = new HashMap<>();
+
+        List<ChatListVO> lChatList = null;
 
         // 쿼리결과 기본 false
         Boolean result = false;
@@ -103,18 +102,11 @@ public class ChatListLogic {
                 Vector<String> vChatTitle = new Vector<String>();
 
                 while (rs.next()) {
-                    String cListNo = rs.getString("ul.chat_no");
-                    String cTitle = rs.getString("cl.chat_title");
-                    vChatNo.add(cListNo);
-                    vChatTitle.add(cTitle);
+                    ChatListVO clVO = new ChatListVO();
+                    clVO.setChat_no(rs.getInt("ul.chat_no"));
+                    clVO.setChat_title(rs.getString("cl.chat_title"));
+                    lChatList.add(clVO);
                 }
-
-                // 채팅방 번호
-                chatNo = new String[vChatNo.size()];
-                vChatNo.copyInto(chatNo);
-                // 채팅방 타이틀
-                chatTitle = new String[vChatTitle.size()];
-                vChatTitle.copyInto(chatTitle);
 
                 // PRT_CHATLIST = 채팅리스트 출력
                 protocol = 502;
@@ -122,7 +114,6 @@ public class ChatListLogic {
 
         } catch (SQLException se) {
             System.out.println("SQLException : " + se.getMessage());
-            System.out.println("쿼리문 : " + sql.toString());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,16 +128,14 @@ public class ChatListLogic {
         }
 
         // 메소드 반환값
-        lResult.add(protocol);
-        lResult.add(chatNo);
-        lResult.add(chatTitle);
+        mResult.put("PROTOCOL", protocol);
+        mResult.put("CHAT_LIST", lChatList);
 
-        System.out.println("프로토콜 : " + lResult.get(0).toString());
-        System.out.println("채팅방 번호 : " + lResult.get(1).toString());
-        System.out.println("채팅방 타이틀 : " + lResult.get(2).toString());
-        System.out.println("ChatListLogic.printChatList() 메소드 종료");
+        System.out.println("프로토콜 : " + mResult.get("PROTOCOL"));
+        System.out.println("채팅방 정보 : " + mResult.get("CHAT_LIST"));
+        System.out.println("ChatListLogic_printChatList() 메소드 종료");
 
-        return lResult;
+        return mResult;
     } // end of printChatList (채팅방 정보 출력)
 
 
@@ -159,7 +148,7 @@ public class ChatListLogic {
      * @return protocol     608: 채팅방 만들기 실패 | 606: 채팅방 만들기 성공
      */
     public int createChat(String userList) {
-        System.out.println("ChatListLogic.createChat() 메소드 시작");
+        System.out.println("ChatListLogic_createChat() 메소드 시작");
         // FAIL_CRE_CHAT = 채팅방 만들기 실패
         protocol = 608;
 
@@ -168,18 +157,18 @@ public class ChatListLogic {
 
         System.out.println("초대된 ID : " + userList);
 
-        // tb_chat_list의 chat_no 최대값
-        String sql = "select max(chat_no) from tb_chat_list";
-        String num = "";    // chat_no 최대값
+        // tb_chat_list의 chat_no 최대값 구하기
+        String sql = "select max(chat_no) from TB_CHAT_LIST";
+        int maxNum = 1;    // chat_no 최대값
         try {
             // 오라클 서버와 연결
             conn = dbMgr.getConnection();
-            pstmt = conn.prepareStatement(sql.toString());
+            pstmt = conn.prepareStatement(sql);
 
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                num = rs.getString(1);
+                maxNum = rs.getInt(1) +1;
             }
         } catch (SQLException se) {
             se.printStackTrace();
@@ -195,29 +184,74 @@ public class ChatListLogic {
             }
         }
 
-        int maxNum = Integer.parseInt(num)+1;
-        maxNum += 1;
+        System.out.println("채팅방 최대넘버 : " + maxNum);
 
-        // 쿼리문에 사용할 변수
-        String table = "TB_CHAT_LIST";
-        String[] columns = { "chat_no", "chat_title" };
-        String[] values = { Integer.toString(maxNum), userList };
+        // TB_CHAT_LIST 데이터 추가
+        String sql2 = "INSERT INTO TB_CHAT_LIST (chat_no, chat_title) VALUES ( ?, ? )";
 
-        // INSERT INTO TB_CHAT_LIST (columns) VALUES values
-        result = quarry.quInsert(table, columns, values);
+        try {
+            conn = dbMgr.getConnection();
+            pstmt = conn.prepareStatement(sql2);
+
+            pstmt.setInt(1, maxNum);
+            pstmt.setString(2, userList);
+
+            // 쿼리 동작 레코드 수
+            // 성공: 1 / 실패: 0
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // DB 사용한 자원 반납
+            try {
+                dbMgr.freeConnection(conn, pstmt);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
 
         // tb_chat_user_list 테이블에 insert
         int result2 = 0;
-        StringTokenizer st = new StringTokenizer(userList, ",");
+        StringTokenizer st = new StringTokenizer(userList, ", ");
+        int count = st.countTokens();
+        System.out.println("사용자 수 : " + count);
 
-        for (int i=0; i<st.countTokens(); i++) {
+        for (int i=0; i<count; i++) {
             String stUserID = st.nextToken();
-            columns = new String[] { "chat_no", "user_id", "flag" };
-            values = new String[] { Integer.toString(maxNum), stUserID, "1"};
 
-            // 마지막 쿼리문만 되면 1이 되는 증상이 있음
-            result2 = quarry.quInsert("tb_chat_user_list", columns, values);
+            String sql3 = "insert into tb_chat_user_list (chat_no, user_id, flag) VALUES (?, ?, 1)";
+
+            try {
+                conn = dbMgr.getConnection();
+                pstmt = conn.prepareStatement(sql3);
+
+                pstmt.setInt(1, maxNum);
+                pstmt.setString(2, stUserID);
+
+                // 쿼리 동작 레코드 수
+                // 성공: 1 / 실패: 0
+                result *= pstmt.executeUpdate();
+
+                if (result == 1) {
+                    // ADD_FRIEND = 친구 추가 이벤트
+                    protocol = 605;
+                }
+            } catch (SQLException se) {
+                se.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                // DB 사용한 자원 반납
+                try {
+                    dbMgr.freeConnection(conn, pstmt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         if ((result*result2) == 1) {
@@ -243,6 +277,7 @@ public class ChatListLogic {
     } // end of enterChat (채팅방 입장)
 
 
+    // TODO: ChatLogic의 delChatContents 메소드 작성되었으므로 주석 처리
     /**
      * [채팅방 나가기]
      * 708 : 잘못된 채팅방 번호
@@ -252,6 +287,7 @@ public class ChatListLogic {
      * @param chatNo        접속한 채팅방 번호
      * @return protocol     708: 잘못된 채팅방 번호 | 706: 채팅방에서 나감
      */
+    /*
     public int removeChat(UserVO uservo, int chatNo) {
         System.out.println("ChatListLogic.removeChat() 메소드 시작");
         // WRONG_NUM = 잘못된 채팅방 번호
@@ -284,5 +320,6 @@ public class ChatListLogic {
 
         return protocol;
     } // end of removeChat (채팅방 나가기)
+    */
 
 }
