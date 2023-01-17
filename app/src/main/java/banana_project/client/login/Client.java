@@ -147,8 +147,8 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
     jtf_userPw.setText("password");
     jtf_userId.setForeground(Color.gray);
     jtf_userPw.setForeground(Color.lightGray);
-    main = new Main(this);
-    main.initDisplay(userId);
+    main = new Main(this, userId);
+    main.initDisplay();
   }
 
   /**

@@ -124,7 +124,7 @@ public class ClientThread extends Thread {
             break;
 
           /**
-           * PwFind 스레드
+           * PwFind스레드 -> 아직 미구현!!
            */
           // 계정이 존재할 때
           case Protocol.EXIST_FACNT: {
@@ -138,6 +138,28 @@ public class ClientThread extends Thread {
           }
             break;
 
+          /**
+           * PwFindDialog 스레드 -> 아직 미구현!!
+           */
+          case Protocol.RESET_PW: {
+            client.pwfind.pwFindDialog.reset_pw();
+          }
+            break;
+
+          /**
+           * Main 스레드
+           */
+          // 친구가 존재하지 않음 501
+          case Protocol.NF_FRDLIST: {
+            client.main.nf_frdlist();
+          }
+            break;
+          // 친구가 존재함 500 -> 친구
+          case Protocol.PRT_FRDLIST: {
+            String fList = st.nextToken();
+            client.main.prt_frdlist(fList);
+          }
+            break;
         } // end of switch
       } catch (Exception e) {
         e.printStackTrace();

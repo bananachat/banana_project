@@ -350,7 +350,7 @@ public class MemJoin implements ActionListener, FocusListener {
                   JOptionPane.showMessageDialog(client, "닉네임 중복확인을 해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
                         setImage.img_info);
                }
-               // 모든게 확인되면 회원가입
+               // 회원가입 시도 -> 200#아이디#비밀번호#이름#핸드폰번호#닉네임
                else {
                   client.oos.writeObject(Protocol.SIGN_UP
                         + Protocol.seperator + userId

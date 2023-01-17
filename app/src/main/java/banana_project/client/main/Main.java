@@ -4,6 +4,7 @@ import banana_project.client.common.*;
 import banana_project.client.login.Client;
 import banana_project.client.mypage.MyPage;
 import banana_project.server.logic.MemberLogic;
+import banana_project.server.thread.Protocol;
 import banana_project.server.vo.UserVO;
 
 import javax.swing.*;
@@ -46,27 +47,28 @@ public class Main implements ActionListener, MouseListener {
 
     // 리스트를 JList 사용
     DefaultListModel<String> dlm = new DefaultListModel<String>();
-    JList<String> jl_list = null;
+    JList<String> jl_list = new JList<String>(dlm);
 
     // [SOUTH]
     JButton jbtn_friends = new JButton("친구리스트");
     JButton jbtn_chat = new JButton("채팅방");
 
     ////////////////////////// [생성자] //////////////////////////
-    public Main(Client client) {
+    public Main(Client client, String userId) {
         this.client = client;
-        // JList 생성
-        for (int i = 0; i < 20; i++) { // TODO: DB 테이블 정보를 받아와야한다 (현재 임의리스트)
-            dlm.addElement(Integer.toString(i));
+        this.userId = userId;
+        // 사용자의 친구목록 불러오기 500#아이디
+        try {
+            client.oos.writeObject(Protocol.PRT_FRDLIST
+                    + Protocol.seperator + userId);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        jl_list = new JList(dlm);
     }
 
     ////////////////////////// [화면 출력] //////////////////////////
-    public void initDisplay(String userId) {
-        this.userId = userId;
-        // 테스트용 아이디출력
-        System.out.println(userId);
+    public void initDisplay() {
+
         // [north]
         jbtn_myPage.addActionListener(this); // jbtn_myPage 설정
         jbtn_myPage.setBorderPainted(false);
@@ -151,13 +153,15 @@ public class Main implements ActionListener, MouseListener {
         client.setVisible(true);
     }
 
-    ////////////////////////// [테스트용 메인메소드] //////////////////////////
-    public static void main(String[] args) {
-        Client c = new Client();
-        Main m = new Main(c);
-        c.initDisplay();
-        m.initDisplay("테스트");
-    } // end of main()
+    //친구가 없을때 메소드
+    public void nf_frdlist() {
+        dlm.addElement("친구가 없습니다.");;
+    }
+
+    //친구가 있을때 메소드
+    public void prt_frdlist(String fList) {
+            dlm.addElement(fList);
+    }
 
     ////////////////////////// [이벤트] //////////////////////////
     @Override
@@ -245,5 +249,13 @@ public class Main implements ActionListener, MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
+    }
+
+    ////////////////////////// [테스트용 메인메소드] //////////////////////////
+    public static void main(String[] args) {
+        Client c = new Client();
+        Main m = new Main(c, "test");
+        c.initDisplay();
+        m.initDisplay();
     }
 }

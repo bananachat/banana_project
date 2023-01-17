@@ -3,22 +3,24 @@ package banana_project.server.thread;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import com.google.common.collect.ImmutableBiMap.Builder;
 
+import banana_project.server.logic.FriendLogic;
 import banana_project.server.logic.MemberLogic;
 import banana_project.server.vo.UserVO;
 
 public class ServerThread extends Thread {
   MemberLogic memberLogic = null;
+  FriendLogic friendLogic = null;
   Server server = null;
   Socket client = null;
   ObjectOutputStream oos = null;
   ObjectInputStream ois = null;
-  // 현재 서버에 입장한 클라이언트 스레드의 닉네임 저장
-  String chatName = null;
 
   /**
    * 생성자
@@ -36,6 +38,7 @@ public class ServerThread extends Thread {
     this.client = server.socket;
     try {
       memberLogic = new MemberLogic();
+      friendLogic = new FriendLogic();
       oos = new ObjectOutputStream(client.getOutputStream()); // 말하기
       ois = new ObjectInputStream(client.getInputStream()); // 듣기
       // 현재 서버에 입장한 클라이언트 스레드 추가하기
@@ -245,6 +248,7 @@ public class ServerThread extends Thread {
             // 계정 존재하지 않음402
           }
             break;
+
           /**
            * PwFindDialog 스레드
            */
@@ -252,6 +256,37 @@ public class ServerThread extends Thread {
           case Protocol.RESET_PW: {
             String userId = st.nextToken();
             String userPw = st.nextToken();
+          }
+            break;
+
+          /**
+           * Main 스레드
+           */
+          // 사용자 친구목록 출력 500#아이디
+          case Protocol.PRT_FRDLIST: {
+            String userId = st.nextToken();
+            // DB등록 및 체크
+            server.jta_log.append("친구목록 DB 체크 시작" + "\n");
+            List<Object> list = friendLogic.printFriend(UserVO.builder().user_id(userId).build());
+            // 결과 프로토콜
+            int result = Integer.parseInt(String.valueOf(list.get(0)));
+            server.jta_log.append("Result: " + result + "\n");
+            // 친구 검색 결과가 없음 604
+            switch (result) {
+              case Protocol.NF_RESULT: {
+                oos.writeObject(Protocol.NF_FRDLIST); // 501
+              }
+                break;
+              // 친구 검색 결과 존재 607
+              case Protocol.EXIST_FRIEND: {
+                for (int i = 1; i < list.size(); i++) {
+                  String fList = String.valueOf(list.get(i));
+                  oos.writeObject(Protocol.PRT_FRDLIST
+                      + Protocol.seperator + fList); // 500
+                }
+              }
+                break;
+            }
           }
             break;
 

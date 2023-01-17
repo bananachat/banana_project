@@ -22,6 +22,7 @@ public class PwFind implements ActionListener, FocusListener {
    * 서버 연결부 선언
    */
   Client client = null;
+  PwFindDialog pwFindDialog = null;
 
   /**
    * 화면부 선언
@@ -108,7 +109,7 @@ public class PwFind implements ActionListener, FocusListener {
 
   // 비번찾기 계정이 존재할때 메소드
   public void exist_facnt() {
-    PwFindDialog pwFindDialog = new PwFindDialog(this);
+    pwFindDialog = new PwFindDialog(this);
     pwFindDialog.initDisplay();
   }
 
@@ -161,7 +162,7 @@ public class PwFind implements ActionListener, FocusListener {
         JOptionPane.showMessageDialog(client, "핸드폰번호는 -를 제외한 숫자만 입력해주세요.", "비밀번호 찾기", JOptionPane.WARNING_MESSAGE,
             setImage.img_info);
       }
-      // 이름, 아이디, 핸드폰번호 DB조회
+      // 비밀번호 찾기 -> 400#이름#아이디#핸드폰번호
       else {
         try {
           client.oos.writeObject(Protocol.FPW_START

@@ -94,6 +94,14 @@ public class PwFindDialog extends JDialog implements ActionListener {
     this.setVisible(true);
   }
 
+  public void reset_pw() {
+    JOptionPane.showMessageDialog(this, "비밀번호가 재설정되었습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
+        setImage.img_confirm);
+    this.dispose();
+    pwFind.client.setContentPane(pwFind.client.jp_login);
+    pwFind.client.revalidate();
+  }
+
   /**
    * ActionListener 메소드
    */
@@ -121,18 +129,14 @@ public class PwFindDialog extends JDialog implements ActionListener {
         JOptionPane.showMessageDialog(this, "비밀번호가 일치하지 않습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
             setImage.img_notFound);
       }
-      // 올바르게 입력하면 DB전송
+      // 비밀번호 재성정 -> 404#아이디#새로운비번
       else {
         try {
 
-          // 받아온 아이디정보 추가할것!
+          // 재설정된 메소드에 받아온 아이디정보 추가할것!
           pwFind.client.oos.writeObject(Protocol.RESET_PW
               + Protocol.seperator + newPw);
-          JOptionPane.showMessageDialog(this, "비밀번호가 재설정되었습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
-              setImage.img_confirm);
-          this.dispose();
-          pwFind.client.setContentPane(pwFind.client.jp_login);
-          pwFind.client.revalidate();
+
         } catch (Exception e2) {
           e2.printStackTrace();
         }

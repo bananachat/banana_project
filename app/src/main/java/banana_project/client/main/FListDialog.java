@@ -277,8 +277,8 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
      */
     public static void main(String[] args) {
         Client c = new Client();
-        Main m = new Main(c);
+        Main m = new Main(c, "test");
         c.initDisplay();
-        m.initDisplay("test");
+        m.initDisplay();
     }
 }

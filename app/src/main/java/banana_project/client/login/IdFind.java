@@ -146,7 +146,7 @@ public class IdFind implements ActionListener, FocusListener {
         JOptionPane.showMessageDialog(client, "핸드폰번호는 -를 제외한 숫자만 입력해주세요.", "아이디 찾기", JOptionPane.WARNING_MESSAGE,
             setImage.img_info);
       } else {
-        // 이름과 핸드폰번호 DB로 보내기
+        // 아이디찾기 -> 300#이름#핸드폰번호
         try {
           client.oos.writeObject(Protocol.FID_START
               + Protocol.seperator + userName
