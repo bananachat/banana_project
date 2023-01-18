@@ -60,10 +60,6 @@ public class FriendLogic {
         Vector<String> vfList = new Vector<String>();
         String friends = "";
 
-
-        // 쿼리결과 기본 false
-        Boolean result = false;
-
         // 로그 작성
         // Protocol 500 : PRT_FRDLIST, 친구목록 출력
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName()
@@ -84,27 +80,22 @@ public class FriendLogic {
             // 쿼리문 내 파라미터 값
             pstmt.setString(1, uservo.getUser_id());
 
-            // 쿼리문 결과
-            result = pstmt.execute();       // 호출: true, 실패: false
+            rs = pstmt.executeQuery();
 
-            // 조회 성공 시
-            if (result) {
-                rs = pstmt.executeQuery();
+            // 친구리스트 쿼리결과값 있을 경우
+            while (rs.next()) {
+                String f = rs.getString("f_id");
+                vfList.add(f);
 
-                // 친구리스트 쿼리결과값
-                while (rs.next()) {
-                    String f = rs.getString("f_id");
-                    vfList.add(f);
-
-                    // EXIST_FRIEND = 친구 검색 존재
-                    protocol = 607;
-                }
-
-                for(int i = 0; i < vfList.size()-1; i++) {
-                    friends += vfList.get(i) + "#";
-                }
-                friends += vfList.get(vfList.size()-1);
+                // EXIST_FRIEND = 친구 검색 존재
+                protocol = 607;
             }
+
+            for(int i = 0; i < vfList.size()-1; i++) {
+                friends += vfList.get(i) + "#";
+            }
+            friends += vfList.get(vfList.size()-1);
+
         } catch (SQLException se) {
             System.out.println("SQLException : " + se.getMessage());
         } catch (Exception e) {
@@ -140,7 +131,7 @@ public class FriendLogic {
      * @param friendID      조회할 친구 ID
      * @return vResult      친구 조회 결과
      */
-    public List<Object>  findFriend(UserVO uservo, String friendID) {
+    public List<Object> findFriend(UserVO uservo, String friendID) {
         System.out.println("FriendLogic_printFriend() 메소드 시작");
         // NF_RESULT = 친구 검색 결과가 없음
         protocol = 604;
@@ -148,9 +139,6 @@ public class FriendLogic {
         // 리턴값
         List<Object> lResult = new ArrayList<>();
         String fList = "";
-
-        // 쿼리결과 기본 false
-        Boolean result = false;
 
         // 로그 작성
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName()
@@ -170,20 +158,15 @@ public class FriendLogic {
             pstmt.setString(1, uservo.getUser_id());
             pstmt.setString(2, friendID);
 
-            result = pstmt.execute();
+            // 쿼리문 결과
+            rs = pstmt.executeQuery();       // 호출: true, 실패: false
 
-            // 조회 결과 있을 경우
-            if (result) {
-                // 쿼리문 결과
-                rs = pstmt.executeQuery();       // 호출: true, 실패: false
+            // 조회 성공 시
+            while(rs.next()) {
+                fList = rs.getString("f_id");
 
-                // 조회 성공 시
-                while(rs.next()) {
-                    fList = rs.getString("f_id");
-
-                    // EXIST_FRIEND = 친구 검색 존재
-                    protocol = 607;
-                }
+                // EXIST_FRIEND = 친구 검색 존재
+                protocol = 607;
             }
 
         } catch (SQLException se) {
