@@ -357,18 +357,24 @@ public class MemberLogic {
                         uservo.setUser_nickname(rs.getString("user_nickname"));
                         //반환 객체에 회원정보 넣어줌
                         resultMap.put("userVO", uservo);
+                        //결과 반환
                         return resultMap;
-                    } else {
+                    } else { //일치하지 않을 경우 로그인 실패
                         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                                 new LogVO(Protocol.WRONG_PW, uservo.toString(), uservo.getUser_id()));
+                        //반환 객체에 비밀번호 오류 프로토콜 삽입
                         resultMap.put("result", Protocol.WRONG_PW);
+                        //로그인 실패 카운트 하나 올림
                         uservo.setFail_cnt(fail_cnt + 1);
                         updateFailCnt(uservo);
+                        //결과값 반환
                         return resultMap;
                     }
+                //5회 이상인 경우 실패 카운트 초과로 로그인 거부
                 } else {
                     ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                             new LogVO(Protocol.OVER_FAIL_CNT, uservo.toString(), uservo.getUser_id()));
+                    //로그인 실패 카운트 초과 프로토콜 객체에 담아 반환
                     resultMap.put("result", Protocol.OVER_FAIL_CNT);
                     return resultMap;
                 }
@@ -376,6 +382,7 @@ public class MemberLogic {
             } else {
                 ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                         new LogVO(Protocol.WRONG_ID, uservo.toString(), uservo.getUser_id()));
+                //계정 없음 프로토콜 객체에 담아 반환
                 resultMap.put("result", Protocol.WRONG_ID);
                 return resultMap;
             }
@@ -384,6 +391,7 @@ public class MemberLogic {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            //자원 반납
             try {
                 mgr.freeConnection(con, pst, rs);
             } catch (Exception e) {
@@ -403,24 +411,28 @@ public class MemberLogic {
     public void updateFailCnt(UserVO uservo) {
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                 new LogVO(999, uservo.toString(), uservo.getUser_id()));
+        //카운트 업데이트 SQL문 작성
         String sql = "UPDATE TB_USER SET FAIL_CNT=? WHERE USER_ID=?";
+        //DB 업데이트 실행
         try {
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
             pst.setInt(1, uservo.getFail_cnt());
             pst.setString(2, uservo.getUser_id());
             pst.executeUpdate();
+        //예외 처리
         } catch (SQLException se) {
             se.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            //자원 반납
             try {
                 mgr.freeConnection(con, pst, rs);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }//로그 출력
         ll.writeLog(ConstantsLog.EXIT_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                 new LogVO(999, uservo.toString(), uservo.getUser_id()));
     }
@@ -434,25 +446,31 @@ public class MemberLogic {
     public int deleteAccount(UserVO uservo) {
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                 new LogVO(999, uservo.toString(), uservo.getUser_id()));
+        //반환값 초기화
         int result = -1;
+        //회원정보 업데이트 SQL 작성
         String sql = "UPDATE TB_USER SET STATUS=? WHERE USER_ID=?";
+        //DB 정보 업데이트 실행
         try {
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
             pst.setInt(1, ConstantsMember.DELETE_ACCOUNT);
             pst.setString(2, uservo.getUser_id());
             result = pst.executeUpdate();
+        //예외 처리
         } catch (SQLException se) {
             se.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            //자원 반납
             try {
                 mgr.freeConnection(con, pst, rs);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        //로그 출력
         ll.writeLog(ConstantsLog.EXIT_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                 new LogVO(999, uservo.toString(), uservo.getUser_id()));
         return result;
@@ -467,22 +485,30 @@ public class MemberLogic {
     public UserVO findUserId(UserVO uservo) {
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                 new LogVO(300, uservo.toString(), uservo.getUser_id()));
+        //반환 객체 생성 및 초기화
         UserVO user = new UserVO();
+        //유저 정보 불러오는 SQL문 작성
         String sql = "SELECT USER_ID FROM TB_USER WHERE USER_NAME=? AND USER_HP=?";
+        //DB 실행
         try {
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
             pst.setString(1, uservo.getUser_name());
             pst.setString(2, uservo.getUser_hp());
             rs = pst.executeQuery();
+            //결과값이 존재할 경우엔 존재하는 계정
             while (rs.next()) {
+                //결과값에서 유저 아이디를 가져옴
                 String userId = rs.getString("user_id");
+                //보안을 위해 **처리 후 객체에 담아 반환
                 userId = userId.replaceAll("(?<=.{3}).(?=.*@)", "*");
                 user.setUser_id(userId);
             }
+        //예외 처리
         } catch (SQLException se) {
             se.printStackTrace();
         } finally {
+            //자원 반납
             try {
                 mgr.freeConnection(con, pst, rs);
             } catch (Exception e) {
@@ -494,11 +520,21 @@ public class MemberLogic {
         return user;
     }
 
+    /**
+     * 비밀번호 재설정 가능 여부 확인
+     * 404 : 비밀번호 재설정 가능
+     *
+     * @param uservo 비밀번호 재설정할 회원 정보 객체
+     * @return 비밀번호 변경 가능 여부 반환
+     */
     public String findUserPW(UserVO uservo) {
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                 new LogVO(400, uservo.toString(), uservo.getUser_id()));
+        //반환값 초기화
         String pw_protocol = "400";
+        //회원 정보 읽어오는 SQl문 설정
         String sql = "SELECT USER_PW FROM TB_USER WHERE USER_NAME=? AND USER_HP=? AND USER_ID=?";
+        //DB에서 읽어오기
         try {
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
@@ -506,11 +542,13 @@ public class MemberLogic {
             pst.setString(2, uservo.getUser_hp());
             pst.setString(3, uservo.getUser_id());
             rs = pst.executeQuery();
+            //값이 있을 경우 정보가 일치한다는 의미 -> 비밀번호 재설정
             while (rs.next()) {
                 pw_protocol = "404";
             }
         } catch (SQLException se) {
             se.printStackTrace();
+        //자원 반납
         } finally {
             try {
                 mgr.freeConnection(con, pst, rs);
