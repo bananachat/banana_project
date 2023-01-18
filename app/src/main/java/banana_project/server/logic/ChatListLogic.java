@@ -58,7 +58,9 @@ public class ChatListLogic {
         // 리턴값
         Map<String, Object> mResult = new HashMap<>();
 
-        List<ChatListVO> lChatList = null;
+        List<ChatListVO> lChatList = new ArrayList<>();
+        Vector<String> vChatNo = new Vector<String>();
+        Vector<String> vChatTitle = new Vector<String>();
 
         // 쿼리결과 기본 false
         Boolean result = false;
@@ -67,20 +69,17 @@ public class ChatListLogic {
         // 로그 작성
         // Protocol 508 : BTN_CHATLIST, 채팅방목록 버튼 클릭
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName()
-                    , new LogVO(508, uservo.toString(), uservo.getUser_id()));
+                , new LogVO(508, uservo.toString(), uservo.getUser_id()));
 
         System.out.println("UserVO : " + uservo.toString());
         System.out.println("로그: " + ll.toString());
 
         // 채팅방 호출 쿼리문
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT ul.chat_no, cl.chat_title ");
-        sql.append("FROM TB_CHAT_USER_LIST ul, TB_CHAT_LIST cl");
-        sql.append("WHERE ul.chat_no = cl.chat_no ");
-        // 빈문자열이 아닌것도 필터링
-        if (uservo.getUser_id()!= null && uservo.getUser_id().length()>0) {
-            sql.append("AND ul.user_id = ? ");
-        }
+
+        sql.append("SELECT ul.chat_no, cl.chat_title FROM TB_CHAT_USER_LIST ul, TB_CHAT_LIST cl ");
+        sql.append("    WHERE ul.chat_no = cl.chat_no AND ul.user_id = ? ");
+        sql.append("    ORDER BY ul.chat_no ");
 
         try {
             // 오라클 서버와 연결
@@ -90,23 +89,13 @@ public class ChatListLogic {
             // 쿼리문 내 파라미터 값 (사용자ID)
             pstmt.setString(1, uservo.getUser_id());
 
-            // 쿼리문 결과
-            result = pstmt.execute();
+            rs = pstmt.executeQuery();
 
-            if (result) {
-                // 쿼리 반환값
-                rs = pstmt.executeQuery();
-                System.out.println("쿼리값 : " + rs.toString());
-
-                Vector<String> vChatNo = new Vector<String>();
-                Vector<String> vChatTitle = new Vector<String>();
-
-                while (rs.next()) {
-                    ChatListVO clVO = new ChatListVO();
-                    clVO.setChat_no(rs.getInt("ul.chat_no"));
-                    clVO.setChat_title(rs.getString("cl.chat_title"));
-                    lChatList.add(clVO);
-                }
+            while (rs.next()) {
+                ChatListVO clVO = new ChatListVO();
+                clVO.setChat_no(rs.getInt(1));
+                clVO.setChat_title(rs.getString(2));
+                lChatList.add(clVO);
 
                 // PRT_CHATLIST = 채팅리스트 출력
                 protocol = 502;
@@ -117,6 +106,12 @@ public class ChatListLogic {
 
         } catch (Exception e) {
             e.printStackTrace();
+            if (conn == null) {                         // DB 접속 실패 시
+                protocol = 800;
+            }
+            if (lChatList == null) {
+                System.out.println("친구리스트가 없습니다");
+            }
         } finally {
             // DB 사용한 자원 반납
             try {
@@ -160,6 +155,7 @@ public class ChatListLogic {
         // tb_chat_list의 chat_no 최대값 구하기
         String sql = "select max(chat_no) from TB_CHAT_LIST";
         int maxNum = 1;    // chat_no 최대값
+
         try {
             // 오라클 서버와 연결
             conn = dbMgr.getConnection();
@@ -174,6 +170,9 @@ public class ChatListLogic {
             se.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
+            if (conn == null) {                         // DB 접속 실패 시
+                protocol = 800;
+            }
         } finally {
             // DB 사용한 자원 반납
             try {
@@ -184,7 +183,7 @@ public class ChatListLogic {
             }
         }
 
-        System.out.println("채팅방 최대넘버 : " + maxNum);
+        System.out.println("새 채팅방 넘버 : " + maxNum);
 
         // TB_CHAT_LIST 데이터 추가
         String sql2 = "INSERT INTO TB_CHAT_LIST (chat_no, chat_title) VALUES ( ?, ? )";
@@ -204,6 +203,9 @@ public class ChatListLogic {
             se.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
+            if (conn == null) {                         // DB 접속 실패 시
+                protocol = 800;
+            }
         } finally {
             // DB 사용한 자원 반납
             try {
@@ -236,14 +238,13 @@ public class ChatListLogic {
                 // 성공: 1 / 실패: 0
                 result *= pstmt.executeUpdate();
 
-                if (result == 1) {
-                    // ADD_FRIEND = 친구 추가 이벤트
-                    protocol = 605;
-                }
             } catch (SQLException se) {
                 se.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
+                if (conn == null) {                         // DB 접속 실패 시
+                    protocol = 800;
+                }
             } finally {
                 // DB 사용한 자원 반납
                 try {
@@ -259,8 +260,12 @@ public class ChatListLogic {
             protocol = 606;
         }
 
+        // TODO: 만약에 모든 쿼리가 정상적으로 안될 경우, 추가한 데이터들 삭제 로직 작성 필요
+
         return protocol;
     } // end of createChat (채팅방 생성)
+
+
 
 
 
@@ -277,15 +282,16 @@ public class ChatListLogic {
     } // end of enterChat (채팅방 입장)
 
 
+
     // TODO: ChatLogic의 delChatContents 메소드 작성되었으므로 주석 처리
     /**
      * [채팅방 나가기]
      * 708 : 잘못된 채팅방 번호
      * 706 : 채팅방에서 나감
      *
-     * @param uservo        사용자 정보
-     * @param chatNo        접속한 채팅방 번호
-     * @return protocol     708: 잘못된 채팅방 번호 | 706: 채팅방에서 나감
+     //     * @param uservo        사용자 정보
+     //     * @param chatNo        접속한 채팅방 번호
+     //     * @return protocol     708: 잘못된 채팅방 번호 | 706: 채팅방에서 나감
      */
     /*
     public int removeChat(UserVO uservo, int chatNo) {
@@ -321,5 +327,26 @@ public class ChatListLogic {
         return protocol;
     } // end of removeChat (채팅방 나가기)
     */
+
+
+    // 단위테스트
+    public static void main(String[] args) {
+        ChatListLogic cl = new ChatListLogic();
+        UserVO uVO = new UserVO();
+        FriendLogic fl = new FriendLogic();
+
+        uVO.setUser_id("test10");
+
+        int i = 0;
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        String userList = "test4, test5, test6";
+
+        // 채팅방 출력
+        map = cl.printChatList(uVO);
+
+        // 채팅방 만들기
+//        i = cl.createChat(userList);
+    }
 
 }
