@@ -271,7 +271,8 @@ public class ServerThread extends Thread {
             server.jta_log.append("친구목록 DB 체크 시작" + "\n");
             List<Object> list = friendLogic.printFriend(UserVO.builder().user_id(userId).build());
             // 결과 프로토콜
-            int result = Integer.parseInt(String.valueOf(list.get(0)));
+            int result = Integer.parseInt(list.get(0).toString());
+            String fList = String.valueOf(list.get(1));
             server.jta_log.append("Result: " + result + "\n");
             // 친구 검색 결과가 없음 604
             switch (result) {
@@ -281,11 +282,8 @@ public class ServerThread extends Thread {
                 break;
               // 친구 검색 결과 존재 607
               case Protocol.EXIST_FRIEND: {
-                for (int i = 1; i < list.size(); i++) {
-                  String fList = String.valueOf(list.get(i));
-                  oos.writeObject(Protocol.PRT_FRDLIST
-                      + Protocol.seperator + fList); // 500
-                }
+                oos.writeObject(Protocol.PRT_FRDLIST
+                    + Protocol.seperator + fList); // 500
               }
                 break;
             }
