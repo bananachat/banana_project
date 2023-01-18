@@ -246,8 +246,22 @@ public class ServerThread extends Thread {
             String userHp = st.nextToken();
             // DB등록 및 체크
             server.jta_log.append("비밀번호찾기 DB 체크 시작" + "\n");
-            // 계정 존재 403
-            // 계정 존재하지 않음402
+            String result = memberLogic
+                .findUserPW(UserVO.builder().user_name(userName).user_id(userId).user_hp(userHp).build());
+            server.jta_log.append("Result: " + result + "\n");
+            switch (Integer.parseInt(result)) {
+              // 재설정 시작 404
+              case Protocol.RESET_PW: {
+
+              }
+                break;
+              // 재설정 실패400
+              case Protocol.FPW_START: {
+
+              }
+                break;
+
+            }
           }
             break;
 
