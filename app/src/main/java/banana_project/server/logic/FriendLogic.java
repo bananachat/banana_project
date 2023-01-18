@@ -91,15 +91,19 @@ public class FriendLogic {
             if (result) {
                 rs = pstmt.executeQuery();
 
-
                 // 친구리스트 쿼리결과값
                 while (rs.next()) {
                     String f = rs.getString("f_id");
                     vfList.add(f);
+
+                    // EXIST_FRIEND = 친구 검색 존재
+                    protocol = 607;
                 }
 
-                // EXIST_FRIEND = 친구 검색 존재
-                protocol = 607;
+                for(int i = 0; i < vfList.size()-1; i++) {
+                    friends += vfList.get(i) + "#";
+                }
+                friends += vfList.get(vfList.size()-1);
             }
         } catch (SQLException se) {
             System.out.println("SQLException : " + se.getMessage());
@@ -114,11 +118,6 @@ public class FriendLogic {
                 e.printStackTrace();
             }
         }
-
-        for(int i = 0; i < vfList.size()-1; i++) {
-            friends += vfList.get(i) + "#";
-        }
-        friends += vfList.get(vfList.size()-1);
 
         lResult.add(protocol);
         lResult.add(friends);
