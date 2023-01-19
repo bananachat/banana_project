@@ -95,31 +95,29 @@ public class MemberLogic {
         return result;
     }
 
+
     /**
-     * 회원정보 업데이트
+     * 회원정보(닉네임) 업데이트
      * 결과값 -1, 0 : 정보 업데이트 실패
      * 결과값 1 : 업데이트 성공
      *
      * @param uservo 회원정보 객체
      * @return result 업데이트 결과 반환
      */
-    public int updateUser(UserVO uservo) {
+    public int updateUserNick(UserVO uservo) {
         //로그 출력
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                 new LogVO(999, uservo.toString(), uservo.getUser_id()));
         //반환값 초기화
         int result = -1;
         //회원정보 UPDATE sql 작성
-        String sql = "UPDATE TB_USER SET USER_PW=?, USER_NAME =?, USER_HP=?, USER_NICKNAME=?, UPD_DATE=SYSDATE WHERE USER_ID=?";
+        String sql = "UPDATE TB_USER SET USER_NICKNAME=?, UPD_DATE=SYSDATE WHERE USER_ID=?";
         try {
             //회원 정보 업데이트 실행
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
-            pst.setString(1, uservo.getUser_pw());
-            pst.setString(2, uservo.getUser_name());
-            pst.setString(3, uservo.getUser_hp());
-            pst.setString(4, uservo.getUser_nickname());
-            pst.setString(5, uservo.getUser_id());
+            pst.setString(1, uservo.getUser_nickname());
+            pst.setString(2, uservo.getUser_id());
             result = pst.executeUpdate();
         } catch (SQLException se) { //SQLException 처리 로그 저장
             se.printStackTrace();
@@ -138,6 +136,48 @@ public class MemberLogic {
                 new LogVO(999, uservo.toString(), uservo.getUser_id()));
         return result;
     }
+
+    /**
+     * 회원정보(비밀번호) 업데이트
+     * 결과값 -1, 0 : 정보 업데이트 실패
+     * 결과값 1 : 업데이트 성공
+     *
+     * @param uservo 회원정보 객체
+     * @return result 업데이트 결과 반환
+     */
+    public int updateUserPW(UserVO uservo) {
+        //로그 출력
+        ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new LogVO(999, uservo.toString(), uservo.getUser_id()));
+        //반환값 초기화
+        int result = -1;
+        //비밀번호 UPDATE sql 작성
+        String sql = "UPDATE TB_USER SET USER_PW=?, UPD_DATE=SYSDATE WHERE USER_ID=?";
+        try {
+            //회원 정보 업데이트 실행
+            con = mgr.getConnection();
+            pst = con.prepareStatement(sql);
+            pst.setString(1, uservo.getUser_pw());
+            pst.setString(2, uservo.getUser_id());
+            result = pst.executeUpdate();
+        } catch (SQLException se) { //SQLException 처리 로그 저장
+            se.printStackTrace();
+        } catch (Exception e) { //Exception 처리 로그 저장
+            e.printStackTrace();
+        } finally {
+            //자원 반납
+            try {
+                mgr.freeConnection(con, pst, rs);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        //로그 출력
+        ll.writeLog(ConstantsLog.EXIT_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new LogVO(999, uservo.toString(), uservo.getUser_id()));
+        return result;
+    }
+
 
     /**
      * 아이디 중복검사
