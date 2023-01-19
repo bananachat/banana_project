@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.IOException;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -28,6 +30,7 @@ public class MyPage implements ActionListener {
   Client client = null;// 회원가입 프레임
   Main main = null; // 메인화면 프레임
   String dbNick = null;
+  String dbId = null;
   boolean nickTnF = false;
   String tempNick = null;
 
@@ -255,6 +258,7 @@ public class MyPage implements ActionListener {
     jtf_userId.setText(userId);
     jtf_nickName.setText(nickName);
     dbNick = nickName;
+    dbId = userId;
   }
 
   /**
@@ -285,12 +289,13 @@ public class MyPage implements ActionListener {
   }
 
   /**
-   * 정보 수정 성공
+   * 닉네임 수정 성공
    * 
    * @param newNick
    */
   public void edit_mypage(String newNick) {
-    JOptionPane.showMessageDialog(client, "변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+    dbNick = newNick;
+    JOptionPane.showMessageDialog(client, "닉네임 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
         setImage.img_confirm);
     client.setContentPane(client.main.jp_main);
     client.setTitle("친구 목록");
@@ -298,10 +303,10 @@ public class MyPage implements ActionListener {
   }
 
   /**
-   * 정보 수정 실패
+   * 닉네임 수정 실패
    */
   public void fail_mypage() {
-    JOptionPane.showMessageDialog(client, "정보 수정에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+    JOptionPane.showMessageDialog(client, "닉네임 수정에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
         setImage.img_notFound);
   }
 
@@ -311,13 +316,27 @@ public class MyPage implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     Object obj = e.getSource();
+    String userNick = jtf_nickName.getText();
+    String pwFirst = jtf_userPw.getText();
+    String pwSecond = jtf_userPwRe.getText();
+    // 닉네임, 비밀번호 정규식
+    String nickCheck = "^[a-zA-Z가-힣ㄱ-ㅎ0-9]{2,16}"; // 영문, 한글, 숫자 닉네임 2~10자
+    String pwCheck = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$"; // 숫자,영문자포함 8~16자 비밀번호
     // 닉네임 중복확인 버튼 눌렀을 때
     if (obj == jbtn_checkNick) {
       String newNick = jtf_nickName.getText();
+      // 원래 닉네임과 같은 경우
       if (dbNick.equals(newNick)) {
         JOptionPane.showMessageDialog(client, "기존에 사용하던 닉네임입니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
             setImage.img_notFound);
-      } else {
+      }
+      // 닉네임이 형식에 안맞음
+      else if (!Pattern.matches(nickCheck, newNick)) {
+        JOptionPane.showMessageDialog(client, "닉네임은 2~10자의 영문, 한글, 숫자로 입력해주세요.", "회원가입",
+            JOptionPane.WARNING_MESSAGE, setImage.img_info);
+      }
+      // 그 외의 경우 
+      else {
         try {
           client.oos.writeObject(Protocol.NICK_MCHK
               + Protocol.seperator + newNick);
@@ -329,31 +348,56 @@ public class MyPage implements ActionListener {
 
     // 확인버튼을 눌렀을 때
     if (obj == jbtn_save || obj == jtf_nickName || obj == jtf_userPw || obj == jtf_userPwRe) {
-      String userNick = jtf_nickName.getText();
-      String pwFirst = jtf_userPw.getText();
-      String pwSecond = jtf_userPwRe.getText();
       // 비밀번호 1, 2가 다를 경우
       if (!pwFirst.equals(pwSecond)) {
         JOptionPane.showMessageDialog(client, "비밀번호가 일치하지 않습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
             setImage.img_notFound);
       }
-      // 입력내용이 DB와 다를 경우
+      // 입력 닉네임이 DB와 다를 경우
       else if (!dbNick.equals(userNick)) {
         // 아이디 중복확인 안했을 경우
         if (!nickTnF) {
           JOptionPane.showMessageDialog(client, "닉네임 중복확인을 해주세요", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
               setImage.img_info);
-        } else {
-          // DB로 변경된 정보 업데이트
+        }
+        // 닉네임이 형식에 안맞음
+        else if (!Pattern.matches(nickCheck, userNick)) {
+          JOptionPane.showMessageDialog(client, "닉네임은 2~10자의 영문, 한글, 숫자로 입력해주세요.", "회원가입",
+              JOptionPane.WARNING_MESSAGE, setImage.img_info);
+        }
+        // 닉네임, 비밀번호 변경
+        else if (!pwFirst.equals("")) {
+          // 비밀번호 형식이 아닐 경우
+          if (!Pattern.matches(pwCheck, pwFirst)) {
+            JOptionPane.showMessageDialog(client, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "로그인",
+                JOptionPane.WARNING_MESSAGE, setImage.img_info);
+          } else { //해야하는것
+
+          }
+        }
+        // 닉네임만 변경 516#닉네임#아이디
+        else {
           try {
-            client.oos.writeObject(Protocol.EDIT_MYPAGE
+            client.oos.writeObject(Protocol.EDIT_MNICK
                 + Protocol.seperator + userNick
-                + Protocol.seperator + pwFirst);
-          } catch (Exception e1) {
+                + Protocol.seperator + dbId);
+          } catch (IOException e1) {
             e1.printStackTrace();
           }
         }
       }
+      // 비밀번호 공백아닐때(변경했을때)
+      else if (!pwFirst.equals("")) { //해야하는것
+        // DB로 변경된 정보 업데이트
+        // try {
+        // client.oos.writeObject(Protocol.EDIT_MYPAGE
+        // + Protocol.seperator + userNick
+        // + Protocol.seperator + pwFirst);
+        // } catch (Exception e1) {
+        // e1.printStackTrace();
+        // }
+      }
+
       // 변경사항이 없는 경우
       else {
         client.setContentPane(client.main.jp_main);
@@ -362,7 +406,9 @@ public class MyPage implements ActionListener {
       }
     }
     // 탈퇴하기 버튼을 눌렀을 때
-    else if (obj == jbtn_resign) {
+    else if (obj == jbtn_resign)
+
+    {
       jd_resign.setVisible(true);
     }
 

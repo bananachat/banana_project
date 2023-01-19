@@ -354,25 +354,25 @@ public class ServerThread extends Thread {
             }
           }
             break;
-          // 사용자 정보 변경 516#닉네임#비밀번호
-          case Protocol.EDIT_MYPAGE: {
+          // 닉네임 변경 516#닉네임#아이디
+          case Protocol.EDIT_MNICK: {
             String newNick = st.nextToken();
-            String newPw = st.nextToken();
+            String userId = st.nextToken();
             // DB체크
-            server.jta_log.append("사용자 정보변경 DB 체크 시작" + "\n");
-            int result = memberLogic.updateUser(UserVO.builder().user_nickname(newNick).user_pw(newPw).build());
+            server.jta_log.append("닉네임변경 DB 체크 시작" + "\n");
+            int result = memberLogic.updateUserNick(UserVO.builder().user_nickname(newNick).user_id(userId).build());
             server.jta_log.append("Result: " + result + "\n");
             // 체크 결과 switch문
             switch (result) {
-              // 정보수정 성공
+              //닉네임 수정 성공 516
               case 1: {
-                oos.writeObject(Protocol.EDIT_MYPAGE
+                oos.writeObject(Protocol.EDIT_MNICK
                     + Protocol.seperator + newNick);
               }
                 break;
-              // 정보수정 실패
-              case 0, -1: {
-                oos.writeObject(Protocol.FAIL_MYPAGE);
+              // 닉네임 수정 실패 517
+              case -1: {
+                oos.writeObject(Protocol.FAIL_MNICK);
               }
                 break;
             }

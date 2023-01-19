@@ -158,10 +158,10 @@ public class ClientThread extends Thread {
           // 친구가 존재함 500 -> 친구
           case Protocol.PRT_FRDLIST: {
             Vector<String> vList = new Vector<>();
-            while(st.hasMoreTokens()){
-            String fList = st.nextToken();
-            vList.add(fList);
-          }
+            while (st.hasMoreTokens()) {
+              String fList = st.nextToken();
+              vList.add(fList);
+            }
             client.main.prt_frdlist(vList);
           }
             break;
@@ -193,15 +193,17 @@ public class ClientThread extends Thread {
             client.main.myPage.exist_mnick();
           }
             break;
-          // 사용자 정보 수정 성공 516
-          case Protocol.EDIT_MYPAGE: {
+          // 닉네임 수정 성공 516
+          case Protocol.EDIT_MNICK: {
             String newNick = st.nextToken();
             client.main.myPage.edit_mypage(newNick);
           }
-          // 사용자 정보 수정 실패 517
-          case Protocol.FAIL_MYPAGE: {
+            break;
+          // 닉네임 수정 실패 517
+          case Protocol.FAIL_MNICK: {
             client.main.myPage.fail_mypage();
           }
+            break;
 
         } // end of switch
       } catch (Exception e) {
