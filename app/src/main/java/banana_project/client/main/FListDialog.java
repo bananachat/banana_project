@@ -9,6 +9,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
+import banana_project.client.room.Pchat;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -214,6 +215,10 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
                 System.out.println("친구검색 다이얼로그 종료");
                 this.dispose();
+
+                // 채팅방 열림
+                main.pchat = new Pchat(main.client);
+                main.pchat.initDisplay();
             }
 
         } // end of 친구|채팅 추가 이벤트
@@ -253,7 +258,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     public void focusGained(FocusEvent e) {
         if (e.getSource() == jtf_search) {
             jtf_search.setForeground(Color.BLACK);
-
             if ("친구 이름를 입력하세요".equals(jtf_search.getText())) {
                 jtf_search.setText("");
             }

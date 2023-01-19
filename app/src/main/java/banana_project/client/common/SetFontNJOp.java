@@ -7,12 +7,16 @@ public class SetFontNJOp {
     // 폰트 설정
     public static final Font p11 = new Font("맑은 고딕", Font.PLAIN, 11); // 보통 11폰트
     public static final Font p12 = new Font("맑은 고딕", Font.PLAIN, 12); // 보통 12폰트
+    public static final Font p13 = new Font("맑은 고딕", Font.PLAIN, 13); // 보통 13폰트
     public static final Font p14 = new Font("맑은 고딕", Font.PLAIN, 14); // 보통 14폰트
+    public static final Font p15 = new Font("맑은 고딕", Font.PLAIN, 15); // 보통 15폰트
     public static final Font p16 = new Font("맑은 고딕", Font.PLAIN, 16); // 보통 16폰트
     public static final Font p18 = new Font("맑은 고딕", Font.PLAIN, 18); // 보통 18폰트
 
     public static final Font b12 = new Font("맑은 고딕", Font.BOLD, 12); // 볼드 12폰트
+    public static final Font b13 = new Font("맑은 고딕", Font.BOLD, 13); // 볼드 13폰트
     public static final Font b14 = new Font("맑은 고딕", Font.BOLD, 14); // 볼드 14폰트
+    public static final Font b15 = new Font("맑은 고딕", Font.BOLD, 15); // 볼드 15폰트
     public static final Font b16 = new Font("맑은 고딕", Font.BOLD, 16); // 볼드16폰트
     public static final Font b18 = new Font("맑은 고딕", Font.BOLD, 18); // 볼드18폰트
 
