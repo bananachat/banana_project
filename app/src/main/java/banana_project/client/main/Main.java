@@ -3,8 +3,7 @@ package banana_project.client.main;
 import banana_project.client.common.*;
 import banana_project.client.login.Client;
 import banana_project.client.mypage.MyPage;
-import banana_project.client.room.Pchat;
-import banana_project.server.logic.MemberLogic;
+import banana_project.client.room.ChatRoom;
 import banana_project.server.thread.Protocol;
 import banana_project.server.vo.UserVO;
 
@@ -22,7 +21,7 @@ public class Main implements ActionListener, MouseListener {
     public Client client = null;
     public MyPage myPage = null; // 마이페이지 선언
     FListDialog flDialog = null; // "친구 추가" 다이얼로그
-    Pchat pchat = null; // 1:1채팅 선언
+    ChatRoom chatRoom = null; // 1:1채팅 선언
     String logMsg = ""; // 로그 기록용
     // 유저정보
     String userId = null;

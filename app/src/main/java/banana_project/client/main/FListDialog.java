@@ -9,7 +9,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
-import banana_project.client.room.Pchat;
+import banana_project.client.room.ChatRoom;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -217,8 +217,8 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 this.dispose();
 
                 // 채팅방 열림
-                main.pchat = new Pchat(main.client);
-                main.pchat.initDisplay();
+                main.chatRoom = new ChatRoom(main.client);
+                main.chatRoom.initDisplay();
             }
 
         } // end of 친구|채팅 추가 이벤트

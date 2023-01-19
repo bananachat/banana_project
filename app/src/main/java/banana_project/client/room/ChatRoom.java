@@ -6,16 +6,14 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
-import banana_project.client.main.Main;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.Font;
 
-public class Pchat implements ActionListener, FocusListener {
+public class ChatRoom implements ActionListener, FocusListener {
     /**
      * 서버 연결부 선언
      */
@@ -45,7 +43,7 @@ public class Pchat implements ActionListener, FocusListener {
     /**
      * 생성자
      */
-    public Pchat(Client client) {
+    public ChatRoom(Client client) {
         this.client = client;
     }
 
@@ -197,8 +195,8 @@ public class Pchat implements ActionListener, FocusListener {
      */
     public static void main(String[] args) {
         Client c = new Client();
-        Pchat p = new Pchat(c);
+        ChatRoom cr = new ChatRoom(c);
         c.initDisplay();
-        p.initDisplay();
+        cr.initDisplay();
     }
 }
