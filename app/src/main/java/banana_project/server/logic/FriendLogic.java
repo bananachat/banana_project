@@ -382,4 +382,32 @@ public class FriendLogic {
 
 
     // TODO: "친구 정보 조회" 기능 추가 시 작성 필요
+
+
+    // 단위테스트
+    public static void main(String[] args) {
+        UserVO uVO = new UserVO();
+        FriendLogic fl = new FriendLogic();
+        int r = 0;
+
+        uVO.setUser_id("test");
+        String selectID = "friend";
+        String selectID1 = "friend1";
+//
+//        // 친구추가
+////        r = fl.addFriend(uVO, selectID1);
+////        System.out.println(r);
+//
+//        // 친구 삭제
+////        r = fl.delFriend(uVO, selectID);
+////        System.out.println(r);
+//
+//        // 친구 조회
+        List<Object> m = new ArrayList<>();
+        m = fl.findFriend(uVO, selectID1);
+//
+//        // 친구 리스트 출력
+//        List<Object> l = new ArrayList<Object>();
+//        l = fl.printFriend(uVO);
+    }
 }
