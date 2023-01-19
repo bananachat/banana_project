@@ -80,5 +80,7 @@ public class Protocol {
     public static final int	SAVE_FAIL = 708;    	//대화저장실패
 
 
+    //          [데이터베이스]           //
+    public static final int	FAIL_CONN = 800;    	//데이터베이스 접속 실패
 
 }
