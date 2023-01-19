@@ -358,9 +358,10 @@ public class ServerThread extends Thread {
           case Protocol.EDIT_MYPAGE: {
             String newNick = st.nextToken();
             String newPw = st.nextToken();
+            String userId = st.nextToken();//추가해야함
             // DB체크
             server.jta_log.append("사용자 정보변경 DB 체크 시작" + "\n");
-            int result = memberLogic.updateUser(UserVO.builder().user_nickname(newNick).user_pw(newPw).build());
+            int result = memberLogic.updateUserNick(UserVO.builder().user_nickname(newNick).user_id(userId).build());//추가해야함
             server.jta_log.append("Result: " + result + "\n");
             // 체크 결과 switch문
             switch (result) {
