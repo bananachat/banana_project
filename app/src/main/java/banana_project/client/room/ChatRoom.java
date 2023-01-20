@@ -43,7 +43,7 @@ public class ChatRoom implements ActionListener, FocusListener {
     /**
      * 생성자
      */
-    public ChatRoom(Client client) {
+    public ChatRoom(Client client, String userId, String chatNo) {
         this.client = client;
     }
 
