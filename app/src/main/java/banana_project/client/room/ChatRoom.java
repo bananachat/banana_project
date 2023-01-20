@@ -195,7 +195,7 @@ public class ChatRoom implements ActionListener, FocusListener {
      */
     public static void main(String[] args) {
         Client c = new Client();
-        ChatRoom cr = new ChatRoom(c);
+        ChatRoom cr = new ChatRoom(c, "user", "1");
         c.initDisplay();
         cr.initDisplay();
     }
