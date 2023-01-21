@@ -6,18 +6,25 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
+import banana_project.server.thread.Protocol;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.IOException;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class ChatRoom implements ActionListener, FocusListener {
     /**
      * 서버 연결부 선언
      */
     Client client = null;
+    String userId = null;
+    String userList = null;
+    String chatNo = null;
     String msg = null;
 
     /**
@@ -45,6 +52,17 @@ public class ChatRoom implements ActionListener, FocusListener {
      */
     public ChatRoom(Client client, String userId, String chatNo) {
         this.client = client;
+        // 테스트용
+        this.userId = "banana@email.com";
+        this.chatNo = "1";
+        // 채팅방 정보 불러오기
+        try {
+            client.oos.writeObject(Protocol.CHAT_START
+                    + Protocol.seperator + this.chatNo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -89,7 +107,6 @@ public class ChatRoom implements ActionListener, FocusListener {
         jta_chat.setEditable(false);
         jta_chat.setLineWrap(true);
         jp_center.add(jta_chat);
-
         // 스크롤바 설정
         jsp_display.getVerticalScrollBar().setBackground(Color.white);
         jsp_display.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
@@ -137,6 +154,35 @@ public class ChatRoom implements ActionListener, FocusListener {
         client.setVisible(true);
     }
 
+    /**
+     * 채팅방 불러오기 메소드
+     * 
+     * @param chatContent
+     * @param chatDate
+     * @param userId2
+     */
+    public void chat_start(String chatContent, String chatDate, String userList) {
+        // 채팅내용이 저장되는 방식?
+        // 유저정보는 채팅에 참여한 전체 유저?
+        // 닉네임 혹은 아이디저장?
+        // 로그인한 유저와 구분법?
+        jta_chat.setText(chatContent);
+        StringTokenizer st = new StringTokenizer(userList, "#");
+        Vector<String> vList = new Vector<>();
+        while (st.hasMoreTokens()) {
+            vList.add(st.nextToken());
+        }
+        // 채팅방 상단 그룹채팅 혹은 1:1채팅 닉네임 표시
+        if (vList.size() > 1) {
+            jbtn_fNick.setText("그룹채팅(" + vList.size() + ")");
+        } else {
+            jbtn_fNick.setText(vList.get(0));
+        }
+    }
+
+    /**
+     * ActionListener 메소드
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
@@ -164,6 +210,9 @@ public class ChatRoom implements ActionListener, FocusListener {
         }
     }
 
+    /**
+     * FocusListener 메소드
+     */
     @Override
     public void focusGained(FocusEvent e) {
         Object obj = e.getSource();
@@ -195,7 +244,7 @@ public class ChatRoom implements ActionListener, FocusListener {
      */
     public static void main(String[] args) {
         Client c = new Client();
-        ChatRoom cr = new ChatRoom(c, "user", "1");
+        ChatRoom cr = new ChatRoom(c, "userId", "chatNo");
         c.initDisplay();
         cr.initDisplay();
     }

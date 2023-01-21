@@ -21,7 +21,7 @@ public class Main implements ActionListener, MouseListener {
     public Client client = null;
     public MyPage myPage = null; // 마이페이지 선언
     FListDialog flDialog = null; // "친구 추가" 다이얼로그
-    ChatRoom chatRoom = null; // 1:1채팅 선언
+    public ChatRoom chatRoom = null; // 1:1채팅 선언
     String logMsg = ""; // 로그 기록용
     // 유저정보
     String userId = null;

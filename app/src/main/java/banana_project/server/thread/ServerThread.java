@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.util.*;
 
 import banana_project.server.logic.ChatListLogic;
+import banana_project.server.logic.ChatLogic;
+import banana_project.server.vo.ChatContentsVO;
 import banana_project.server.vo.ChatListVO;
 import com.google.common.collect.ImmutableBiMap.Builder;
 
@@ -17,6 +19,7 @@ public class ServerThread extends Thread {
   MemberLogic memberLogic = null;
   FriendLogic friendLogic = null;
   ChatListLogic chatListLogic = null;
+  ChatLogic chatLogic = null;
   Server server = null;
   Socket client = null;
   ObjectOutputStream oos = null;
@@ -39,6 +42,7 @@ public class ServerThread extends Thread {
     try {
       memberLogic = new MemberLogic();
       friendLogic = new FriendLogic();
+      chatLogic = new ChatLogic();
       oos = new ObjectOutputStream(client.getOutputStream()); // 말하기
       ois = new ObjectInputStream(client.getInputStream()); // 듣기
       // 현재 서버에 입장한 클라이언트 스레드 추가하기
@@ -252,14 +256,14 @@ public class ServerThread extends Thread {
             switch (result) {
               // 재설정 시작 403
               case Protocol.EXIST_FACNT: {
-                //계정이 존재함 프로토콜 반환
+                // 계정이 존재함 프로토콜 반환
                 oos.writeObject(Protocol.EXIST_FACNT
-                        + Protocol.seperator + userId);
+                    + Protocol.seperator + userId);
                 break;
               }
               // 재설정 실패 402
               case Protocol.NF_FACNT: {
-                //계정 존재하지 않음 프로토콜 반환
+                // 계정 존재하지 않음 프로토콜 반환
                 oos.writeObject(Protocol.NF_FACNT);
                 break;
               }
@@ -598,6 +602,27 @@ public class ServerThread extends Thread {
               }
                 break;
             }
+          }
+            break;
+
+          /**
+           * ChatRoom 스레드
+           */
+          // 채팅방 불러오기 700#채팅방번호
+          case Protocol.CHAT_START: {
+            int chatNo = Integer.parseInt(st.nextToken());
+            // DB체크
+            server.jta_log.append("채팅방 불러오기 DB 체크 시작" + "\n");
+            List<ChatContentsVO> rList = chatLogic.ChatCall(chatNo);
+            String chatContent = rList.get(0).getChat_content();
+            String chatDate = rList.get(0).getChat_date();
+            String userList = rList.get(0).getUser_id();
+            server.jta_log.append("Result: " + userList + "\n");
+            // 클라이언트에 채팅내용, 메시지날짜, 채팅참여유저정보 전송
+            oos.writeObject(Protocol.CHAT_START
+                + Protocol.seperator + chatContent
+                + Protocol.seperator + chatDate
+                + Protocol.seperator + userList);
           }
             break;
 

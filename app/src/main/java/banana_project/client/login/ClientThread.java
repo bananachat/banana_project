@@ -206,6 +206,18 @@ public class ClientThread extends Thread {
           }
             break;
 
+          /**
+           * ChatRoom 스레드
+           */
+          // 채팅방 불러오기 700#채팅방번호
+          case Protocol.CHAT_START: {
+            String chatContent = st.nextToken();
+            String chatDate = st.nextToken();
+            String userList = st.nextToken();
+            client.main.chatRoom.chat_start(chatContent, chatDate, userList);
+          }
+            break;
+
         } // end of switch
       } catch (Exception e) {
         e.printStackTrace();
