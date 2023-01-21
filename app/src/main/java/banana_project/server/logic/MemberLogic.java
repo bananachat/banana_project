@@ -558,16 +558,16 @@ public class MemberLogic {
 
     /**
      * 비밀번호 재설정 가능 여부 확인
-     * 404 : 비밀번호 재설정 가능
+     * EXIST_FACNT : 비밀번호 재설정 가능
      *
      * @param uservo 비밀번호 재설정할 회원 정보 객체
      * @return 비밀번호 변경 가능 여부 반환
      */
-    public String findUserPW(UserVO uservo) {
+    public int findUserPW(UserVO uservo) {
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                new LogVO(400, uservo.toString(), uservo.getUser_id()));
+                new LogVO(Protocol.FPW_START, uservo.toString(), uservo.getUser_id()));
         //반환값 초기화
-        String pw_protocol = "400";
+        int pw_protocol = Protocol.NF_FACNT;
         //회원 정보 읽어오는 SQl문 설정
         String sql = "SELECT USER_PW FROM TB_USER WHERE USER_NAME=? AND USER_HP=? AND USER_ID=?";
         //DB에서 읽어오기
@@ -580,7 +580,7 @@ public class MemberLogic {
             rs = pst.executeQuery();
             //값이 있을 경우 정보가 일치한다는 의미 -> 비밀번호 재설정
             while (rs.next()) {
-                pw_protocol = "404";
+                pw_protocol = Protocol.EXIST_FACNT;
             }
         } catch (SQLException se) {
             se.printStackTrace();
@@ -593,7 +593,7 @@ public class MemberLogic {
             }
         }
         ll.writeLog(ConstantsLog.EXIT_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                new LogVO(401, uservo.toString(), uservo.getUser_id()));
+                new LogVO(Protocol.FPW_EXIT, uservo.toString(), uservo.getUser_id()));
         return pw_protocol;
     }
 

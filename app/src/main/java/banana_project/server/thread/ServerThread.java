@@ -246,21 +246,23 @@ public class ServerThread extends Thread {
             String userHp = st.nextToken();
             // DB등록 및 체크
             server.jta_log.append("비밀번호찾기 DB 체크 시작" + "\n");
-            String result = memberLogic
+            int result = memberLogic
                 .findUserPW(UserVO.builder().user_name(userName).user_id(userId).user_hp(userHp).build());
             server.jta_log.append("Result: " + result + "\n");
-            switch (Integer.parseInt(result)) {
-              // 재설정 시작 404
-              case Protocol.RESET_PW: {
-
-              }
+            switch (result) {
+              // 재설정 시작 403
+              case Protocol.EXIST_FACNT: {
+                //계정이 존재함 프로토콜 반환
+                oos.writeObject(Protocol.EXIST_FACNT
+                        + Protocol.seperator + userId);
                 break;
-              // 재설정 실패400
-              case Protocol.FPW_START: {
-
               }
+              // 재설정 실패 402
+              case Protocol.NF_FACNT: {
+                //계정 존재하지 않음 프로토콜 반환
+                oos.writeObject(Protocol.NF_FACNT);
                 break;
-
+              }
             }
           }
             break;

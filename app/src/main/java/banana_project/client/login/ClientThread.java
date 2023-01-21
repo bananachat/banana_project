@@ -130,14 +130,15 @@ public class ClientThread extends Thread {
           // 계정이 존재할 때
           case Protocol.EXIST_FACNT: {
             // 아이디 받아오기 추가할것!!
-            client.pwfind.exist_facnt();
-          }
+            String userId = st.nextToken();
+            client.pwfind.exist_facnt(userId);
             break;
+          }
           // 계정이 존재하지 않을때
           case Protocol.NF_FACNT: {
             client.pwfind.nf_facnt();
-          }
             break;
+          }
 
           /**
            * PwFindDialog 스레드 -> 아직 미구현!!
