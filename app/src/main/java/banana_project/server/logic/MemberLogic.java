@@ -29,11 +29,7 @@ public class MemberLogic {
     /**
      * MemberLogic constructor
      */
-    public MemberLogic() {
-    }
-
-    /*  +비밀번호 찾기 -> 이름/아이디/폰번호 -> 일치한다 안한다
-     */
+    public MemberLogic() {}
 
     /**
      * 회원가입
@@ -94,7 +90,6 @@ public class MemberLogic {
         //결과 반환
         return result;
     }
-
 
     /**
      * 회원정보(닉네임) 업데이트
@@ -177,7 +172,6 @@ public class MemberLogic {
                 new LogVO(999, uservo.toString(), uservo.getUser_id()));
         return result;
     }
-
 
     /**
      * 아이디 중복검사
@@ -385,10 +379,12 @@ public class MemberLogic {
                         //로그인 성공 프로토콜을 반환값에 삽입
                         resultMap.put("result", Protocol.LOGIN_S);
                         UserVO uv = new UserVO();
-                        //로그인 성공시에 로그인 실패 카운트 0회로 리셋
-                        uv.setFail_cnt(ConstantsMember.RESET_FAIL_CNT);
-                        //DB에 리셋된 실패 카운트 저장
-                        updateFailCnt(uv);
+                        //로그인 성공시에 실패 카운트가 0이 아니면 0으로 리셋
+                        if (fail_cnt != 0) {
+                            uv.setFail_cnt(ConstantsMember.RESET_FAIL_CNT);
+                            //DB에 리셋된 실패 카운트 저장
+                            updateFailCnt(uv);
+                        }
                         //회원 정보를 받아와 반환 객체에 저장
                         uservo.setUser_id(rs.getString("user_id"));
                         uservo.setUser_pw(rs.getString("user_pw"));
@@ -410,7 +406,7 @@ public class MemberLogic {
                         //결과값 반환
                         return resultMap;
                     }
-                //5회 이상인 경우 실패 카운트 초과로 로그인 거부
+                    //5회 이상인 경우 실패 카운트 초과로 로그인 거부
                 } else {
                     ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                             new LogVO(Protocol.OVER_FAIL_CNT, uservo.toString(), uservo.getUser_id()));
@@ -418,7 +414,7 @@ public class MemberLogic {
                     resultMap.put("result", Protocol.OVER_FAIL_CNT);
                     return resultMap;
                 }
-            //값이 존재하지 않을 경우 해당 계정이 존재하지 않음.
+                //값이 존재하지 않을 경우 해당 계정이 존재하지 않음.
             } else {
                 ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                         new LogVO(Protocol.WRONG_ID, uservo.toString(), uservo.getUser_id()));
@@ -460,7 +456,7 @@ public class MemberLogic {
             pst.setInt(1, uservo.getFail_cnt());
             pst.setString(2, uservo.getUser_id());
             pst.executeUpdate();
-        //예외 처리
+            //예외 처리
         } catch (SQLException se) {
             se.printStackTrace();
         } catch (Exception e) {
@@ -497,7 +493,7 @@ public class MemberLogic {
             pst.setInt(1, ConstantsMember.DELETE_ACCOUNT);
             pst.setString(2, uservo.getUser_id());
             result = pst.executeUpdate();
-        //예외 처리
+            //예외 처리
         } catch (SQLException se) {
             se.printStackTrace();
         } catch (Exception e) {
@@ -544,7 +540,7 @@ public class MemberLogic {
                 userId = userId.replaceAll("(?<=.{3}).(?=.*@)", "*");
                 user.setUser_id(userId);
             }
-        //예외 처리
+            //예외 처리
         } catch (SQLException se) {
             se.printStackTrace();
         } finally {
@@ -588,7 +584,7 @@ public class MemberLogic {
             }
         } catch (SQLException se) {
             se.printStackTrace();
-        //자원 반납
+            //자원 반납
         } finally {
             try {
                 mgr.freeConnection(con, pst, rs);
@@ -601,7 +597,7 @@ public class MemberLogic {
         return pw_protocol;
     }
 
-
+    //삭제예정
     public static void main(String[] args) {
         MemberLogic ml = new MemberLogic();
         UserVO uv = new UserVO();
