@@ -1,6 +1,8 @@
 package banana_project.client.login;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -10,6 +12,7 @@ import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.join.MemJoin;
 import banana_project.server.thread.Protocol;
+import banana_project.server.vo.ChatListVO;
 import lombok.Builder.Default;
 
 public class ClientThread extends Thread {
@@ -166,6 +169,122 @@ public class ClientThread extends Thread {
             client.main.prt_frdlist(vList);
           }
             break;
+
+          /**
+           * Main 채팅리스트 출력
+           */
+          // 채팅리스트 존재 502
+          case Protocol.PRT_CHATLIST: {
+            System.out.println("채팅리스트 존재");
+            List<ChatListVO> chatList = new ArrayList<>();
+            ChatListVO chatListVO = null;
+            Vector<String> vList = new Vector<>();
+            StringTokenizer cl = null;
+
+            while (st.hasMoreTokens()) {
+              String list = st.nextToken();
+              vList.add(list);                // 채팅번호|채팅명
+            }
+            for (int i=0; i<vList.size(); i++) {
+              cl = new StringTokenizer(vList.get(i), "|");
+              chatListVO.setChat_no(Integer.parseInt(cl.nextToken()));
+              chatListVO.setChat_title(cl.nextToken());
+
+              chatList.add(chatListVO);
+            }
+
+            client.main.print_chatList(chatList);
+          } break;
+
+          // 채팅리스트 없음 503
+          case Protocol.NF_CHATLIST: {
+            System.out.println("채팅리스트 없음");
+            client.main.nf_chatList();
+          }
+
+          /**
+           * Main다이얼로그 친구 목록 출력
+           */
+          // PRT_FRIENDS : 친구검색 출력 602
+          case Protocol.PRT_FRIENDS: {
+            System.out.println("다이얼로그 - 친구 출력");
+            Vector<String> vList = new Vector<>();
+
+            while (st.hasMoreTokens()) {
+              String fList = st.nextToken();
+              vList.add(fList);
+            }
+
+            client.main.flDialog.prt_frdList(vList);
+          } break;
+
+          /*
+          * NULL_FRIENDS:   친구목록이 없음      609
+          * NULL_USER:      해당 사용자 없음     610
+          * NF_RESULT:      친구 검색 결과가 없음 604
+          * */
+          case Protocol.NULL_FRIENDS, Protocol.NULL_USER, Protocol.NF_RESULT: {
+            System.out.println("다이얼로그 - 검색 결과 없음");
+            client.main.flDialog.nf_frdList();
+          } break;
+
+          /**
+           * Main다이얼로그 사용자 검색
+           */
+          // 해당 사용자 존재 611
+          case Protocol.EXIST_USER: {
+            System.out.println("다이얼로그 - 검색한 사용자 출력");
+            Vector<String> vList = new Vector<>();
+            String userId = st.nextToken();
+
+            vList.add(userId);
+
+            client.main.flDialog.prt_frdList(vList);
+          } break;
+
+          /**
+           * Main다이얼로그 친구 검색
+           */
+          // 검색 결과 존재 607
+          case Protocol.EXIST_FRIEND: {
+            System.out.println("다이얼로그 - 검색한 친구 출력");
+            Vector<String> vList = new Vector<>();
+            String userId = st.nextToken();
+
+            vList.add(userId);
+
+            client.main.flDialog.prt_frdList(vList);
+          } break;
+
+          /**
+           * Main다이얼로그 친구 추가
+           */
+          // 친구 추가 이벤트 605
+          case Protocol.ADD_FRIEND: {
+            System.out.println("다이얼로그 - 친구 추가");
+            //TODO: 뭘 어떻게???
+          } break;
+
+          // 친구 추가 실패 612
+          case Protocol.FAIL_ADD_FRIEND: {
+            System.out.println("다이얼로그 - 친구 추가 실패");
+            //TODO: 뭘 어떻게???
+          } break;
+
+          /**
+           * Main다이얼로그 채팅방 만들기
+           */
+          // 채팅방 만들기 성공 606
+          case Protocol.CREATE_CHAT: {
+            System.out.println("다이얼로그 - 채팅방 만들기");
+            //TODO: 뭘 어떻게???
+          } break;
+
+          // 채팅방 만들기 실패 608
+          case Protocol.FAIL_CRE_CHAT: {
+            System.out.println("다이얼로그 - 채팅방 만들기 실패");
+            //TODO: 뭘 어떻게???
+          } break;
 
           /**
            * MyPage 스레드
