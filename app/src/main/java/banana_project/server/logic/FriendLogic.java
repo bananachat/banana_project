@@ -69,13 +69,16 @@ public class FriendLogic {
         System.out.println("로그: " + ll.toString());
 
         // 친구리스트 호출 쿼리문
-        String sql = "";
-        sql = "SELECT f_id FROM TB_FRIENDS_LIST WHERE user_id = ?";
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ur.user_nickname FROM     ");
+        sql.append("        (SELECT f_id FROM tb_friends_list WHERE user_id= ? ) fl   ");
+        sql.append("        , (SELECT user_id, user_nickname FROM tb_user) ur    ");
+        sql.append("WHERE fl.f_id = ur.user_id  ");
 
         try {
             // 오라클 서버와 연결
             conn = dbMgr.getConnection();
-            pstmt = conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql.toString());
 
             // 쿼리문 내 파라미터 값
             pstmt.setString(1, uservo.getUser_id());
@@ -84,7 +87,7 @@ public class FriendLogic {
 
             // 친구리스트 쿼리결과값 있을 경우
             while (rs.next()) {
-                String f = rs.getString("f_id");
+                String f = rs.getString(1);
                 vfList.add(f);
 
                 // EXIST_FRIEND = 친구 검색 존재
@@ -97,6 +100,7 @@ public class FriendLogic {
             friends += vfList.get(vfList.size()-1);
 
         } catch (SQLException se) {
+            se.printStackTrace();
             System.out.println("SQLException : " + se.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,15 +127,15 @@ public class FriendLogic {
 
 
     /**
-     * [친구 ID로 조회]
+     * [친구 닉네임으로 조회]
      * vResult."PROTOCOL" - 604: 친구 검색 결과가 없음 | 607: 친구 검색 존재,
      * vResult."F_ID      - 친구리스트
      *
      * @param uservo        사용자 정보
-     * @param friendID      조회할 친구 ID
+     * @param friendNick      조회할 친구 닉네임
      * @return vResult      친구 조회 결과
      */
-    public List<Object> findFriend(UserVO uservo, String friendID) {
+    public List<Object> findFriend(UserVO uservo, String friendNick) {
         System.out.println("FriendLogic_printFriend() 메소드 시작");
         // NF_RESULT = 친구 검색 결과가 없음
         protocol = 604;
@@ -144,26 +148,31 @@ public class FriendLogic {
         ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName()
                     , new LogVO(600, uservo.toString(), uservo.getUser_id()));
 
-        System.out.println("UserVO : " + uservo.toString() + "\nfriendName : " + friendID);
+        System.out.println("UserVO : " + uservo.toString() + "\nfriendName : " + friendNick);
 
         // 친구 조회 호출 쿼리문
-        String sql = "SELECT f_id FROM TB_FRIENDS_LIST WHERE user_id = ? AND f_id = ?";
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ur.user_nickname FROM     ");
+        sql.append("        (SELECT f_id FROM tb_friends_list WHERE user_id= ? ) fl   ");
+        sql.append("        , (SELECT user_id, user_nickname FROM tb_user) ur    ");
+        sql.append("WHERE fl.f_id = ur.user_id  ");
+        sql.append("AND ur.user_nickname = ? ");
 
         try {
             // 오라클 서버와 연결
             conn = dbMgr.getConnection();
-            pstmt = conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql.toString());
 
             // 쿼리문 내 파라미터 값
             pstmt.setString(1, uservo.getUser_id());
-            pstmt.setString(2, friendID);
+            pstmt.setString(2, friendNick);
 
             // 쿼리문 결과
             rs = pstmt.executeQuery();       // 호출: true, 실패: false
 
             // 조회 성공 시
             while(rs.next()) {
-                fList = rs.getString("f_id");
+                fList = rs.getString(1);
 
                 // EXIST_FRIEND = 친구 검색 존재
                 protocol = 607;
@@ -197,15 +206,87 @@ public class FriendLogic {
 
 
     /**
-     * [선택한 ID를 친구 추가]
+     * [사용자 닉네임으로 조회 - 모든 사용자 중]
+     * vResult."PROTOCOL" - 604: 친구 검색 결과가 없음 | 607: 친구 검색 존재,
+     * vResult."friendName"      - 친구리스트
+     *
+     * @param friendNick      조회할 친구 ID
+     * @return vResult      친구 조회 결과
+     */
+    public List<Object> findFriend(String friendNick) {
+        System.out.println("FriendLogic_printFriend()<-모든사용자중 메소드 시작");
+        // NF_RESULT = 친구 검색 결과가 없음
+        protocol = 604;
+
+        // 리턴값
+        List<Object> lResult = new ArrayList<>();
+        String fList = "";
+
+        // 로그 작성
+//        ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName()
+//                , new LogVO(600, uservo.toString(), uservo.getUser_id()));
+
+        System.out.println("friendName : " + friendNick);
+
+        // 친구 조회 호출 쿼리문
+        String sql = "SELECT USER_NICKNAME FROM TB_USER WHERE USER_NICKNAME = ?";
+
+        try {
+            // 오라클 서버와 연결
+            conn = dbMgr.getConnection();
+            pstmt = conn.prepareStatement(sql);
+
+            // 쿼리문 내 파라미터 값
+            pstmt.setString(1, friendNick);
+
+            // 쿼리문 결과
+            rs = pstmt.executeQuery();       // 호출: true, 실패: false
+
+            // 조회 성공 시
+            while(rs.next()) {
+                fList = rs.getString(1);
+
+                // EXIST_FRIEND = 친구 검색 존재
+                protocol = 607;
+            }
+
+        } catch (SQLException se) {
+            System.out.println("SQLException : " + se.getMessage());
+            System.out.println("쿼리문 : " + sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // DB 사용한 자원 반납
+            try {
+                dbMgr.freeConnection(conn, pstmt, rs);
+            } catch (Exception e) {
+                // 디버깅
+                e.printStackTrace();
+            }
+        }
+
+        lResult.add(protocol);
+        lResult.add(fList);
+
+        System.out.println("프로토콜 : " + lResult.get(0));
+        System.out.println("친구리스트 : " + lResult.get(1));
+        System.out.println("FriendLogic.printFriend() 메소드 종료");
+
+        return lResult;
+    } // end of findFriend (친구 이름으로 조회)
+
+
+
+    /**
+     * [선택한 닉네임을 친구 추가]
      * 607 : 친구 검색 존재,
      * 605  : 친구 추가 이벤트
      *
      * @param uservo            사용자 정보
-     * @param selectID          선택한 계정ID
+     * @param selectNick          선택한 계정ID
      * @return protocol         607:친구 검색 존재 | 605: 친구 추가 이벤트
      */
-    public int addFriend(UserVO uservo, String selectID) {
+    public int addFriend(UserVO uservo, String selectNick) {
         System.out.println("FriendLogic.addFriend() 메소드 시작");
         // EXIST_FRIEND = 친구 검색 존재
         protocol = 607;
@@ -214,18 +295,23 @@ public class FriendLogic {
         int result = 0;
 
         System.out.println("사용자 ID : " + uservo.getUser_id());
-        System.out.println("선택한 계정ID : " + selectID);
+        System.out.println("선택한 계정ID : " + selectNick);
 
 
         // 해당 친구가 DB에 없는지 확인
-        String selQuarry = "SELECT * FROM TB_FRIENDS_LIST WHERE USER_ID = ? AND F_ID = ?";
+        StringBuilder selQuarry = new StringBuilder();
+        selQuarry.append("SELECT ur.user_nickname FROM    ");
+        selQuarry.append(" (SELECT f_id FROM tb_friends_list WHERE user_id= :x ) fl    ");
+        selQuarry.append("        , (SELECT user_id, user_nickname FROM tb_user) ur   ");
+        selQuarry.append("WHERE fl.f_id = ur.user_id  ");
+        selQuarry.append("AND ur.user_nickname = :y   ");
 
         try {
             conn = dbMgr.getConnection();
-            pstmt = conn.prepareStatement(selQuarry);
+            pstmt = conn.prepareStatement(selQuarry.toString());
 
             pstmt.setString(1, uservo.getUser_id());
-            pstmt.setString(2, selectID);
+            pstmt.setString(2, selectNick);
 
             rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -249,6 +335,32 @@ public class FriendLogic {
 
         if (isOk == -1) {
             // 해당 ID 친구 추가
+            String selectID = "";
+
+            String findID = "SELECT user_id FROM tb_user WHERE user_nickname = ?";
+
+            try {
+                conn = dbMgr.getConnection();
+                pstmt = conn.prepareStatement(findID);
+
+                pstmt.setString(1, selectNick);
+
+                rs = pstmt.executeQuery();
+
+                selectID = rs.getString(1);
+
+            } catch (SQLException se) {
+                se.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                // DB 사용한 자원 반납
+                try {
+                    dbMgr.freeConnection(conn, pstmt, rs);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
             String sql = "INSERT INTO TB_FRIENDS_LIST (USER_ID, F_ID) VALUES (?, ?)";
 
@@ -287,7 +399,7 @@ public class FriendLogic {
 
 
     /**
-     * [선택한 ID를 친구 삭제]
+     * [선택한 닉네임을 친구 삭제]
      * 604: 검색 결과가 없음
      * 511: 친구 삭제
      *
@@ -390,9 +502,9 @@ public class FriendLogic {
         FriendLogic fl = new FriendLogic();
         int r = 0;
 
-        uVO.setUser_id("test");
-        String selectID = "friend";
-        String selectID1 = "friend1";
+        uVO.setUser_id("banana@email.com");
+        String selectName1 = "바나나";
+        String selectName2 = "자고싶어2";
 //
 //        // 친구추가
 ////        r = fl.addFriend(uVO, selectID1);
@@ -404,10 +516,11 @@ public class FriendLogic {
 //
 //        // 친구 조회
         List<Object> m = new ArrayList<>();
-        m = fl.findFriend(uVO, selectID1);
+        m = fl.findFriend(uVO, selectName2);
+//        m = fl.findFriend(selectName1);
 //
 //        // 친구 리스트 출력
-//        List<Object> l = new ArrayList<Object>();
+        List<Object> l = new ArrayList<Object>();
 //        l = fl.printFriend(uVO);
     }
 }
