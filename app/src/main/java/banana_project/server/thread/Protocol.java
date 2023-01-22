@@ -67,6 +67,11 @@ public class Protocol {
     public static final int	CREATE_CHAT = 606;  	//채팅방 만들기 성공
     public static final int	EXIST_FRIEND = 607;  	//친구 검색 존재
     public static final int	FAIL_CRE_CHAT = 608;  	//채팅방 만들기 실패
+    public static final int	NULL_FRIENDS = 609;  	//친구목록이 없음
+    public static final int NULL_USER = 610;  	//해당 사용자 없음
+    public static final int	EXIST_USER = 611;  	//해당 사용자 존재
+    public static final int	FAIL_ADD_FRIEND = 612;  	//친구 추가 실패
+
 
 
     //          [대화방 화면]           //
