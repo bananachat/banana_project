@@ -328,16 +328,22 @@ public class ServerThread extends Thread {
               case Protocol.NF_RESULT: {
                 oos.writeObject(Protocol.NF_FRDLIST); // 501
               }
-                break;
+              break;
               // 친구 검색 결과 존재 607
               case Protocol.EXIST_FRIEND: {
                 oos.writeObject(Protocol.PRT_FRDLIST
-                    + Protocol.seperator + fList); // 500
+                        + Protocol.seperator + fList); // 500
               }
-                break;
+              break;
+              case Protocol.FAIL_CONN: { // 800: 데이터베이스 접속 실패
+                System.out.println("DB 연결 실패");
+                oos.writeObject(Protocol.NF_FRDLIST); // 501로 전달 (친구리스트 없음)
+              }
+              break;
             }
           }
-            break;
+          break;
+
 
           /**
            * [Main 스레드 - 채팅 리스트 출력]
@@ -350,7 +356,7 @@ public class ServerThread extends Thread {
             String userId = st.nextToken();
 
             // DB 내 사용자 채팅리스트 확인
-            server.jta_log.append("채팅리스트 DB 체크 시작" + "\n");
+            server.jta_log.append("채팅리스트 출력" + "\n");
 
             Map<String, Object> mChatList = chatListLogic.printChatList(UserVO.builder().user_id(userId).build());
 
@@ -372,83 +378,114 @@ public class ServerThread extends Thread {
                   chNo = Integer.toString(lChatList.get(i).getChat_no());
                   ctitle = lChatList.get(i).getChat_title();
 
-                  resultList += (chNo + "#" + ctitle + "#");
+                  resultList += (chNo + "|" + ctitle + "#");
                 }
                 chNo = Integer.toString(lChatList.get(lChatList.size() - 1).getChat_no());
                 ctitle = lChatList.get(lChatList.size() - 1).getChat_title();
 
-                resultList += (chNo + "#" + ctitle);
+                resultList += (chNo + "|" + ctitle);
+
+                oos.writeObject(Protocol.PRT_CHATLIST
+                        + Protocol.seperator + resultList);     // 502: 채팅리스트 출력
 
               }
-                break;
+              break;
+
               case Protocol.NF_CHATLIST: { // 503: 채팅리스트 없음
                 oos.writeObject(Protocol.NF_CHATLIST); // 503로 전달 (채팅리스트 없음)
               }
-                break;
+              break;
+
               case Protocol.FAIL_CONN: { // 800: 데이터베이스 접속 실패
                 // TODO: 로그 작성
                 System.out.println("DB 연결 실패");
                 oos.writeObject(Protocol.NF_CHATLIST); // 503로 전달 (채팅리스트 없음)
               }
-                break;
+              break;
 
             }
           }
-            break; // end of (Main 스레드 내 채팅 리스트 출력)
+          break; // end of (Main 스레드 내 채팅 리스트 출력)
+
 
           /**
-           * [Main 다이얼로그 - 친구 목록 출력(친구추가 → 검색한 값)]
-           * 600 : PRT_USERS = 친구검색 출력(친구추가 → 검색한 값)
+           * [Main 다이얼로그 - 친구 목록 출력]
+           * 600 : PRT_USERS = 친구검색 출력
+           * 607 : EXIST_FRIEND = 친구 검색 존재
            * 604 : NF_RESULT = 친구 검색 결과가 없음
            * 800 : FAIL_CONN = 데이터베이스 접속 실패
            */
-          case Protocol.PRT_USERS: {
-            int result = 0;
+          case Protocol.PRT_USERS, Protocol.PRT_FRIENDS: {
+            String userId = st.nextToken();
 
-            switch (result) {
-              case Protocol.PRT_USERS: {
+            // DB등록 및 체크
+            server.jta_log.append("main다이얼로그 친구목록 출력" + "\n");
 
+            List<Object> list = friendLogic.printFriend(UserVO.builder().user_id(userId).build());
+
+            // 결과 프로토콜
+            int result = Integer.parseInt(list.get(0).toString());
+            server.jta_log.append("Result: " + result + "\n");
+
+            switch (result) {        // 향상된 switch문
+              case Protocol.EXIST_FRIEND -> {         // 607 : 친구 검색 존재
+                String fList = String.valueOf(list.get(1));
+                oos.writeObject(Protocol.PRT_FRIENDS
+                        + Protocol.seperator + fList); // 602로 전달 (친구목록 출력)
               }
-                break;
-              case Protocol.NF_RESULT: {
 
+              case Protocol.NF_RESULT -> {            // 604 : 친구 검색 결과가 없음
+                oos.writeObject(Protocol.NULL_FRIENDS); // 609로 전달 (친구목록이 없음)
               }
-                break;
-              case Protocol.FAIL_CONN: {
 
+              case Protocol.FAIL_CONN -> {            // 800 : 데이터베이스 접속 실패
+                System.out.println("DB 연결 실패");
+                oos.writeObject(Protocol.NULL_FRIENDS); // 609로 전달 (친구목록이 없음)
               }
-                break;
-
             }
           }
-            break;
+          break;
+
 
           /**
-           * [Main 다이얼로그 - 검색버튼(친구추가 → 모든 사용자 중에 검색)]
+           * [Main 다이얼로그 - 검색버튼(모든 사용자 중에 검색)]
            * 601 : SRCH_USERS = 검색버튼(친구추가 → 모든 사용자 중에 검색)
+           * 607 : EXIST_FRIEND = 친구 검색 존재
            * 604 : NF_RESULT = 친구 검색 결과가 없음
            * 800 : FAIL_CONN = 데이터베이스 접속 실패
            */
           case Protocol.SRCH_USERS: {
-            int result = 0;
+            String user_id = st.nextToken();
+            String friend_id = st.nextToken();
+
+            // DB등록 및 체크
+            server.jta_log.append("main다이얼로그 사용자 검색\n");
+            List<Object> list = friendLogic.findFriend(friend_id);
+
+            // 결과 프로토콜
+            int result = Integer.parseInt(list.get(0).toString());
 
             switch (result) {
-              case Protocol.SRCH_USERS: {
+              case Protocol.EXIST_FRIEND: {       // 607 : EXIST_FRIEND = 친구 검색 존재
+                String findFri = String.valueOf(list.get(1));
 
-              }
-                break;
-              case Protocol.NF_RESULT: {
+                oos.writeObject(Protocol.EXIST_USER
+                                + Protocol.seperator + findFri); // 611로 전달 (해당 사용자 존재)
+              } break;
 
-              }
-                break;
-              case Protocol.FAIL_CONN: {
+              case Protocol.NF_RESULT: {          // 604 : NF_RESULT = 친구 검색 결과가 없음
+                oos.writeObject(Protocol.NF_RESULT);  // 610로 전달 (해당 사용자 없음)
+              } break;
 
-              }
-                break;
+              case Protocol.FAIL_CONN: {          // 800 : FAIL_CONN = 데이터베이스 접속 실패
+                System.out.println("DB 연결 실패");
+                oos.writeObject(Protocol.NF_RESULT); // 604로 전달 (친구 검색 결과가 없음)
+              } break;
 
             }
           }
-            break;
+          break;
+
 
           /**
            * [Main 다이얼로그 - 친구검색 출력(새채팅 → 친구목록)]
@@ -456,53 +493,77 @@ public class ServerThread extends Thread {
            * 604 : NF_RESULT = 친구 검색 결과가 없음
            * 800 : FAIL_CONN = 데이터베이스 접속 실패
            */
-          case Protocol.PRT_FRIENDS: {
-            int result = 0;
+//          case Protocol.PRT_FRIENDS: {
+//            String userId = st.nextToken();
+//
+//            // DB등록 및 체크
+//            server.jta_log.append("친구목록 DB 체크 시작" + "\n");
+//
+//            List<Object> list = friendLogic.printFriend(UserVO.builder().user_id(userId).build());
+//
+//            // 결과 프로토콜
+//            int result = Integer.parseInt(list.get(0).toString());
+//            server.jta_log.append("Result: " + result + "\n");
+//
+//            switch (result) {
+//              case Protocol.EXIST_FRIEND: {         // 607 : 친구 검색 존재
+//                String fList = String.valueOf(list.get(1));
+//                oos.writeObject(Protocol.PRT_FRDLIST
+//                        + Protocol.seperator + fList); // 500로 전달 (친구목록 출력)
+//              }
+//              break;
+//              case Protocol.NF_RESULT: {            // 604 : 친구 검색 결과가 없음
+//                oos.writeObject(Protocol.NF_FRDLIST); // 501로 전달 (친구리스트 없음)
+//              }
+//              break;
+//              case Protocol.FAIL_CONN: {            // 800 : 데이터베이스 접속 실패
+//                System.out.println("DB 연결 실패");
+//                oos.writeObject(Protocol.NF_RESULT); // 501로 전달 (친구리스트 없음)
+//              }
+//              break;
+//            }
+//          }
+//          break;
 
-            switch (result) {
-              case Protocol.PRT_FRIENDS: {
-
-              }
-                break;
-              case Protocol.NF_RESULT: {
-
-              }
-                break;
-              case Protocol.FAIL_CONN: {
-
-              }
-                break;
-
-            }
-          }
-            break;
 
           /**
-           * [Main 다이얼로그 - 검색버튼(새채팅 → 친구 중에 검색)]
+           * [Main 다이얼로그 - 검색버튼(친구 중에 검색)]
            * 603 : SRCH_FRIEDNDS = 검색버튼(친구추가 → 모든 사용자 중에 검색)
            * 604 : NF_RESULT = 친구 검색 결과가 없음
            * 800 : FAIL_CONN = 데이터베이스 접속 실패
            */
           case Protocol.SRCH_FRIEDNDS: {
-            int result = 0;
+            String user_id = st.nextToken();
+            String friend_id = st.nextToken();
+
+            // DB등록 및 체크
+            server.jta_log.append("main다이얼로그 친구 검색\n");
+            List<Object> list = friendLogic.findFriend(UserVO.builder().user_id(user_id).build(), friend_id);
+
+            // 결과 프로토콜
+            int result = Integer.parseInt(list.get(0).toString());
 
             switch (result) {
-              case Protocol.SRCH_FRIEDNDS: {
+              case Protocol.EXIST_FRIEND: {       // 607 : EXIST_FRIEND = 친구 검색 존재
+                String findFri = String.valueOf(list.get(1));
 
-              }
-                break;
-              case Protocol.NF_RESULT: {
+                oos.writeObject(Protocol.EXIST_FRIEND
+                        + Protocol.seperator + findFri); // 607로 전달 (친구 검색 존재)
+              } break;
 
-              }
-                break;
-              case Protocol.FAIL_CONN: {
+              case Protocol.NF_RESULT: {          // 604 : NF_RESULT = 친구 검색 결과가 없음
+                oos.writeObject(Protocol.NF_RESULT);  // 604로 전달 (친구 검색 결과가 없음)
+              } break;
 
-              }
-                break;
+              case Protocol.FAIL_CONN: {          // 800 : FAIL_CONN = 데이터베이스 접속 실패
+                System.out.println("DB 연결 실패");
+                oos.writeObject(Protocol.NF_RESULT); // 604로 전달 (친구 검색 결과가 없음)
+              } break;
 
             }
           }
-            break;
+          break;
+
 
           /**
            * [Main 다이얼로그 - 친구 추가 이벤트]
@@ -511,48 +572,57 @@ public class ServerThread extends Thread {
            * 800 : FAIL_CONN = 데이터베이스 접속 실패
            */
           case Protocol.ADD_FRIEND: {
-            int result = 0;
+            String userId = st.nextToken();
+            String friendId = st.nextToken();
+
+            // DB등록 및 체크
+            server.jta_log.append("main다이얼로그 친구 추가\n");
+
+            int result = friendLogic.addFriend(UserVO.builder().user_id(userId).build(), friendId);
 
             switch (result) {
-              case Protocol.ADD_FRIEND: {
-
+              case 1 -> {         // 이벤트 성공
+                oos.writeObject(Protocol.ADD_FRIEND);       //  605로 전달 (검색버튼(친구추가 → 모든 사용자 중에 검색))
               }
-                break;
-              case Protocol.FAIL_CONN: {
-
+              case -1 -> {        // 이벤트 실패
+                oos.writeObject(Protocol.FAIL_ADD_FRIEND);        //  612로 전달 (친구 추가 실패)
               }
-                break;
-
             }
           }
-            break;
+          break;
+
 
           /**
-           * [Main 다이얼로그 - 검채팅방 만들기 성공]
+           * [Main 다이얼로그 - 채팅방 만들기]
            * 606 : CREATE_CHAT = 채팅방 만들기 성공
-           * 609 : FAIL_CRE_CHAT = 채팅방 만들기 실패
+           * 608 : FAIL_CRE_CHAT = 채팅방 만들기 실패
            * 800 : FAIL_CONN = 데이터베이스 접속 실패
            */
           case Protocol.CREATE_CHAT: {
-            int result = 0;
+            String userId = st.nextToken();
+            String userList = st.nextToken();
+
+            // DB와 같은지 체크
+            server.jta_log.append("채팅방 만들기\n");
+
+            int result = chatListLogic.createChat(userList);
 
             switch (result) {
-              case Protocol.CREATE_CHAT: {
-
+              case Protocol.CREATE_CHAT -> {
+                oos.writeObject(Protocol.CREATE_CHAT);        //  606로 전달 (채팅방 만들기 성공)
               }
-                break;
-              case Protocol.FAIL_CRE_CHAT: {
 
+              case Protocol.FAIL_CRE_CHAT -> {
+                oos.writeObject(Protocol.FAIL_CRE_CHAT);      // 608로 전달 (채팅방 만들기 실패)
               }
-                break;
-              case Protocol.FAIL_CONN: {
 
+              case Protocol.FAIL_CONN -> {
+                System.out.println("DB 연결 실패");
+                oos.writeObject(Protocol.FAIL_CRE_CHAT);      // 608로 전달 (채팅방 만들기 실패)
               }
-                break;
-
             }
           }
-            break;
+          break;
 
           ///////////////////////////////////////////////////////////////////////////////////
           /**
