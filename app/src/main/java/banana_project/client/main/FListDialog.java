@@ -161,6 +161,40 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.setVisible(isView);
     }
 
+
+    // 친구가 있을 때 메소드
+    public void prt_frdList(Vector<String> fList) {
+        jl_list.setEnabled(true);
+        dlm.removeAllElements();
+        for (int i = 0; i < fList.size(); i++) {
+            dlm.addElement(fList.get(i));
+        }
+    }
+    // 친구가 없을 때 메소드
+    public void nf_frdList() {
+        dlm.removeAllElements();
+        dlm.addElement("사용자를 찾을 수 없습니다.");
+        jl_list.setEnabled(false);
+    }
+
+    // 친구 추가 성공
+    public void add_friend() {
+
+    }
+    // 친구 추가 실패
+    public void fail_add_friend() {
+
+    }
+
+    // 채팅방 생성 성공
+    public void create_chatroom() {
+
+    }
+    // 채팅방 생성 실패
+    public void fail_create_chatroom() {
+
+    }
+
     ////////////////////////// [이벤트] //////////////////////////
     @Override
     public void actionPerformed(ActionEvent e) {
