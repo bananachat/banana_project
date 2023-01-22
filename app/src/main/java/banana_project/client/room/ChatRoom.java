@@ -14,6 +14,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -21,11 +24,16 @@ public class ChatRoom implements ActionListener, FocusListener {
     /**
      * 서버 연결부 선언
      */
+    StringTokenizer st = null;
     Client client = null;
     String userId = null;
-    String userList = null;
+    String userNick = null;
     String chatNo = null;
     String msg = null;
+    // 채팅참여유저 담기
+    List<Map<String, String>> userList = null;
+    // 날짜변수
+    String chatDate = "";
 
     /**
      * 화면부 선언
@@ -50,19 +58,31 @@ public class ChatRoom implements ActionListener, FocusListener {
     /**
      * 생성자
      */
-    public ChatRoom(Client client, String userId, String chatNo) {
+    public ChatRoom(Client client, String userId, String chatNo, List<Map<String, String>> userList) {
         this.client = client;
-        // 테스트용
-        this.userId = "banana@email.com";
-        this.chatNo = "1";
+        this.userId = userId;
+        this.chatNo = chatNo;
+        this.userList = userList;
+        // 채팅방 상단 그룹채팅(참여멤버숫자) 표시
+        if (userList.size() > 2) {
+            jbtn_fNick.setText("그룹채팅(" + userList.size() + ")");
+        }
+        // 채팅방 상단 1:1채팅 상대닉네임 표시
+        else {
+            for (int i = 0; i < userList.size(); i++) {
+                String tempNick = userList.get(i).get("userNick");
+                if (!userNick.equals(tempNick)) {
+                    jbtn_fNick.setText(tempNick);
+                }
+            }
+        }
         // 채팅방 정보 불러오기
         try {
             client.oos.writeObject(Protocol.CHAT_START
-                    + Protocol.seperator + this.chatNo);
+                    + Protocol.seperator + chatNo);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -89,7 +109,7 @@ public class ChatRoom implements ActionListener, FocusListener {
         jbtn_fNick.setBorderPainted(false);
         jbtn_fNick.setBackground(new Color(255, 230, 120));
         jbtn_fNick.setForeground(new Color(130, 65, 60));
-        jbtn_fNick.setFont(setFontNJOp.b15);
+        // jbtn_fNick.setFont(setFontNJOp.b15);
         jbtn_fNick.setBounds(120, 20, 155, 30);
         jp_Pchat.add(jbtn_fNick);
 
@@ -157,26 +177,65 @@ public class ChatRoom implements ActionListener, FocusListener {
     /**
      * 채팅방 불러오기 메소드
      * 
-     * @param chatContent
-     * @param chatDate
-     * @param userId2
+     * @param result
      */
-    public void chat_start(String chatContent, String chatDate, String userList) {
-        // 채팅내용이 저장되는 방식?
-        // 유저정보는 채팅에 참여한 전체 유저?
-        // 닉네임 혹은 아이디저장?
-        // 로그인한 유저와 구분법?
-        jta_chat.setText(chatContent);
-        StringTokenizer st = new StringTokenizer(userList, "#");
-        Vector<String> vList = new Vector<>();
-        while (st.hasMoreTokens()) {
-            vList.add(st.nextToken());
+    public void chat_start(String result) {
+        st = new StringTokenizer(result, "#");
+        chatDate = st.nextToken();
+        String chatId = st.nextToken();
+        String chatCont = st.nextToken();
+
+        // 채팅방에 날짜 출력
+        StringTokenizer setDate = new StringTokenizer(chatDate, "/");
+        while (setDate.hasMoreTokens()) {
+            String year = setDate.nextToken();
+            String month = setDate.nextToken();
+            String day = setDate.nextToken();
+            jta_chat.append("     " + year + "년 " + month + "월" + day + "일     ");
         }
-        // 채팅방 상단 그룹채팅 혹은 1:1채팅 닉네임 표시
-        if (vList.size() > 1) {
-            jbtn_fNick.setText("그룹채팅(" + vList.size() + ")");
-        } else {
-            jbtn_fNick.setText(vList.get(0));
+        // 해당 아이디의 닉네임과 채팅내용 출력
+        for (int i = 0; i < userList.size(); i++) {
+            if (chatId.equals(userList.get(i).get("userId"))) {
+                jta_chat.append(userList.get(i).get("userNick") + ": " + chatCont);
+            }
+        }
+        // 토큰(대화내용)이 남아있다면
+        while (st.hasMoreTokens()) {
+            String chatDate2 = st.nextToken();
+            chatId = st.nextToken();
+            chatCont = st.nextToken();
+            // 날짜가 바뀌었을 때 해당날짜 출력
+            if (!chatDate.equals(chatDate2)) {
+                StringTokenizer setDate2 = new StringTokenizer(chatDate2, "/");
+                while (setDate.hasMoreTokens()) {
+                    String year = setDate2.nextToken();
+                    String month = setDate2.nextToken();
+                    String day = setDate2.nextToken();
+                    jta_chat.append("     " + year + "년 " + month + "월" + day + "일     ");
+                    this.chatDate = chatDate2;
+                }
+            }
+            // 해당 아이디의 닉네임과 채팅내용 출력
+            for (int i = 0; i < userList.size(); i++) {
+                if (chatId.equals(userList.get(i).get("userId"))) {
+                    jta_chat.append(userList.get(i).get("userNick") + ": " + chatCont);
+                }
+            }
+        }
+    }
+
+    /**
+     * 채팅방에서 전달받은 메시지 출력
+     * 
+     * @param recvId
+     * @param recvMsg
+     */
+    public void recv_msg(String recvId, String recvMsg) {
+        // 해당 아이디의 닉네임과 채팅내용 출력
+        for (int i = 0; i < userList.size(); i++) {
+            if (recvId.equals(userList.get(i).get("userId"))) {
+                jta_chat.append(userList.get(i).get("userNick") + ": " + recvMsg);
+            }
         }
     }
 
@@ -204,8 +263,17 @@ public class ChatRoom implements ActionListener, FocusListener {
             }
             // 내용을 입력했을 경우
             else {
-                jta_chat.append("user: " + msg + "\n");
+                jta_chat.append(userNick + ": " + msg + "\n");
                 jtf_chat.setText("");
+                // 대화저장 707#채팅방넘버#아이디#메시지
+                try {
+                    client.oos.writeObject(Protocol.SAVE_CHAT
+                            + Protocol.seperator + chatNo
+                            + Protocol.seperator + userId
+                            + Protocol.seperator + msg);
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                }
             }
         }
     }
@@ -244,7 +312,7 @@ public class ChatRoom implements ActionListener, FocusListener {
      */
     public static void main(String[] args) {
         Client c = new Client();
-        ChatRoom cr = new ChatRoom(c, "userId", "chatNo");
+        ChatRoom cr = new ChatRoom(c, null, null, null);
         c.initDisplay();
         cr.initDisplay();
     }

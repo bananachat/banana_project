@@ -211,13 +211,17 @@ public class ClientThread extends Thread {
            */
           // 채팅방 불러오기 700#채팅방번호
           case Protocol.CHAT_START: {
-            String chatContent = st.nextToken();
-            String chatDate = st.nextToken();
-            String userList = st.nextToken();
-            client.main.chatRoom.chat_start(chatContent, chatDate, userList);
+            String result = st.nextToken();
+            client.main.chatRoom.chat_start(result);
           }
             break;
-
+          // 메시지 출력 701#아이디#메시지내용
+          case Protocol.SEND_MSG: {
+            String recvId = st.nextToken();
+            String recvMsg = st.nextToken();
+            client.main.chatRoom.recv_msg(recvId, recvMsg);
+          }
+            break;
         } // end of switch
       } catch (Exception e) {
         e.printStackTrace();

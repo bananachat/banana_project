@@ -23,6 +23,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     Main main = null;
     String userId = null;
     String chatNo = null;
+    String userList = null;
 
     /**
      * 화면부 선언
@@ -219,7 +220,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 this.dispose();
 
                 // 채팅방 열림
-                main.chatRoom = new ChatRoom(main.client, userId, chatNo);
+                main.chatRoom = new ChatRoom(main.client, userId, chatNo, userList);
                 main.chatRoom.initDisplay();
             }
 

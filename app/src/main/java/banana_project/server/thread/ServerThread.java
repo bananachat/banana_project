@@ -24,6 +24,7 @@ public class ServerThread extends Thread {
   Socket client = null;
   ObjectOutputStream oos = null;
   ObjectInputStream ois = null;
+  String userId = null;
 
   /**
    * 생성자
@@ -53,6 +54,19 @@ public class ServerThread extends Thread {
   }
 
   /**
+   * 클라이언트에게 말하기 구현
+   *
+   * @param msg
+   */
+  public void send(String msg) {
+    try {
+      oos.writeObject(msg);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
    * 현재 입장해 있는 친구들 모두에게 메시지 전송하기 구현
    *
    * @param msg
@@ -64,15 +78,25 @@ public class ServerThread extends Thread {
   }
 
   /**
-   * 클라이언트에게 말하기 구현
-   *
+   * 단톡방에서 말하기 구현
+   * 
    * @param msg
+   * @param roomTitle
    */
-  public void send(String msg) {
-    try {
-      oos.writeObject(msg);
-    } catch (Exception e) {
-      e.printStackTrace();
+  public void roomCasting(String chatNo, String sendId, String sendMsg, List<Map<String, Object>> userList) {
+    for (int i = 0; i < userList.size(); i++) {
+      // 만약 채팅방넘버가 같다면 해당 서버스레드에 메시지 전송
+      if (chatNo.equals(userList.get(i).get("chatNo"))) {
+        ServerThread serverThread = (ServerThread) userList.get(i).get("ServerThread");
+        try {
+          // 프로토콜#아이디#메시지
+          serverThread.send(Protocol.SEND_MSG
+              + Protocol.seperator + sendId
+              + Protocol.seperator + sendMsg);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
     }
   }
 
@@ -113,6 +137,7 @@ public class ServerThread extends Thread {
             switch (result) {
               // 로그인 성공 101 -> 아이디
               case Protocol.LOGIN_S: {
+                this.userId = userId;
                 oos.writeObject(Protocol.LOGIN_S
                     + Protocol.seperator + userId);
               }
@@ -613,16 +638,61 @@ public class ServerThread extends Thread {
             int chatNo = Integer.parseInt(st.nextToken());
             // DB체크
             server.jta_log.append("채팅방 불러오기 DB 체크 시작" + "\n");
-            List<ChatContentsVO> rList = chatLogic.ChatCall(chatNo);
-            String chatContent = rList.get(0).getChat_content();
-            String chatDate = rList.get(0).getChat_date();
-            String userList = rList.get(0).getUser_id();
-            server.jta_log.append("Result: " + userList + "\n");
-            // 클라이언트에 채팅내용, 메시지날짜, 채팅참여유저정보 전송
-            oos.writeObject(Protocol.CHAT_START
-                + Protocol.seperator + chatContent
-                + Protocol.seperator + chatDate
-                + Protocol.seperator + userList);
+
+            // 로직 수정할것!
+            // 날짜(2023/01/21)#아이디#채팅내용 String형식으로 준다고 가정
+            List<ChatContentsVO> result = chatLogic.ChatCall(chatNo);
+
+            if (result != null) {
+              // 클라이언트에 전송 700#결과(날짜#아이디#채팅내용)
+              oos.writeObject(Protocol.CHAT_START
+                  + Protocol.seperator + result);
+            } else {
+              server.jta_log.append("result: null" + "\n");
+            }
+          }
+            break;
+
+          // 대화내용 저장 707#채팅방넘버#아이디#메시지
+          case Protocol.SAVE_CHAT: {
+            String chatNo = st.nextToken();
+            String userId = st.nextToken();
+            String chatCont = st.nextToken();
+            server.jta_log.append("그룹채팅 저장 DB 체크 시작" + "\n");
+            int result = chatLogic
+                .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNo)).user_id(userId)
+                    .chat_content(chatCont).build());
+            server.jta_log.append("result: " + result + "\n");
+
+            // 메시지 저장 및 전달(채팅방만들때 해당 멤버들의 서버스레드를 저장한다고 가정!)
+            // 아마 아래와같은 usrList를 ChatListLogic에서 가져와야할듯??
+            List<Map<String, Object>> userList = new ArrayList<>(); // chatNo와 ServerThread
+            switch (result) {
+              // 저장성공
+              case 1: {
+                // 같은 단톡방에 말 전달하기
+                roomCasting(chatNo, userId, chatCont, userList);
+              }
+                break;
+              // 저장실패
+              case 0, -1: {
+                server.jta_log.append("그룹채팅 메시지 저장 실패" + "\n");
+              }
+                break;
+            }
+          }
+            break;
+
+          // 메시지 출력 701#아이디#메시지내용
+          case Protocol.SEND_MSG: {
+            String recvId = st.nextToken();
+            String recvMsg = st.nextToken();
+            // 자기가 보낸 메시지가 아니라면 클라이언트로 전송
+            if (!userId.equals(recvId)) {
+              oos.writeObject(Protocol.SEND_MSG
+                  + Protocol.seperator + recvId
+                  + Protocol.seperator + recvMsg);
+            }
           }
             break;
 
