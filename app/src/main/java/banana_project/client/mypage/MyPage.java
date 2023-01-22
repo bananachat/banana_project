@@ -290,11 +290,11 @@ public class MyPage implements ActionListener {
 
   /**
    * 닉네임 수정 성공
-   * 
-   * @param newNick
+   *
+   * @param userNick
    */
-  public void edit_mypage(String newNick) {
-    dbNick = newNick;
+  public void edit_mypage(String userNick) {
+    dbNick = userNick;
     JOptionPane.showMessageDialog(client, "닉네임 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
         setImage.img_confirm);
     client.setContentPane(client.main.jp_main);
@@ -306,8 +306,62 @@ public class MyPage implements ActionListener {
    * 닉네임 수정 실패
    */
   public void fail_mypage() {
-    JOptionPane.showMessageDialog(client, "닉네임 수정에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+    JOptionPane.showMessageDialog(client, "닉네임 변경에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
         setImage.img_notFound);
+  }
+
+  /**
+   * 닉네임, 비번 둘 다 수정 성공
+   */
+  public void edit_mboth(String userNick) {
+    dbNick = userNick;
+    JOptionPane.showMessageDialog(client, "닉네임, 비밀번호 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+            setImage.img_confirm);
+    client.setContentPane(client.main.jp_main);
+    client.setTitle("친구 목록");
+    client.revalidate();
+  }
+
+  /**
+   * 닉네임, 비번 둘 다 수정 실패
+   */
+  public void fail_mboth() {
+    JOptionPane.showMessageDialog(client, "닉네임,비밀번호 변경에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+            setImage.img_notFound);
+  }
+
+  /**
+   * 비밀번호만 변경 성공
+   */
+  public void edit_mpw() {
+    JOptionPane.showMessageDialog(client, "비밀번호 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+            setImage.img_confirm);
+    client.setContentPane(client.main.jp_main);
+    client.setTitle("친구 목록");
+    client.revalidate();
+  }
+
+  /**
+   * 비밀번호만 변경 실패
+   */
+
+  public void fail_mpw() {
+    JOptionPane.showMessageDialog(client, "비밀번호 변경에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
+            setImage.img_notFound);
+  }
+
+  public void del_acnt() {
+    JOptionPane.showMessageDialog(jd_resign, "바나나톡 탈퇴가 완료되었습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
+            setImage.img_delete);
+    jd_resign.dispose();
+    client.setContentPane(client.jp_login);
+    client.setTitle("바나나톡");
+    client.revalidate();
+  }
+
+  public void fail_dacnt() {
+    JOptionPane.showMessageDialog(jd_resign, "비밀번호가 일치하지 않습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
+            setImage.img_notFound);
   }
 
   /**
@@ -324,22 +378,21 @@ public class MyPage implements ActionListener {
     String pwCheck = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$"; // 숫자,영문자포함 8~16자 비밀번호
     // 닉네임 중복확인 버튼 눌렀을 때
     if (obj == jbtn_checkNick) {
-      String newNick = jtf_nickName.getText();
       // 원래 닉네임과 같은 경우
-      if (dbNick.equals(newNick)) {
+      if (dbNick.equals(userNick)) {
         JOptionPane.showMessageDialog(client, "기존에 사용하던 닉네임입니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
             setImage.img_notFound);
       }
       // 닉네임이 형식에 안맞음
-      else if (!Pattern.matches(nickCheck, newNick)) {
+      else if (!Pattern.matches(nickCheck, userNick)) {
         JOptionPane.showMessageDialog(client, "닉네임은 2~10자의 영문, 한글, 숫자로 입력해주세요.", "회원가입",
             JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
-      // 그 외의 경우 
+      // 그 외의 경우
       else {
         try {
           client.oos.writeObject(Protocol.NICK_MCHK
-              + Protocol.seperator + newNick);
+              + Protocol.seperator + userNick);
         } catch (Exception e1) {
           e1.printStackTrace();
         }
@@ -360,11 +413,7 @@ public class MyPage implements ActionListener {
           JOptionPane.showMessageDialog(client, "닉네임 중복확인을 해주세요", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
               setImage.img_info);
         }
-        // 닉네임이 형식에 안맞음
-        else if (!Pattern.matches(nickCheck, userNick)) {
-          JOptionPane.showMessageDialog(client, "닉네임은 2~10자의 영문, 한글, 숫자로 입력해주세요.", "회원가입",
-              JOptionPane.WARNING_MESSAGE, setImage.img_info);
-        }
+
         // 닉네임, 비밀번호 변경
         else if (!pwFirst.equals("")) {
           // 비밀번호 형식이 아닐 경우
@@ -372,7 +421,15 @@ public class MyPage implements ActionListener {
             JOptionPane.showMessageDialog(client, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "로그인",
                 JOptionPane.WARNING_MESSAGE, setImage.img_info);
           } else { //해야하는것
-
+            //비밀번호 형식일 경우  -> DB에 있는 비밀번호와 닉네임을 둘 다 변경
+            try {
+              client.oos.writeObject(Protocol.EDIT_MBOTH
+                      + Protocol.seperator + userNick
+                      + Protocol.seperator + pwFirst
+                      + Protocol.seperator + dbId);
+            } catch (IOException e1) {
+              e1.printStackTrace();
+            }
           }
         }
         // 닉네임만 변경 516#닉네임#아이디
@@ -386,16 +443,15 @@ public class MyPage implements ActionListener {
           }
         }
       }
-      // 비밀번호 공백아닐때(변경했을때)
-      else if (!pwFirst.equals("")) { //해야하는것
-        // DB로 변경된 정보 업데이트
-        // try {
-        // client.oos.writeObject(Protocol.EDIT_MYPAGE
-        // + Protocol.seperator + userNick
-        // + Protocol.seperator + pwFirst);
-        // } catch (Exception e1) {
-        // e1.printStackTrace();
-        // }
+      // 비밀번호만 변경 518#아이디#비밀번호
+      else if (!pwFirst.equals("")) {
+         try {
+         client.oos.writeObject(Protocol.EDIT_MPW
+         + Protocol.seperator + dbId
+         + Protocol.seperator + pwFirst);
+         } catch (Exception e1) {
+         e1.printStackTrace();
+         }
       }
 
       // 변경사항이 없는 경우
@@ -405,6 +461,7 @@ public class MyPage implements ActionListener {
         client.revalidate();
       }
     }
+
     // 탈퇴하기 버튼을 눌렀을 때
     else if (obj == jbtn_resign)
 
@@ -416,24 +473,27 @@ public class MyPage implements ActionListener {
     else if (obj == jbtn_realresign || obj == jtf_resignId || obj == jtf_resignPw) {
       String userId = jtf_resignId.getText();
       String userPw = jtf_resignPw.getText();
+
       // 아이디가 로그인 아이디와 다를경우
-      if (!userId.equals("DB")) {
+      if (!userId.equals(dbId)) {
         JOptionPane.showMessageDialog(jd_resign, "아이디가 일치하지 않습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
             setImage.img_notFound);
       }
-      // 비밀번호가 로그인 아이디와 다를경우
-      else if (!userPw.equals("DB")) {
-        JOptionPane.showMessageDialog(jd_resign, "비밀번호가 일치하지 않습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
-            setImage.img_notFound);
+      //비밀번호가 공백일 경우 경고문 띄우기
+      else if(userPw.equals("")){
+        JOptionPane.showMessageDialog(jd_resign, "비밀번호를 입력해주세요.", "회원탈퇴",
+                JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
-      // 아이디와 비밀번호가 로그인한것과 같을 경우
-      else if (userId.equals("DB") || userPw.equals("DB")) {
-        JOptionPane.showMessageDialog(jd_resign, "바나나톡 탈퇴가 완료되었습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
-            setImage.img_delete);
-        jd_resign.dispose();
-        client.setContentPane(client.jp_login);
-        client.setTitle("바나나톡");
-        client.revalidate();
+
+      // 아이디 비밀번호 DB체크(비밀번호는 로직에서 체크하기 -> 비밀번호 관련 은재언니한테 문의하기)
+      else {
+        try {
+          client.oos.writeObject(Protocol.DEL_ACNT + Protocol.seperator+userId + Protocol.seperator+userPw);
+
+        } catch (IOException ex) {
+          throw new RuntimeException(ex);
+        }
+
       }
     }
     // 돌아가기 버튼을 눌렀을 때
@@ -444,7 +504,7 @@ public class MyPage implements ActionListener {
 
   /**
    * 테스트용메인
-   * 
+   *
    * @param args
    */
   public static void main(String[] args) {

@@ -653,6 +653,7 @@ public class ServerThread extends Thread {
             }
           }
             break;
+
           // 새로운 닉네임 중복체크 514#닉네임
           case Protocol.NICK_MCHK: {
             String newNick = st.nextToken();
@@ -675,6 +676,7 @@ public class ServerThread extends Thread {
             }
           }
             break;
+
           // 사용자 정보 변경 516#닉네임#비밀번호
           case Protocol.EDIT_MNICK: {
             String newNick = st.nextToken();
@@ -692,13 +694,81 @@ public class ServerThread extends Thread {
               }
                 break;
               // 닉네임 수정 실패 517
-              case -1: {
+              case -1, 0: {
                 oos.writeObject(Protocol.FAIL_MNICK);
               }
                 break;
             }
           }
             break;
+
+          //DB에 있는 비밀번호와 닉네임을 둘 다 변경 520#닉네임#비밀번호#아이디
+          case Protocol.EDIT_MBOTH: {
+            String newNick = st.nextToken();
+            String newPw = st.nextToken();
+            String userId = st.nextToken();
+            // DB체크
+            server.jta_log.append("닉네임, 비밀번호 변경 DB 체크 시작" + "\n");
+            int result = memberLogic.updateUserNick(UserVO.builder().user_nickname(newNick).user_id(userId).build());
+            int result2 = memberLogic.updateUserPW(UserVO.builder().user_pw(newPw).user_id(userId).build());
+            server.jta_log.append("Result: " + result + result2+ "\n");
+
+            // 체크 결과 if문
+            if(result ==1 && result2 == 1){
+              oos.writeObject(Protocol.EDIT_MBOTH + Protocol.seperator+newNick);
+            }else{
+              oos.writeObject(Protocol.FAIL_MBOTH);
+            }
+          }
+          break;
+
+          //비밀번호만 변경 518#아이디#비밀번호
+          case Protocol.EDIT_MPW: {
+            String userId = st.nextToken();
+            String newPw = st.nextToken();
+            // DB체크
+            server.jta_log.append("비밀번호변경 DB 체크 시작" + "\n");
+            int result = memberLogic.updateUserPW(UserVO.builder().user_pw(newPw).user_id(userId).build());
+            server.jta_log.append("Result: " + result + "\n");
+            // 체크 결과 switch문
+            switch (result) {
+              //비밀번호 수정 성공 518
+              case 1: {
+                oos.writeObject(Protocol.EDIT_MPW);
+              }
+              break;
+              // 비밀번호 수정 실패 519
+              case -1, 0: {
+                oos.writeObject(Protocol.FAIL_MPW);
+              }
+              break;
+            }
+          }
+          break;
+
+          //마이페이지 회원탈퇴 성공 522#아이디#비밀번호
+          case Protocol.DEL_ACNT: {
+            String userId = st.nextToken();
+            String userPw = st.nextToken();
+            //DB체크
+            server.jta_log.append("회원탈퇴 DB 체크 시작" + "\n");
+            int result = memberLogic.deleteAccount(UserVO.builder().user_id(userId).build());
+            server.jta_log.append("Result: " + result + "\n");
+            //체크 결과 swith문
+            switch (result){
+              //마이페이지 회원탈퇴 성공 522
+              case 1: {
+                oos.writeObject(Protocol.DEL_ACNT);
+              }
+              break;
+              //마이페이지 회원탈퇴 실패 523
+              case -1,0 : {
+                oos.writeObject(Protocol.FAIL_DACNT);
+              }
+              break;
+            }
+          }
+          break;
 
           /**
            * ChatRoom 스레드

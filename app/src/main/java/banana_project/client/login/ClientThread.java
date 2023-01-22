@@ -325,6 +325,42 @@ public class ClientThread extends Thread {
           }
             break;
 
+          // 비밀번호 수정 성공 518
+          case Protocol.EDIT_MPW: {
+            client.main.myPage.edit_mpw();
+          }
+          break;
+          // 비밀번호 수정 실패 519
+          case Protocol.FAIL_MPW: {
+            client.main.myPage.fail_mpw();
+          }
+          break;
+
+          // 닉네임, 비번 수정 성공 520
+          case Protocol.EDIT_MBOTH: {
+            String newNick = st.nextToken();
+            client.main.myPage.edit_mboth(newNick);
+          }
+          break;
+
+          // 닉네임, 비번 수정 실패 521
+          case Protocol.FAIL_MBOTH:{
+            client.main.myPage.fail_mboth();
+          }
+          break;
+
+          //마이페이지 회원탈퇴 성공 522
+          case Protocol.DEL_ACNT:{
+            client.main.myPage.del_acnt();
+          }
+          break;
+
+          //마이페이지 회원탈퇴 실패 523
+          case Protocol.FAIL_DACNT:{
+            client.main.myPage.fail_dacnt();
+          }
+          break;
+
           /**
            * ChatRoom 스레드
            */

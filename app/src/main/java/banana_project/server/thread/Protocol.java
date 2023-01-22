@@ -56,6 +56,10 @@ public class Protocol {
     public static final int	FAIL_MNICK = 517;    	//마이페이지 닉네임 변경 실패
     public static final int	EDIT_MPW = 518;    	//마이페이지 비번 변경
     public static final int	FAIL_MPW = 519;    	//마이페이지 비번 변경 실패
+    public static final int	EDIT_MBOTH = 520;    	//마이페이지 닉네임, 비번 둘 다 변경
+    public static final int	FAIL_MBOTH = 521;    	//마이페이지 닉네임, 비번 둘 다 변경 실패
+    public static final int	DEL_ACNT = 522;    	//마이페이지 회원탈퇴 성공
+    public static final int	FAIL_DACNT = 523;    	//마이페이지 회원탈퇴 실패
 
     //          [친구 검색]           //
     public static final int	PRT_USERS = 600; 	    //친구검색 출력(친구추가 → 검색한 값)
