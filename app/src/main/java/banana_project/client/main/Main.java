@@ -5,6 +5,7 @@ import banana_project.client.login.Client;
 import banana_project.client.mypage.MyPage;
 import banana_project.client.room.ChatRoom;
 import banana_project.server.thread.Protocol;
+import banana_project.server.vo.ChatListVO;
 import banana_project.server.vo.UserVO;
 
 import javax.swing.*;
@@ -14,13 +15,14 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.util.List;
 import java.util.Vector;
 
 public class Main implements ActionListener, MouseListener {
     ////////////////////////// [선언부] //////////////////////////
     public Client client = null;
     public MyPage myPage = null; // 마이페이지 선언
-    FListDialog flDialog = null; // "친구 추가" 다이얼로그
+    public FListDialog flDialog = null; // "친구 추가" 다이얼로그
     public ChatRoom chatRoom = null; // 1:1채팅 선언
     String logMsg = ""; // 로그 기록용
     // 유저정보
@@ -169,6 +171,27 @@ public class Main implements ActionListener, MouseListener {
         dlm.removeAllElements();
         for (int i = 0; i < fList.size(); i++) {
             dlm.addElement(fList.get(i));
+        }
+    }
+
+    // 채팅리스트 없을때 메소드
+    public void nf_chatList() {
+        jl_list.setFont(setFontNJOp.b14);
+        dlm.removeAllElements();
+        dlm.addElement("새로운 채팅방을 만들어보세요.");
+        jl_list.setEnabled(false);
+    }
+
+    // 채팅리스트 있을때 메소드
+    public void print_chatList(List<ChatListVO> list) {
+        ChatListVO clVO = null;
+        jl_list.setFont(setFontNJOp.b16);
+        jl_list.setEnabled(true);
+        dlm.removeAllElements();
+
+        for (int i = 0; i < list.size(); i++) {
+            clVO = list.get(i);
+            dlm.addElement(clVO.getChat_title());
         }
     }
 
