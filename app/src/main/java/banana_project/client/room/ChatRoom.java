@@ -221,16 +221,11 @@ public class ChatRoom implements ActionListener, FocusListener {
     /**
      * 전송받은 메시지 출력
      * 
-     * @param chatNo
      * @param recvNick
      * @param recvMsg
      */
-    public void recv_msg(String chatNo, String recvNick, String recvMsg) {
-        // 만약 채팅방번호가 같다면
-        if (this.chatNo.equals(chatNo)) {
-            // 해당 아이디의 닉네임과 채팅내용 출력
-            jta_chat.append(recvNick + ": " + recvMsg);
-        }
+    public void recv_msg(String recvNick, String recvMsg) {
+        jta_chat.append(recvNick + ": " + recvMsg);
     }
 
     // 메시지 전송 실패

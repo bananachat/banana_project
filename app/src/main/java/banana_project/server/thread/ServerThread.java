@@ -26,6 +26,7 @@ public class ServerThread extends Thread {
   ObjectInputStream ois = null;
   String userId = null;
   String userNick = null;
+  String chatNo = null;
 
   /**
    * 생성자
@@ -796,6 +797,7 @@ public class ServerThread extends Thread {
               // 클라이언트에 전송 700#결과(날짜#닉네임#채팅내용)
               oos.writeObject(Protocol.CHAT_START
                   + Protocol.seperator + result);
+              this.chatNo = String.valueOf(chatNo);
             } else {
               server.jta_log.append("result: null" + "\n");
             }
@@ -835,15 +837,14 @@ public class ServerThread extends Thread {
           }
             break;
 
-          // 메시지 출력 701#채팅방넘버#닉네임#메시지내용
+          // 메시지 출력 701#닉네임#메시지내용
           case Protocol.SEND_MSG: {
-            String chatNo = st.nextToken();
+            String recvNo = st.nextToken();
             String recvNick = st.nextToken();
             String recvMsg = st.nextToken();
-            // 자기가 보낸 메시지가 아니라면 클라이언트로 전송
-            if (!userNick.equals(recvNick)) {
+            // 자기가 보낸 메시지가 아니고 채팅방넘버가 같으면 클라이언트로 전송
+            if (!userNick.equals(recvNick) && chatNo.equals(recvNo)) {
               oos.writeObject(Protocol.SEND_MSG
-                  + Protocol.seperator + chatNo
                   + Protocol.seperator + recvNick
                   + Protocol.seperator + recvMsg);
             }

@@ -380,12 +380,11 @@ public class ClientThread extends Thread {
           }
             break;
 
-          // 메시지 출력 701#아이디#메시지내용
+          // 메시지 출력 701#닉네임#메시지내용
           case Protocol.SEND_MSG: {
-            String chatNo = st.nextToken();
             String recvNick = st.nextToken();
             String recvMsg = st.nextToken();
-            client.main.chatRoom.recv_msg(chatNo, recvNick, recvMsg);
+            client.main.chatRoom.recv_msg(recvNick, recvMsg);
           }
             break;
 
