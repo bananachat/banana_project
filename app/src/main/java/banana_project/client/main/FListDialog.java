@@ -22,6 +22,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     ////////////////////////// [선언부] //////////////////////////
     Main main = null;
     String userId = null;
+    String userNick = null;
     String chatNo = null;
     String userList = null;
 
@@ -161,7 +162,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.setVisible(isView);
     }
 
-
     // 친구가 있을 때 메소드
     public void prt_frdList(Vector<String> fList) {
         jl_list.setEnabled(true);
@@ -170,6 +170,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
             dlm.addElement(fList.get(i));
         }
     }
+
     // 친구가 없을 때 메소드
     public void nf_frdList() {
         dlm.removeAllElements();
@@ -181,6 +182,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     public void add_friend() {
 
     }
+
     // 친구 추가 실패
     public void fail_add_friend() {
 
@@ -190,6 +192,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     public void create_chatroom() {
 
     }
+
     // 채팅방 생성 실패
     public void fail_create_chatroom() {
 
@@ -254,7 +257,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 this.dispose();
 
                 // 채팅방 열림
-                main.chatRoom = new ChatRoom(main.client, userId, chatNo, userList);
+                main.chatRoom = new ChatRoom(main.client, userId, userNick, chatNo, userList);
                 main.chatRoom.initDisplay();
             }
 

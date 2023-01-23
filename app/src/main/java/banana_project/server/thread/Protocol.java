@@ -81,7 +81,7 @@ public class Protocol {
     //          [대화방 화면]           //
     public static final int	CHAT_START = 700; 	    //대화방화면 출력
     public static final int	SEND_MSG = 701;  	    //메세지 보내기
-    // public static final int	GROUP_MSG = 702; 	    //단체 대화 메세지
+    public static final int	FAIL_MSG = 702; 	    //메시지 보내기 실패
     public static final int	PRT_MEMLIST = 703;  	//채팅방 멤버목록 출력
     public static final int	PRT_TEMPLSIT = 704; 	//현 채팅방에 없는 친구 출력(친구초대 클릭했을 때)
     public static final int	ADD_MEM = 705; 	        //현 채팅방에 친구 초대(입장메세지)

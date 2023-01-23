@@ -25,6 +25,7 @@ public class ServerThread extends Thread {
   ObjectOutputStream oos = null;
   ObjectInputStream ois = null;
   String userId = null;
+  String userNick = null;
 
   /**
    * 생성자
@@ -67,18 +68,25 @@ public class ServerThread extends Thread {
   }
 
   /**
-   * 현재 입장해 있는 친구들 모두에게 메시지 전송하기 구현
+   * 단톡방에서 말하기 구현
+   * 
+   * 1. 일단 모두에게 보내고 ChatRoom에서 if문 채팅방넘버로 거르기(일단 전송 후 거르기)
    *
    * @param msg
    */
-  public void broadCasting(String msg) {
+  public void broadCasting(String chatNo, String sendNick, String sendMsg) {
     for (ServerThread serverThread : server.globalList) {
-      serverThread.send(msg);
+      serverThread.send(Protocol.SEND_MSG
+          + Protocol.seperator + chatNo
+          + Protocol.seperator + sendNick
+          + Protocol.seperator + sendMsg);
     }
   }
 
   /**
    * 단톡방에서 말하기 구현
+   * 
+   * 2.채팅넘버와 서버스레드 같이 저장한다 가정(스레드부터 거르고 전송)
    * 
    * @param msg
    * @param roomTitle
@@ -89,8 +97,9 @@ public class ServerThread extends Thread {
       if (chatNo.equals(userList.get(i).get("chatNo"))) {
         ServerThread serverThread = (ServerThread) userList.get(i).get("ServerThread");
         try {
-          // 프로토콜#아이디#메시지
+          // 프로토콜#채팅방번호#아이디#메시지
           serverThread.send(Protocol.SEND_MSG
+              + Protocol.seperator + chatNo
               + Protocol.seperator + sendId
               + Protocol.seperator + sendMsg);
         } catch (Exception e) {
@@ -328,22 +337,21 @@ public class ServerThread extends Thread {
               case Protocol.NF_RESULT: {
                 oos.writeObject(Protocol.NF_FRDLIST); // 501
               }
-              break;
+                break;
               // 친구 검색 결과 존재 607
               case Protocol.EXIST_FRIEND: {
                 oos.writeObject(Protocol.PRT_FRDLIST
-                        + Protocol.seperator + fList); // 500
+                    + Protocol.seperator + fList); // 500
               }
-              break;
+                break;
               case Protocol.FAIL_CONN: { // 800: 데이터베이스 접속 실패
                 System.out.println("DB 연결 실패");
                 oos.writeObject(Protocol.NF_FRDLIST); // 501로 전달 (친구리스트 없음)
               }
-              break;
+                break;
             }
           }
-          break;
-
+            break;
 
           /**
            * [Main 스레드 - 채팅 리스트 출력]
@@ -386,27 +394,26 @@ public class ServerThread extends Thread {
                 resultList += (chNo + "|" + ctitle);
 
                 oos.writeObject(Protocol.PRT_CHATLIST
-                        + Protocol.seperator + resultList);     // 502: 채팅리스트 출력
+                    + Protocol.seperator + resultList); // 502: 채팅리스트 출력
 
               }
-              break;
+                break;
 
               case Protocol.NF_CHATLIST: { // 503: 채팅리스트 없음
                 oos.writeObject(Protocol.NF_CHATLIST); // 503로 전달 (채팅리스트 없음)
               }
-              break;
+                break;
 
               case Protocol.FAIL_CONN: { // 800: 데이터베이스 접속 실패
                 // TODO: 로그 작성
                 System.out.println("DB 연결 실패");
                 oos.writeObject(Protocol.NF_CHATLIST); // 503로 전달 (채팅리스트 없음)
               }
-              break;
+                break;
 
             }
           }
-          break; // end of (Main 스레드 내 채팅 리스트 출력)
-
+            break; // end of (Main 스레드 내 채팅 리스트 출력)
 
           /**
            * [Main 다이얼로그 - 친구 목록 출력]
@@ -427,25 +434,24 @@ public class ServerThread extends Thread {
             int result = Integer.parseInt(list.get(0).toString());
             server.jta_log.append("Result: " + result + "\n");
 
-            switch (result) {        // 향상된 switch문
-              case Protocol.EXIST_FRIEND -> {         // 607 : 친구 검색 존재
+            switch (result) { // 향상된 switch문
+              case Protocol.EXIST_FRIEND -> { // 607 : 친구 검색 존재
                 String fList = String.valueOf(list.get(1));
                 oos.writeObject(Protocol.PRT_FRIENDS
-                        + Protocol.seperator + fList); // 602로 전달 (친구목록 출력)
+                    + Protocol.seperator + fList); // 602로 전달 (친구목록 출력)
               }
 
-              case Protocol.NF_RESULT -> {            // 604 : 친구 검색 결과가 없음
+              case Protocol.NF_RESULT -> { // 604 : 친구 검색 결과가 없음
                 oos.writeObject(Protocol.NULL_FRIENDS); // 609로 전달 (친구목록이 없음)
               }
 
-              case Protocol.FAIL_CONN -> {            // 800 : 데이터베이스 접속 실패
+              case Protocol.FAIL_CONN -> { // 800 : 데이터베이스 접속 실패
                 System.out.println("DB 연결 실패");
                 oos.writeObject(Protocol.NULL_FRIENDS); // 609로 전달 (친구목록이 없음)
               }
             }
           }
-          break;
-
+            break;
 
           /**
            * [Main 다이얼로그 - 검색버튼(모든 사용자 중에 검색)]
@@ -466,26 +472,28 @@ public class ServerThread extends Thread {
             int result = Integer.parseInt(list.get(0).toString());
 
             switch (result) {
-              case Protocol.EXIST_FRIEND: {       // 607 : EXIST_FRIEND = 친구 검색 존재
+              case Protocol.EXIST_FRIEND: { // 607 : EXIST_FRIEND = 친구 검색 존재
                 String findFri = String.valueOf(list.get(1));
 
                 oos.writeObject(Protocol.EXIST_USER
-                                + Protocol.seperator + findFri); // 611로 전달 (해당 사용자 존재)
-              } break;
+                    + Protocol.seperator + findFri); // 611로 전달 (해당 사용자 존재)
+              }
+                break;
 
-              case Protocol.NF_RESULT: {          // 604 : NF_RESULT = 친구 검색 결과가 없음
-                oos.writeObject(Protocol.NF_RESULT);  // 610로 전달 (해당 사용자 없음)
-              } break;
+              case Protocol.NF_RESULT: { // 604 : NF_RESULT = 친구 검색 결과가 없음
+                oos.writeObject(Protocol.NF_RESULT); // 610로 전달 (해당 사용자 없음)
+              }
+                break;
 
-              case Protocol.FAIL_CONN: {          // 800 : FAIL_CONN = 데이터베이스 접속 실패
+              case Protocol.FAIL_CONN: { // 800 : FAIL_CONN = 데이터베이스 접속 실패
                 System.out.println("DB 연결 실패");
                 oos.writeObject(Protocol.NF_RESULT); // 604로 전달 (친구 검색 결과가 없음)
-              } break;
+              }
+                break;
 
             }
           }
-          break;
-
+            break;
 
           /**
            * [Main 다이얼로그 - 친구검색 출력(새채팅 → 친구목록)]
@@ -493,38 +501,38 @@ public class ServerThread extends Thread {
            * 604 : NF_RESULT = 친구 검색 결과가 없음
            * 800 : FAIL_CONN = 데이터베이스 접속 실패
            */
-//          case Protocol.PRT_FRIENDS: {
-//            String userId = st.nextToken();
-//
-//            // DB등록 및 체크
-//            server.jta_log.append("친구목록 DB 체크 시작" + "\n");
-//
-//            List<Object> list = friendLogic.printFriend(UserVO.builder().user_id(userId).build());
-//
-//            // 결과 프로토콜
-//            int result = Integer.parseInt(list.get(0).toString());
-//            server.jta_log.append("Result: " + result + "\n");
-//
-//            switch (result) {
-//              case Protocol.EXIST_FRIEND: {         // 607 : 친구 검색 존재
-//                String fList = String.valueOf(list.get(1));
-//                oos.writeObject(Protocol.PRT_FRDLIST
-//                        + Protocol.seperator + fList); // 500로 전달 (친구목록 출력)
-//              }
-//              break;
-//              case Protocol.NF_RESULT: {            // 604 : 친구 검색 결과가 없음
-//                oos.writeObject(Protocol.NF_FRDLIST); // 501로 전달 (친구리스트 없음)
-//              }
-//              break;
-//              case Protocol.FAIL_CONN: {            // 800 : 데이터베이스 접속 실패
-//                System.out.println("DB 연결 실패");
-//                oos.writeObject(Protocol.NF_RESULT); // 501로 전달 (친구리스트 없음)
-//              }
-//              break;
-//            }
-//          }
-//          break;
-
+          // case Protocol.PRT_FRIENDS: {
+          // String userId = st.nextToken();
+          //
+          // // DB등록 및 체크
+          // server.jta_log.append("친구목록 DB 체크 시작" + "\n");
+          //
+          // List<Object> list =
+          // friendLogic.printFriend(UserVO.builder().user_id(userId).build());
+          //
+          // // 결과 프로토콜
+          // int result = Integer.parseInt(list.get(0).toString());
+          // server.jta_log.append("Result: " + result + "\n");
+          //
+          // switch (result) {
+          // case Protocol.EXIST_FRIEND: { // 607 : 친구 검색 존재
+          // String fList = String.valueOf(list.get(1));
+          // oos.writeObject(Protocol.PRT_FRDLIST
+          // + Protocol.seperator + fList); // 500로 전달 (친구목록 출력)
+          // }
+          // break;
+          // case Protocol.NF_RESULT: { // 604 : 친구 검색 결과가 없음
+          // oos.writeObject(Protocol.NF_FRDLIST); // 501로 전달 (친구리스트 없음)
+          // }
+          // break;
+          // case Protocol.FAIL_CONN: { // 800 : 데이터베이스 접속 실패
+          // System.out.println("DB 연결 실패");
+          // oos.writeObject(Protocol.NF_RESULT); // 501로 전달 (친구리스트 없음)
+          // }
+          // break;
+          // }
+          // }
+          // break;
 
           /**
            * [Main 다이얼로그 - 검색버튼(친구 중에 검색)]
@@ -544,26 +552,28 @@ public class ServerThread extends Thread {
             int result = Integer.parseInt(list.get(0).toString());
 
             switch (result) {
-              case Protocol.EXIST_FRIEND: {       // 607 : EXIST_FRIEND = 친구 검색 존재
+              case Protocol.EXIST_FRIEND: { // 607 : EXIST_FRIEND = 친구 검색 존재
                 String findFri = String.valueOf(list.get(1));
 
                 oos.writeObject(Protocol.EXIST_FRIEND
-                        + Protocol.seperator + findFri); // 607로 전달 (친구 검색 존재)
-              } break;
+                    + Protocol.seperator + findFri); // 607로 전달 (친구 검색 존재)
+              }
+                break;
 
-              case Protocol.NF_RESULT: {          // 604 : NF_RESULT = 친구 검색 결과가 없음
-                oos.writeObject(Protocol.NF_RESULT);  // 604로 전달 (친구 검색 결과가 없음)
-              } break;
+              case Protocol.NF_RESULT: { // 604 : NF_RESULT = 친구 검색 결과가 없음
+                oos.writeObject(Protocol.NF_RESULT); // 604로 전달 (친구 검색 결과가 없음)
+              }
+                break;
 
-              case Protocol.FAIL_CONN: {          // 800 : FAIL_CONN = 데이터베이스 접속 실패
+              case Protocol.FAIL_CONN: { // 800 : FAIL_CONN = 데이터베이스 접속 실패
                 System.out.println("DB 연결 실패");
                 oos.writeObject(Protocol.NF_RESULT); // 604로 전달 (친구 검색 결과가 없음)
-              } break;
+              }
+                break;
 
             }
           }
-          break;
-
+            break;
 
           /**
            * [Main 다이얼로그 - 친구 추가 이벤트]
@@ -581,16 +591,15 @@ public class ServerThread extends Thread {
             int result = friendLogic.addFriend(UserVO.builder().user_id(userId).build(), friendId);
 
             switch (result) {
-              case 1 -> {         // 이벤트 성공
-                oos.writeObject(Protocol.ADD_FRIEND);       //  605로 전달 (검색버튼(친구추가 → 모든 사용자 중에 검색))
+              case 1 -> { // 이벤트 성공
+                oos.writeObject(Protocol.ADD_FRIEND); // 605로 전달 (검색버튼(친구추가 → 모든 사용자 중에 검색))
               }
-              case -1 -> {        // 이벤트 실패
-                oos.writeObject(Protocol.FAIL_ADD_FRIEND);        //  612로 전달 (친구 추가 실패)
+              case -1 -> { // 이벤트 실패
+                oos.writeObject(Protocol.FAIL_ADD_FRIEND); // 612로 전달 (친구 추가 실패)
               }
             }
           }
-          break;
-
+            break;
 
           /**
            * [Main 다이얼로그 - 채팅방 만들기]
@@ -609,20 +618,20 @@ public class ServerThread extends Thread {
 
             switch (result) {
               case Protocol.CREATE_CHAT -> {
-                oos.writeObject(Protocol.CREATE_CHAT);        //  606로 전달 (채팅방 만들기 성공)
+                oos.writeObject(Protocol.CREATE_CHAT); // 606로 전달 (채팅방 만들기 성공)
               }
 
               case Protocol.FAIL_CRE_CHAT -> {
-                oos.writeObject(Protocol.FAIL_CRE_CHAT);      // 608로 전달 (채팅방 만들기 실패)
+                oos.writeObject(Protocol.FAIL_CRE_CHAT); // 608로 전달 (채팅방 만들기 실패)
               }
 
               case Protocol.FAIL_CONN -> {
                 System.out.println("DB 연결 실패");
-                oos.writeObject(Protocol.FAIL_CRE_CHAT);      // 608로 전달 (채팅방 만들기 실패)
+                oos.writeObject(Protocol.FAIL_CRE_CHAT); // 608로 전달 (채팅방 만들기 실패)
               }
             }
           }
-          break;
+            break;
 
           ///////////////////////////////////////////////////////////////////////////////////
           /**
@@ -702,7 +711,7 @@ public class ServerThread extends Thread {
           }
             break;
 
-          //DB에 있는 비밀번호와 닉네임을 둘 다 변경 520#닉네임#비밀번호#아이디
+          // DB에 있는 비밀번호와 닉네임을 둘 다 변경 520#닉네임#비밀번호#아이디
           case Protocol.EDIT_MBOTH: {
             String newNick = st.nextToken();
             String newPw = st.nextToken();
@@ -711,18 +720,18 @@ public class ServerThread extends Thread {
             server.jta_log.append("닉네임, 비밀번호 변경 DB 체크 시작" + "\n");
             int result = memberLogic.updateUserNick(UserVO.builder().user_nickname(newNick).user_id(userId).build());
             int result2 = memberLogic.updateUserPW(UserVO.builder().user_pw(newPw).user_id(userId).build());
-            server.jta_log.append("Result: " + result + result2+ "\n");
+            server.jta_log.append("Result: " + result + result2 + "\n");
 
             // 체크 결과 if문
-            if(result ==1 && result2 == 1){
-              oos.writeObject(Protocol.EDIT_MBOTH + Protocol.seperator+newNick);
-            }else{
+            if (result == 1 && result2 == 1) {
+              oos.writeObject(Protocol.EDIT_MBOTH + Protocol.seperator + newNick);
+            } else {
               oos.writeObject(Protocol.FAIL_MBOTH);
             }
           }
-          break;
+            break;
 
-          //비밀번호만 변경 518#아이디#비밀번호
+          // 비밀번호만 변경 518#아이디#비밀번호
           case Protocol.EDIT_MPW: {
             String userId = st.nextToken();
             String newPw = st.nextToken();
@@ -732,43 +741,43 @@ public class ServerThread extends Thread {
             server.jta_log.append("Result: " + result + "\n");
             // 체크 결과 switch문
             switch (result) {
-              //비밀번호 수정 성공 518
+              // 비밀번호 수정 성공 518
               case 1: {
                 oos.writeObject(Protocol.EDIT_MPW);
               }
-              break;
+                break;
               // 비밀번호 수정 실패 519
               case -1, 0: {
                 oos.writeObject(Protocol.FAIL_MPW);
               }
-              break;
+                break;
             }
           }
-          break;
+            break;
 
-          //마이페이지 회원탈퇴 성공 522#아이디#비밀번호
+          // 마이페이지 회원탈퇴 성공 522#아이디#비밀번호
           case Protocol.DEL_ACNT: {
             String userId = st.nextToken();
             String userPw = st.nextToken();
-            //DB체크
+            // DB체크
             server.jta_log.append("회원탈퇴 DB 체크 시작" + "\n");
             int result = memberLogic.deleteAccount(UserVO.builder().user_id(userId).build());
             server.jta_log.append("Result: " + result + "\n");
-            //체크 결과 swith문
-            switch (result){
-              //마이페이지 회원탈퇴 성공 522
+            // 체크 결과 swith문
+            switch (result) {
+              // 마이페이지 회원탈퇴 성공 522
               case 1: {
                 oos.writeObject(Protocol.DEL_ACNT);
               }
-              break;
-              //마이페이지 회원탈퇴 실패 523
-              case -1,0 : {
+                break;
+              // 마이페이지 회원탈퇴 실패 523
+              case -1, 0: {
                 oos.writeObject(Protocol.FAIL_DACNT);
               }
-              break;
+                break;
             }
           }
-          break;
+            break;
 
           /**
            * ChatRoom 스레드
@@ -780,11 +789,11 @@ public class ServerThread extends Thread {
             server.jta_log.append("채팅방 불러오기 DB 체크 시작" + "\n");
 
             // 로직 수정할것!
-            // 날짜(2023/01/21)#아이디#채팅내용 String형식으로 준다고 가정
+            // 날짜(2023/01/21)#닉네임#채팅내용 String형식으로 준다고 가정
             List<ChatContentsVO> result = chatLogic.ChatCall(chatNo);
 
             if (result != null) {
-              // 클라이언트에 전송 700#결과(날짜#아이디#채팅내용)
+              // 클라이언트에 전송 700#결과(날짜#닉네임#채팅내용)
               oos.writeObject(Protocol.CHAT_START
                   + Protocol.seperator + result);
             } else {
@@ -793,29 +802,32 @@ public class ServerThread extends Thread {
           }
             break;
 
-          // 대화내용 저장 707#채팅방넘버#아이디#메시지
+          // 대화내용 저장 707#채팅방넘버#아이디#닉네임#메시지
           case Protocol.SAVE_CHAT: {
             String chatNo = st.nextToken();
             String userId = st.nextToken();
+            String userNick = st.nextToken();
             String chatCont = st.nextToken();
+            this.userNick = userNick;
             server.jta_log.append("그룹채팅 저장 DB 체크 시작" + "\n");
             int result = chatLogic
                 .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNo)).user_id(userId)
                     .chat_content(chatCont).build());
             server.jta_log.append("result: " + result + "\n");
 
-            // 메시지 저장 및 전달(채팅방만들때 해당 멤버들의 서버스레드를 저장한다고 가정!)
-            // 아마 아래와같은 usrList를 ChatListLogic에서 가져와야할듯??
-            List<Map<String, Object>> userList = new ArrayList<>(); // chatNo와 ServerThread
+            // 메시지 저장 및 전달
+            // 가정-서버스레드를 다 저장하고 모든 서버스레드에 전달하되 챗넘버가 같은경우에만 메시지전달
             switch (result) {
               // 저장성공
               case 1: {
-                // 같은 단톡방에 말 전달하기
-                roomCasting(chatNo, userId, chatCont, userList);
+                // 같은 단톡방에 말 전달하기 701#채팅방넘버#닉네임#메시지
+                broadCasting(chatNo, userNick, chatCont);
+                server.jta_log.append("그룹채팅 메시지 저장 성공" + "\n");
               }
                 break;
-              // 저장실패
+              // 저장실패 702
               case 0, -1: {
+                oos.writeObject(Protocol.FAIL_MSG);
                 server.jta_log.append("그룹채팅 메시지 저장 실패" + "\n");
               }
                 break;
@@ -823,19 +835,20 @@ public class ServerThread extends Thread {
           }
             break;
 
-          // 메시지 출력 701#아이디#메시지내용
+          // 메시지 출력 701#채팅방넘버#닉네임#메시지내용
           case Protocol.SEND_MSG: {
-            String recvId = st.nextToken();
+            String chatNo = st.nextToken();
+            String recvNick = st.nextToken();
             String recvMsg = st.nextToken();
             // 자기가 보낸 메시지가 아니라면 클라이언트로 전송
-            if (!userId.equals(recvId)) {
+            if (!userNick.equals(recvNick)) {
               oos.writeObject(Protocol.SEND_MSG
-                  + Protocol.seperator + recvId
+                  + Protocol.seperator + chatNo
+                  + Protocol.seperator + recvNick
                   + Protocol.seperator + recvMsg);
             }
           }
             break;
-
           // case Protocol.WHISPER: {
           // String nickName = st.nextToken();// 보내는 넘
           // // insert here - 받는 넘

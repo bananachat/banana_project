@@ -183,9 +183,9 @@ public class ClientThread extends Thread {
 
             while (st.hasMoreTokens()) {
               String list = st.nextToken();
-              vList.add(list);                // 채팅번호|채팅명
+              vList.add(list); // 채팅번호|채팅명
             }
-            for (int i=0; i<vList.size(); i++) {
+            for (int i = 0; i < vList.size(); i++) {
               cl = new StringTokenizer(vList.get(i), "|");
               chatListVO.setChat_no(Integer.parseInt(cl.nextToken()));
               chatListVO.setChat_title(cl.nextToken());
@@ -194,7 +194,8 @@ public class ClientThread extends Thread {
             }
 
             client.main.print_chatList(chatList);
-          } break;
+          }
+            break;
 
           // 채팅리스트 없음 503
           case Protocol.NF_CHATLIST: {
@@ -216,17 +217,19 @@ public class ClientThread extends Thread {
             }
 
             client.main.flDialog.prt_frdList(vList);
-          } break;
+          }
+            break;
 
           /*
-          * NULL_FRIENDS:   친구목록이 없음      609
-          * NULL_USER:      해당 사용자 없음     610
-          * NF_RESULT:      친구 검색 결과가 없음 604
-          * */
+           * NULL_FRIENDS: 친구목록이 없음 609
+           * NULL_USER: 해당 사용자 없음 610
+           * NF_RESULT: 친구 검색 결과가 없음 604
+           */
           case Protocol.NULL_FRIENDS, Protocol.NULL_USER, Protocol.NF_RESULT: {
             System.out.println("다이얼로그 - 검색 결과 없음");
             client.main.flDialog.nf_frdList();
-          } break;
+          }
+            break;
 
           /**
            * Main다이얼로그 사용자 검색
@@ -240,7 +243,8 @@ public class ClientThread extends Thread {
             vList.add(userId);
 
             client.main.flDialog.prt_frdList(vList);
-          } break;
+          }
+            break;
 
           /**
            * Main다이얼로그 친구 검색
@@ -254,7 +258,8 @@ public class ClientThread extends Thread {
             vList.add(userId);
 
             client.main.flDialog.prt_frdList(vList);
-          } break;
+          }
+            break;
 
           /**
            * Main다이얼로그 친구 추가
@@ -262,14 +267,16 @@ public class ClientThread extends Thread {
           // 친구 추가 이벤트 605
           case Protocol.ADD_FRIEND: {
             System.out.println("다이얼로그 - 친구 추가");
-            //TODO: 뭘 어떻게???
-          } break;
+            // TODO: 뭘 어떻게???
+          }
+            break;
 
           // 친구 추가 실패 612
           case Protocol.FAIL_ADD_FRIEND: {
             System.out.println("다이얼로그 - 친구 추가 실패");
-            //TODO: 뭘 어떻게???
-          } break;
+            // TODO: 뭘 어떻게???
+          }
+            break;
 
           /**
            * Main다이얼로그 채팅방 만들기
@@ -277,14 +284,16 @@ public class ClientThread extends Thread {
           // 채팅방 만들기 성공 606
           case Protocol.CREATE_CHAT: {
             System.out.println("다이얼로그 - 채팅방 만들기");
-            //TODO: 뭘 어떻게???
-          } break;
+            // TODO: 뭘 어떻게???
+          }
+            break;
 
           // 채팅방 만들기 실패 608
           case Protocol.FAIL_CRE_CHAT: {
             System.out.println("다이얼로그 - 채팅방 만들기 실패");
-            //TODO: 뭘 어떻게???
-          } break;
+            // TODO: 뭘 어떻게???
+          }
+            break;
 
           /**
            * MyPage 스레드
@@ -329,37 +338,37 @@ public class ClientThread extends Thread {
           case Protocol.EDIT_MPW: {
             client.main.myPage.edit_mpw();
           }
-          break;
+            break;
           // 비밀번호 수정 실패 519
           case Protocol.FAIL_MPW: {
             client.main.myPage.fail_mpw();
           }
-          break;
+            break;
 
           // 닉네임, 비번 수정 성공 520
           case Protocol.EDIT_MBOTH: {
             String newNick = st.nextToken();
             client.main.myPage.edit_mboth(newNick);
           }
-          break;
+            break;
 
           // 닉네임, 비번 수정 실패 521
-          case Protocol.FAIL_MBOTH:{
+          case Protocol.FAIL_MBOTH: {
             client.main.myPage.fail_mboth();
           }
-          break;
+            break;
 
-          //마이페이지 회원탈퇴 성공 522
-          case Protocol.DEL_ACNT:{
+          // 마이페이지 회원탈퇴 성공 522
+          case Protocol.DEL_ACNT: {
             client.main.myPage.del_acnt();
           }
-          break;
+            break;
 
-          //마이페이지 회원탈퇴 실패 523
-          case Protocol.FAIL_DACNT:{
+          // 마이페이지 회원탈퇴 실패 523
+          case Protocol.FAIL_DACNT: {
             client.main.myPage.fail_dacnt();
           }
-          break;
+            break;
 
           /**
            * ChatRoom 스레드
@@ -370,11 +379,19 @@ public class ClientThread extends Thread {
             client.main.chatRoom.chat_start(result);
           }
             break;
+
           // 메시지 출력 701#아이디#메시지내용
           case Protocol.SEND_MSG: {
-            String recvId = st.nextToken();
+            String chatNo = st.nextToken();
+            String recvNick = st.nextToken();
             String recvMsg = st.nextToken();
-            client.main.chatRoom.recv_msg(recvId, recvMsg);
+            client.main.chatRoom.recv_msg(chatNo, recvNick, recvMsg);
+          }
+            break;
+
+          // 메시지 출력 실패 702
+          case Protocol.FAIL_MSG: {
+            client.main.chatRoom.fail_msg();
           }
             break;
         } // end of switch
