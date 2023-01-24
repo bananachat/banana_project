@@ -148,6 +148,7 @@ public class ClientThread extends Thread {
            */
           case Protocol.RESET_PW: {
             client.pwfind.pwFindDialog.reset_pw();
+            
           }
             break;
 

@@ -313,7 +313,16 @@ public class ServerThread extends Thread {
           case Protocol.RESET_PW: {
             String userId = st.nextToken();
             String userPw = st.nextToken();
+            String userNw = st.nextToken();
+            int result = memberLogic.updateUserPW(UserVO.builder().user_pw(userNw).user_id(userId).build()); 
+            oos.writeObject(Protocol.RESET_PW);
+            if(result > 0) {
+              // 비밀번호 재설정 성공
+          } else {
+              // 비밀번호 재설정 실패
           }
+          }
+
             break;
 
           /**
