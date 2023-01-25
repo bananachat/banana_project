@@ -484,16 +484,26 @@ public class MemberLogic {
                 new LogVO(999, uservo.toString(), uservo.getUser_id()));
         //반환값 초기화
         int result = -1;
-        //회원정보 업데이트 SQL 작성
-        String sql = "UPDATE TB_USER SET STATUS=? WHERE USER_ID=?";
-        //DB 정보 업데이트 실행
+
+        String sql = "SELECT user_pw, salt FROM TB_USER WHERE user_id = ? AND STATUS = 0";
         try {
+            //DB에서 정보 가져오기
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
-            pst.setInt(1, ConstantsMember.DELETE_ACCOUNT);
-            pst.setString(2, uservo.getUser_id());
-            result = pst.executeUpdate();
-            //예외 처리
+            pst.setString(1, uservo.getUser_id());
+            rs = pst.executeQuery();
+            //값이 존재할 경우 계정이 존재한다는 의미
+            if (rs.next()) {
+                String u_pw = rs.getString("user_pw");
+                String salt = rs.getString("salt");
+                //비밀번호 암호화하여 DB값과 비교
+                if (u_pw.equals(ep.getEncrypt(uservo.getUser_pw(), salt))) {//일치할 경우 로그인 성공
+                    ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
+                            new LogVO(Protocol.LOGIN_S, uservo.toString(), uservo.getUser_id()));
+                    //로그인 성공 프로토콜을 반환값에 삽입
+                    UserVO uv = new UserVO();
+                }
+            }
         } catch (SQLException se) {
             se.printStackTrace();
         } catch (Exception e) {
@@ -505,10 +515,32 @@ public class MemberLogic {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            //회원정보 업데이트 SQL 작성
+            sql = "UPDATE TB_USER SET STATUS=? WHERE USER_ID=?";
+            //DB 정보 업데이트 실행
+            try {
+                con = mgr.getConnection();
+                pst = con.prepareStatement(sql);
+                pst.setInt(1, ConstantsMember.DELETE_ACCOUNT);
+                pst.setString(2, uservo.getUser_id());
+                result = pst.executeUpdate();
+                //예외 처리
+            } catch (SQLException se) {
+                se.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                //자원 반납
+                try {
+                    mgr.freeConnection(con, pst, rs);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            //로그 출력
+            ll.writeLog(ConstantsLog.EXIT_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
+                    new LogVO(999, uservo.toString(), uservo.getUser_id()));
         }
-        //로그 출력
-        ll.writeLog(ConstantsLog.EXIT_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                new LogVO(999, uservo.toString(), uservo.getUser_id()));
         return result;
     }
 
