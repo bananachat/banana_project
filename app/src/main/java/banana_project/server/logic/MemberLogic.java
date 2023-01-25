@@ -29,7 +29,8 @@ public class MemberLogic {
     /**
      * MemberLogic constructor
      */
-    public MemberLogic() {}
+    public MemberLogic() {
+    }
 
     /**
      * 회원가입
@@ -475,6 +476,9 @@ public class MemberLogic {
 
     /**
      * 회원 탈퇴
+     * 결과값 1 : 탈퇴 성공
+     * 결과값 523 : 비밀번호 오류로 탈퇴 실패
+     * 결과값 -1 : 에러 발생
      *
      * @param uservo 회원 정보 객체
      * @return result 탈퇴 결과 반환
@@ -484,7 +488,7 @@ public class MemberLogic {
                 new LogVO(999, uservo.toString(), uservo.getUser_id()));
         //반환값 초기화
         int result = -1;
-
+        //비밀번호 확인용 SQL작성
         String sql = "SELECT user_pw, salt FROM TB_USER WHERE user_id = ? AND STATUS = 0";
         try {
             //DB에서 정보 가져오기
@@ -492,18 +496,21 @@ public class MemberLogic {
             pst = con.prepareStatement(sql);
             pst.setString(1, uservo.getUser_id());
             rs = pst.executeQuery();
-            //값이 존재할 경우 계정이 존재한다는 의미
+            //비밀번호가 일치하는지 확인
             if (rs.next()) {
                 String u_pw = rs.getString("user_pw");
                 String salt = rs.getString("salt");
-                //비밀번호 암호화하여 DB값과 비교
-                if (u_pw.equals(ep.getEncrypt(uservo.getUser_pw(), salt))) {//일치할 경우 로그인 성공
-                    ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                            new LogVO(Protocol.LOGIN_S, uservo.toString(), uservo.getUser_id()));
-                    //로그인 성공 프로토콜을 반환값에 삽입
-                    UserVO uv = new UserVO();
-                }
+                //비밀번호 일치하지 않을 경우 탈퇴 불가 프로토콜 리턴
+                if (!u_pw.equals(ep.getEncrypt(uservo.getUser_pw(), salt)))
+                    return Protocol.FAIL_DACNT;
             }
+            //회원정보 업데이트 SQL 작성
+            sql = "UPDATE TB_USER SET STATUS=? WHERE USER_ID=?";
+            //DB 정보 업데이트 실행
+            pst = con.prepareStatement(sql);
+            pst.setInt(1, ConstantsMember.DELETE_ACCOUNT);
+            pst.setString(2, uservo.getUser_id());
+            result = pst.executeUpdate();
         } catch (SQLException se) {
             se.printStackTrace();
         } catch (Exception e) {
@@ -515,34 +522,13 @@ public class MemberLogic {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            //회원정보 업데이트 SQL 작성
-            sql = "UPDATE TB_USER SET STATUS=? WHERE USER_ID=?";
-            //DB 정보 업데이트 실행
-            try {
-                con = mgr.getConnection();
-                pst = con.prepareStatement(sql);
-                pst.setInt(1, ConstantsMember.DELETE_ACCOUNT);
-                pst.setString(2, uservo.getUser_id());
-                result = pst.executeUpdate();
-                //예외 처리
-            } catch (SQLException se) {
-                se.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                //자원 반납
-                try {
-                    mgr.freeConnection(con, pst, rs);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            //로그 출력
-            ll.writeLog(ConstantsLog.EXIT_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
-                    new LogVO(999, uservo.toString(), uservo.getUser_id()));
         }
+        //로그 출력
+        ll.writeLog(ConstantsLog.EXIT_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new LogVO(999, uservo.toString(), uservo.getUser_id()));
         return result;
     }
+
 
     /**
      * 아이디 찾기
@@ -627,25 +613,5 @@ public class MemberLogic {
         ll.writeLog(ConstantsLog.EXIT_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
                 new LogVO(Protocol.FPW_EXIT, uservo.toString(), uservo.getUser_id()));
         return pw_protocol;
-    }
-
-    //삭제예정
-    public static void main(String[] args) {
-        MemberLogic ml = new MemberLogic();
-        UserVO uv = new UserVO();
-        uv.setUser_id("test3@gmail.com");
-        uv.setUser_pw("password");
-        uv.setUser_name("tname3");
-        uv.setUser_hp("010-3333-3333");
-        uv.setUser_nickname("빨리끝내자3");
-        int result = ml.joinUser(uv);
-//        int result = ml.updateUser(uv);
-//         int result = Integer.parseInt(ml.loginUser(uv).get("result").toString());
-//        int result = ml.checkDuplId(uv);
-//        int result = ml.deleteAccount(uv);
-//        System.out.println("결과값 : " + result);
-//        result = Integer.parseInt(ml.loginUser(uv).get("result").toString());
-        System.out.println("결과값 : " + result);
-//        System.out.println(ml.findUserId(uv));
     }
 }
