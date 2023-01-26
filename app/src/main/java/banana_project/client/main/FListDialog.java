@@ -10,6 +10,7 @@ import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
 import banana_project.client.room.ChatRoom;
+import banana_project.server.thread.Protocol;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -180,12 +181,16 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
     // 친구 추가 성공
     public void add_friend() {
-
+        //성공 후 필요한 작업 작성~~~
+        dlm.clear(); // 친구리스트 초기화
+        copy_list.clear(); // 선택한 친구리스트 초기화
     }
 
     // 친구 추가 실패
     public void fail_add_friend() {
-
+        //실패 후 필요한 작업 작성
+        //대충 이런?
+        JOptionPane.showMessageDialog(this, "친구 추가에 실패하였습니다.", "info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     // 채팅방 생성 성공
@@ -227,15 +232,27 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
             } else {
                 // 선택한 친구들 리스트, num 변수에 추가
                 for (int i = 0; i < copy_list.size() - 1; i++) {
-                    num += (copy_list.get(i) + ", ");
+                    num += (copy_list.get(i) + ",");
                 }
-                num += (copy_list.get(copy_list.size() - 1) + " ");
+//                num += (copy_list.get(copy_list.size() - 1) + " "); -> ?
+                num += (copy_list.get(copy_list.size() - 1));
 
                 // 상황별 메시지 변경
                 if ("친구 추가".equals(main.jbtn_firChan.getText())) {
                     System.out.println("친구 추가...");
 
                     msg = num + "을(를) 친구 추가합니다";
+
+                    // 서버 스레드로 친구 추가 프로토콜과 해당 유저 아이디, 친구 추가할 목록 전송
+                    try {
+                        main.client.oos.writeObject(
+                                Protocol.ADD_FRIEND +
+                                        Protocol.seperator + userId +
+                                        Protocol.seperator + num);
+                    }catch (Exception e2) {
+                        e2.printStackTrace();
+                    }
+
                 } else if ("새 채팅".equals(main.jbtn_firChan.getText())) {
                     System.out.println("새 채팅...");
 

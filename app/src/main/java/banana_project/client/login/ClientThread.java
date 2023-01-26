@@ -269,6 +269,7 @@ public class ClientThread extends Thread {
           case Protocol.ADD_FRIEND: {
             System.out.println("다이얼로그 - 친구 추가");
             // TODO: 뭘 어떻게???
+            client.main.flDialog.add_friend();
           }
             break;
 
@@ -276,6 +277,7 @@ public class ClientThread extends Thread {
           case Protocol.FAIL_ADD_FRIEND: {
             System.out.println("다이얼로그 - 친구 추가 실패");
             // TODO: 뭘 어떻게???
+            client.main.flDialog.fail_add_friend();
           }
             break;
 

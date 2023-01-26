@@ -598,8 +598,13 @@ public class ServerThread extends Thread {
             // DB등록 및 체크
             server.jta_log.append("main다이얼로그 친구 추가\n");
 
-            int result = friendLogic.addFriend(UserVO.builder().user_id(userId).build(), friendId);
+            int result = 0;//초기값 대충,,,
 
+            //친구 목록 생성
+            String[] friendList = friendId.split(",");
+            for(int i = 0; i < friendList.length - 1; i++) {
+              result = friendLogic.addFriend(UserVO.builder().user_id(userId).build(), friendList[i]);
+            }
             switch (result) {
               case 1 -> { // 이벤트 성공
                 oos.writeObject(Protocol.ADD_FRIEND); // 605로 전달 (검색버튼(친구추가 → 모든 사용자 중에 검색))
