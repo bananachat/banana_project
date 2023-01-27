@@ -137,7 +137,8 @@ public class ChatLogic {
         int result= -1;
 
         //flag는 나가면 1 있으면 0
-        String sql= "update TB_CHAT_USER_LIST  set flag=1 where chat_no=? and user_id=?";///이래도 되나요?
+//        String sql= "update TB_CHAT_USER_LIST  set flag=1 where chat_no=? and user_id=?";///이래도 되나요?
+        String sql= "delete from TB_CHAT_USER_LIST where chat_no=? and user_id=?";//TODO:
         try{
             con=dbMgr.getConnection();
             pst=con.prepareStatement(sql);
