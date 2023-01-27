@@ -860,9 +860,24 @@ public class ServerThread extends Thread {
             List<ChatContentsVO> result = chatLogic.ChatCall(chatNo);
 
             if (result != null) {
+              String resultList = "";
+              String date="";
+              String nick = "";
+              String ccon = ""; //채팅 내용
+              for (int i = 0; i < result.size() - 1; i++) {//-1인 이유? 문자열을 바꿀때 한번 더 돈다. 리스트 마지막번호
+
+                date = result.get(i).getChat_date();;
+                nick = result.get(i).getUser_id();;
+                ccon = result.get(i).getChat_content();;
+                resultList += (date + "#" +nick+"#"+ ccon + "#");
+              }
+              date=result.get(result.size() - 1).getChat_date();
+              nick=result.get(result.size() - 1).getUser_id();
+              ccon=result.get(result.size() - 1).getChat_content();
+              resultList += (date + "#" +nick+"#"+ ccon);
               // 클라이언트에 전송 700#결과(날짜#닉네임#채팅내용)
               oos.writeObject(Protocol.CHAT_START
-                  + Protocol.seperator + result);
+                  + Protocol.seperator + resultList);
               this.chatNo = String.valueOf(chatNo);
             } else {
               server.jta_log.append("result: null" + "\n");

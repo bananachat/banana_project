@@ -51,7 +51,7 @@ public class ChatLogic {
         StringBuilder sb=new StringBuilder();
 
         sb.append(" select a.ddd , b.user_nickname, a.chat_contents, a.chat_no from ");
-        sb.append("         (select to_date(chat_date,'YY/MM/DD')  ddd, user_id, chat_contents, chat_no from    ");
+        sb.append("         (select to_char(chat_date,'YYYY/MM/DD')  ddd, user_id, chat_contents, chat_no from    ");
         sb.append("                 tb_chat_contents where chat_no= ? ) a,   ");
         sb.append("         (SELECT user_id, user_nickname FROM tb_user) b  ");
         sb.append(" where a.user_id = b.user_id ");
@@ -64,13 +64,13 @@ public class ChatLogic {
             rs=pst.executeQuery();
             while(rs.next()){//대기하다가 오면 값넣어주기
                 String chat_date=rs.getString(1);
-                String chat_contents=rs.getString(2);
-                String user_id=rs.getString(3);
+                String user_nick=rs.getString(2);
+                String chat_contents=rs.getString(3);
                 ccvo= new ChatContentsVO();
                 ccvo.setChat_content(chat_contents);
                 ccvo.setChat_date(chat_date);
                 ccvo.setChat_no(chatnum);
-                ccvo.setUser_id(user_id);
+                ccvo.setUser_id(user_nick);
                 crs.add(ccvo);
             }
         }catch(SQLException se) { //채팅방없음
