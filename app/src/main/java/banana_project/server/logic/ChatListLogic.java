@@ -150,7 +150,7 @@ public class ChatListLogic {
         // 리턴값 기본 0
         int result = 0;
 
-        System.out.println("초대된 ID : " + userList);
+        System.out.println("초대된 닉네임 : " + userList);
 
         // tb_chat_list의 chat_no 최대값 구하기
         String sql = "select max(chat_no) from TB_CHAT_LIST";
@@ -223,16 +223,22 @@ public class ChatListLogic {
         System.out.println("사용자 수 : " + count);
 
         for (int i=0; i<count; i++) {
-            String stUserID = st.nextToken();
+            String stUserNick = st.nextToken();
 
-            String sql3 = "insert into tb_chat_user_list (chat_no, user_id, flag) VALUES (?, ?, 1)";
+            StringBuilder sql3 = new StringBuilder();
+            // insert into tb_chat_user_list (chat_no, user_id, flag)
+            // VALUES (?, (select user_id from tb_user where user_nickname = ?), 1);
+            sql3.append("INSERT INTO tb_chat_user_list (chat_no, user_id, flag) ");
+            sql3.append(" VALUES (?, ");        // maxNum
+            sql3.append(" (SELECT user_id FROM tb_user WHERE user_nickname = ? ) "); // stUserID
+            sql3.append(" , 1) ");
 
             try {
                 conn = dbMgr.getConnection();
-                pstmt = conn.prepareStatement(sql3);
+                pstmt = conn.prepareStatement(sql3.toString());
 
                 pstmt.setInt(1, maxNum);
-                pstmt.setString(2, stUserID);
+                pstmt.setString(2, stUserNick);
 
                 // 쿼리 동작 레코드 수
                 // 성공: 1 / 실패: 0
@@ -265,68 +271,6 @@ public class ChatListLogic {
         return protocol;
     } // end of createChat (채팅방 생성)
 
-
-
-
-
-    // TODO: 채팅방 입장 메소드 작성 중
-    public int enterChat() {
-        System.out.println("ChatListLogic.enterChat() 메소드 시작");
-        // 리턴값 기본 -1
-        int result = -1;
-
-
-
-
-        return result;
-    } // end of enterChat (채팅방 입장)
-
-
-
-    // TODO: ChatLogic의 delChatContents 메소드 작성되었으므로 주석 처리
-    /**
-     * [채팅방 나가기]
-     * 708 : 잘못된 채팅방 번호
-     * 706 : 채팅방에서 나감
-     *
-     //     * @param uservo        사용자 정보
-     //     * @param chatNo        접속한 채팅방 번호
-     //     * @return protocol     708: 잘못된 채팅방 번호 | 706: 채팅방에서 나감
-     */
-    /*
-    public int removeChat(UserVO uservo, int chatNo) {
-        System.out.println("ChatListLogic.removeChat() 메소드 시작");
-        // WRONG_NUM = 잘못된 채팅방 번호
-        protocol = 708;
-
-        // 리턴값 기본 0
-        int result = 0;
-
-        System.out.println("사용자 ID : " + uservo.getUser_id());
-        System.out.println("채팅방 번호 : " + chatNo);
-
-        String table = "TB_CHAT_USER_LIST";
-        String[] columns = { "flag" };
-        String[] chgValues = { "1" };
-        String whereClause = "user_id = " + uservo.getUser_id() + " AND chat_no = " + chatNo;
-
-        // 해당 채팅방이 DB에 없는지 확인
-        String selQuarry = " SELECT * FROM " + table + " WHERE " + whereClause;
-        boolean isOk = quarry.quSelect(selQuarry);
-
-        if (isOk) {
-            // 접속 flag 퇴장으로 수정
-            result = quarry.quUpdate(table, columns, chgValues, whereClause);
-
-            if (result == 1) {
-                // EXIT_MEM = 채팅방에서 나감
-                protocol = 706;
-            }
-        }
-
-        return protocol;
-    } // end of removeChat (채팅방 나가기)
-    */
 
 
     // 단위테스트
