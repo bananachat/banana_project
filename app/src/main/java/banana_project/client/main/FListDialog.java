@@ -11,6 +11,7 @@ import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
 import banana_project.client.room.ChatRoom;
 import banana_project.server.thread.Protocol;
+import banana_project.server.vo.UserVO;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -182,6 +183,9 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         // 성공 후 필요한 작업 작성~~~
         dlm.clear(); // 친구리스트 초기화
         copy_list.clear(); // 선택한 친구리스트 초기화
+
+        System.out.println("친구검색 다이얼로그 종료");
+        this.dispose();
     }
 
     // 친구 추가 실패
@@ -193,12 +197,18 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
     // 채팅방 생성 성공
     public void create_chatroom() {
+        dlm.clear(); // 친구리스트 초기화
+        copy_list.clear(); // 선택한 친구리스트 초기화
 
+        //TODO: 채팅방 호출
+
+        System.out.println("친구검색 다이얼로그 종료");
+        this.dispose();
     }
 
     // 채팅방 생성 실패
     public void fail_create_chatroom() {
-
+        JOptionPane.showMessageDialog(this, "채팅방 생성 실패하였습니다.", "info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     ////////////////////////// [이벤트] //////////////////////////
@@ -255,6 +265,11 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                     System.out.println("새 채팅...");
 
                     msg = num + "와(과) 채팅 시작합니다";
+
+                    String user = main.userId; // 사용자 ID
+                    num += "," + user;
+
+                    //TODO: 서버스레드로 통신 필요
                 }
 
                 // 복사한 친구들 리스트 출력
