@@ -295,7 +295,6 @@ public class ClientThread extends Thread {
           // 친구 추가 이벤트 605
           case Protocol.ADD_FRIEND: {
             System.out.println("다이얼로그 - 친구 추가");
-            // TODO: 뭘 어떻게???
             client.main.flDialog.add_friend();
           }
             break;
@@ -303,7 +302,6 @@ public class ClientThread extends Thread {
           // 친구 추가 실패 612
           case Protocol.FAIL_ADD_FRIEND: {
             System.out.println("다이얼로그 - 친구 추가 실패");
-            // TODO: 뭘 어떻게???
             client.main.flDialog.fail_add_friend();
           }
             break;
@@ -314,14 +312,14 @@ public class ClientThread extends Thread {
           // 채팅방 만들기 성공 606
           case Protocol.CREATE_CHAT: {
             System.out.println("다이얼로그 - 채팅방 만들기");
-            // TODO: 뭘 어떻게???
+            client.main.flDialog.create_chatroom();
           }
             break;
 
           // 채팅방 만들기 실패 608
           case Protocol.FAIL_CRE_CHAT: {
             System.out.println("다이얼로그 - 채팅방 만들기 실패");
-            // TODO: 뭘 어떻게???
+            client.main.flDialog.fail_create_chatroom();
           }
             break;
 
