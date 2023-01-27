@@ -142,12 +142,12 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
   /**
    * 로그인성공
    */
-  public void login_s(String userId) {
+  public void login_s(String userId, String userNick) {
     jtf_userId.setText("example@email.com");
     jtf_userPw.setText("password");
     jtf_userId.setForeground(Color.gray);
     jtf_userPw.setForeground(Color.lightGray);
-    main = new Main(this, userId);
+    main = new Main(this, userId, userNick);
     main.initDisplay();
   }
 

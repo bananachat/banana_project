@@ -147,9 +147,13 @@ public class ServerThread extends Thread {
             switch (result) {
               // 로그인 성공 101 -> 아이디
               case Protocol.LOGIN_S: {
+                UserVO resultVO = memberLogic.getUserInfo(UserVO.builder().user_id(userId).build());
+                String userNick = resultVO.getUser_nickname();
                 this.userId = userId;
+                this.userNick = userNick;
                 oos.writeObject(Protocol.LOGIN_S
-                    + Protocol.seperator + userId);
+                    + Protocol.seperator + userId
+                    + Protocol.seperator + userNick);
               }
                 break;
               // 비번 틀림 103
@@ -314,13 +318,13 @@ public class ServerThread extends Thread {
             String userId = st.nextToken();
             String userPw = st.nextToken();
             String userNw = st.nextToken();
-            int result = memberLogic.updateUserPW(UserVO.builder().user_pw(userNw).user_id(userId).build()); 
+            int result = memberLogic.updateUserPW(UserVO.builder().user_pw(userNw).user_id(userId).build());
             oos.writeObject(Protocol.RESET_PW);
-            if(result > 0) {
+            if (result > 0) {
               // 비밀번호 재설정 성공
-          } else {
+            } else {
               // 비밀번호 재설정 실패
-          }
+            }
           }
 
             break;
@@ -420,10 +424,57 @@ public class ServerThread extends Thread {
                 oos.writeObject(Protocol.NF_CHATLIST); // 503로 전달 (채팅리스트 없음)
               }
                 break;
-
             }
           }
             break; // end of (Main 스레드 내 채팅 리스트 출력)
+
+          /**
+           * main 친구 삭제
+           */
+          case Protocol.DEL_FRIEND: {
+            String userId = st.nextToken();
+            String selNick = st.nextToken();
+            // DB등록 및 체크
+            server.jta_log.append("친구삭제 DB 체크 시작" + "\n");
+            int result = friendLogic.delFriend(UserVO.builder().user_id(userId).build(), selNick);
+            server.jta_log.append("result: " + result + "\n");
+            switch (result) {
+              // 친구 삭제 성공
+              case Protocol.DEL_FRIEND: {
+                oos.writeObject(Protocol.DEL_FRIEND);
+              }
+                break;
+              // 친구 삭제 실패
+              case Protocol.NF_RESULT: {
+                oos.writeObject(Protocol.FAIL_DEL_FRIEND);
+              }
+                break;
+            }
+          }
+            break;
+
+          /**
+           * main 채팅방 삭제
+           */
+          case Protocol.DEL_CHAT: {
+            String selChat = st.nextToken();
+            server.jta_log.append("채팅방 삭제 DB 체크 시작" + "\n");
+            int result = chatLogic.delChatContents(null);
+            server.jta_log.append("result: " + result + "\n");
+            switch (result) {
+              // 채팅방 삭제 성공
+              case 1: {
+                oos.writeObject(Protocol.DEL_CHAT);
+              }
+                break;
+              // 채팅방 삭제 실패
+              case 0, -1: {
+                oos.writeObject(Protocol.FAIL_DEL_CHAT);
+              }
+                break;
+            }
+          }
+            break;
 
           /**
            * [Main 다이얼로그 - 친구 목록 출력]
@@ -598,11 +649,11 @@ public class ServerThread extends Thread {
             // DB등록 및 체크
             server.jta_log.append("main다이얼로그 친구 추가\n");
 
-            int result = 0;//초기값 대충,,,
+            int result = 0;// 초기값 대충,,,
 
-            //친구 목록 생성
+            // 친구 목록 생성
             String[] friendList = friendId.split(",");
-            for(int i = 0; i < friendList.length - 1; i++) {
+            for (int i = 0; i < friendList.length - 1; i++) {
               result = friendLogic.addFriend(UserVO.builder().user_id(userId).build(), friendList[i]);
             }
             switch (result) {
@@ -713,6 +764,7 @@ public class ServerThread extends Thread {
             switch (result) {
               // 닉네임 수정 성공 516
               case 1: {
+                this.userNick = newNick;
                 oos.writeObject(Protocol.EDIT_MNICK
                     + Protocol.seperator + newNick);
               }
@@ -824,7 +876,6 @@ public class ServerThread extends Thread {
             String userId = st.nextToken();
             String userNick = st.nextToken();
             String chatCont = st.nextToken();
-            this.userNick = userNick;
             server.jta_log.append("그룹채팅 저장 DB 체크 시작" + "\n");
             int result = chatLogic
                 .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNo)).user_id(userId)

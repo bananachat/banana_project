@@ -22,8 +22,6 @@ import java.util.Vector;
 public class FListDialog extends JDialog implements ActionListener, ListSelectionListener, FocusListener {
     ////////////////////////// [선언부] //////////////////////////
     Main main = null;
-    String userId = null;
-    String userNick = null;
     String chatNo = null;
     String userList = null;
 
@@ -181,15 +179,15 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
     // 친구 추가 성공
     public void add_friend() {
-        //성공 후 필요한 작업 작성~~~
+        // 성공 후 필요한 작업 작성~~~
         dlm.clear(); // 친구리스트 초기화
         copy_list.clear(); // 선택한 친구리스트 초기화
     }
 
     // 친구 추가 실패
     public void fail_add_friend() {
-        //실패 후 필요한 작업 작성
-        //대충 이런?
+        // 실패 후 필요한 작업 작성
+        // 대충 이런?
         JOptionPane.showMessageDialog(this, "친구 추가에 실패하였습니다.", "info", JOptionPane.INFORMATION_MESSAGE);
     }
 
@@ -234,7 +232,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 for (int i = 0; i < copy_list.size() - 1; i++) {
                     num += (copy_list.get(i) + ",");
                 }
-//                num += (copy_list.get(copy_list.size() - 1) + " "); -> ?
+                // num += (copy_list.get(copy_list.size() - 1) + " "); -> ?
                 num += (copy_list.get(copy_list.size() - 1));
 
                 // 상황별 메시지 변경
@@ -247,9 +245,9 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                     try {
                         main.client.oos.writeObject(
                                 Protocol.ADD_FRIEND +
-                                        Protocol.seperator + userId +
+                                        Protocol.seperator + main.userId +
                                         Protocol.seperator + num);
-                    }catch (Exception e2) {
+                    } catch (Exception e2) {
                         e2.printStackTrace();
                     }
 
@@ -274,7 +272,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 this.dispose();
 
                 // 채팅방 열림
-                main.chatRoom = new ChatRoom(main.client, userId, userNick, chatNo, userList);
+                main.chatRoom = new ChatRoom(main.client, main.userId, main.userNick, chatNo, userList);
                 main.chatRoom.initDisplay();
             }
 
@@ -338,7 +336,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
      */
     public static void main(String[] args) {
         Client c = new Client();
-        Main m = new Main(c, "test");
+        Main m = new Main(c, "test", "test");
         c.initDisplay();
         m.initDisplay();
     }

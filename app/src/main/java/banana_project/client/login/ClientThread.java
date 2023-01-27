@@ -52,7 +52,8 @@ public class ClientThread extends Thread {
           // 로그인 성공 -> 101#아이디
           case Protocol.LOGIN_S: {
             String userId = st.nextToken();
-            client.login_s(userId);
+            String userNick = st.nextToken();
+            client.login_s(userId, userNick);
           }
             break;
           // 비번 틀림 103
@@ -148,7 +149,7 @@ public class ClientThread extends Thread {
            */
           case Protocol.RESET_PW: {
             client.pwfind.pwFindDialog.reset_pw();
-            
+
           }
             break;
 
@@ -160,6 +161,7 @@ public class ClientThread extends Thread {
             client.main.nf_frdlist();
           }
             break;
+
           // 친구가 존재함 500 -> 친구
           case Protocol.PRT_FRDLIST: {
             Vector<String> vList = new Vector<>();
@@ -203,6 +205,31 @@ public class ClientThread extends Thread {
             System.out.println("채팅리스트 없음");
             client.main.nf_chatList();
           }
+            break;
+
+          // main 친구 삭제
+          case Protocol.DEL_FRIEND: {
+            client.main.del_friend();
+          }
+            break;
+
+          // main 친구 삭제 실패
+          case Protocol.FAIL_DEL_FRIEND: {
+            client.main.fail_del_friend();
+          }
+            break;
+
+          // main 채팅방 삭제
+          case Protocol.DEL_CHAT: {
+            client.main.del_chat();
+          }
+            break;
+
+          // main 채팅방 삭제 실패
+          case Protocol.FAIL_DEL_CHAT: {
+            client.main.fail_del_chat();
+          }
+            break;
 
           /**
            * Main다이얼로그 친구 목록 출력

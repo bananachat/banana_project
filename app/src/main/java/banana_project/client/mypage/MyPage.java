@@ -295,6 +295,7 @@ public class MyPage implements ActionListener {
    */
   public void edit_mypage(String userNick) {
     dbNick = userNick;
+    main.setNick(userNick);
     JOptionPane.showMessageDialog(client, "닉네임 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
         setImage.img_confirm);
     client.setContentPane(client.main.jp_main);
@@ -315,8 +316,9 @@ public class MyPage implements ActionListener {
    */
   public void edit_mboth(String userNick) {
     dbNick = userNick;
+    main.setNick(userNick);
     JOptionPane.showMessageDialog(client, "닉네임, 비밀번호 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-            setImage.img_confirm);
+        setImage.img_confirm);
     client.setContentPane(client.main.jp_main);
     client.setTitle("친구 목록");
     client.revalidate();
@@ -327,7 +329,7 @@ public class MyPage implements ActionListener {
    */
   public void fail_mboth() {
     JOptionPane.showMessageDialog(client, "닉네임,비밀번호 변경에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-            setImage.img_notFound);
+        setImage.img_notFound);
   }
 
   /**
@@ -335,7 +337,7 @@ public class MyPage implements ActionListener {
    */
   public void edit_mpw() {
     JOptionPane.showMessageDialog(client, "비밀번호 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-            setImage.img_confirm);
+        setImage.img_confirm);
     client.setContentPane(client.main.jp_main);
     client.setTitle("친구 목록");
     client.revalidate();
@@ -347,12 +349,12 @@ public class MyPage implements ActionListener {
 
   public void fail_mpw() {
     JOptionPane.showMessageDialog(client, "비밀번호 변경에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-            setImage.img_notFound);
+        setImage.img_notFound);
   }
 
   public void del_acnt() {
     JOptionPane.showMessageDialog(jd_resign, "바나나톡 탈퇴가 완료되었습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
-            setImage.img_delete);
+        setImage.img_delete);
     jd_resign.dispose();
     client.setContentPane(client.jp_login);
     client.setTitle("바나나톡");
@@ -361,7 +363,7 @@ public class MyPage implements ActionListener {
 
   public void fail_dacnt() {
     JOptionPane.showMessageDialog(jd_resign, "비밀번호가 일치하지 않습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
-            setImage.img_notFound);
+        setImage.img_notFound);
   }
 
   /**
@@ -420,13 +422,13 @@ public class MyPage implements ActionListener {
           if (!Pattern.matches(pwCheck, pwFirst)) {
             JOptionPane.showMessageDialog(client, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "로그인",
                 JOptionPane.WARNING_MESSAGE, setImage.img_info);
-          } else { //해야하는것
-            //비밀번호 형식일 경우  -> DB에 있는 비밀번호와 닉네임을 둘 다 변경
+          } else { // 해야하는것
+            // 비밀번호 형식일 경우 -> DB에 있는 비밀번호와 닉네임을 둘 다 변경
             try {
               client.oos.writeObject(Protocol.EDIT_MBOTH
-                      + Protocol.seperator + userNick
-                      + Protocol.seperator + pwFirst
-                      + Protocol.seperator + dbId);
+                  + Protocol.seperator + userNick
+                  + Protocol.seperator + pwFirst
+                  + Protocol.seperator + dbId);
             } catch (IOException e1) {
               e1.printStackTrace();
             }
@@ -445,13 +447,13 @@ public class MyPage implements ActionListener {
       }
       // 비밀번호만 변경 518#아이디#비밀번호
       else if (!pwFirst.equals("")) {
-         try {
-         client.oos.writeObject(Protocol.EDIT_MPW
-         + Protocol.seperator + dbId
-         + Protocol.seperator + pwFirst);
-         } catch (Exception e1) {
-         e1.printStackTrace();
-         }
+        try {
+          client.oos.writeObject(Protocol.EDIT_MPW
+              + Protocol.seperator + dbId
+              + Protocol.seperator + pwFirst);
+        } catch (Exception e1) {
+          e1.printStackTrace();
+        }
       }
 
       // 변경사항이 없는 경우
@@ -479,16 +481,16 @@ public class MyPage implements ActionListener {
         JOptionPane.showMessageDialog(jd_resign, "아이디가 일치하지 않습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
             setImage.img_notFound);
       }
-      //비밀번호가 공백일 경우 경고문 띄우기
-      else if(userPw.equals("")){
+      // 비밀번호가 공백일 경우 경고문 띄우기
+      else if (userPw.equals("")) {
         JOptionPane.showMessageDialog(jd_resign, "비밀번호를 입력해주세요.", "회원탈퇴",
-                JOptionPane.WARNING_MESSAGE, setImage.img_info);
+            JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
 
       // 아이디 비밀번호 DB체크(비밀번호는 로직에서 체크하기 -> 비밀번호 관련 은재언니한테 문의하기)
       else {
         try {
-          client.oos.writeObject(Protocol.DEL_ACNT + Protocol.seperator+userId + Protocol.seperator+userPw);
+          client.oos.writeObject(Protocol.DEL_ACNT + Protocol.seperator + userId + Protocol.seperator + userPw);
 
         } catch (IOException ex) {
           throw new RuntimeException(ex);

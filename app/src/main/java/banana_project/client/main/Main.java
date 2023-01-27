@@ -27,6 +27,10 @@ public class Main implements ActionListener, MouseListener {
     String logMsg = ""; // 로그 기록용
     // 유저정보
     String userId = null;
+    String userNick = null;
+    // 친구, 채팅 삭제용
+    String selNick = "";
+    String selChat = "";
 
     /**
      * 화면부 선언
@@ -43,7 +47,8 @@ public class Main implements ActionListener, MouseListener {
     JButton jbtn_firChan = new JButton("친구 추가"); // "친구추가 | 새 채팅"으로 텍스트 변환
 
     // [CENTER]
-    JLabel jlb_secChan = new JLabel("친구"); // "친구 목록 | 채팅 목록"으로 텍스트 변환
+    JLabel jlb_secChan = new JLabel(); // "친구 목록 | 채팅 목록"으로 텍스트 변환
+    JLabel jlb_del = new JLabel("<HTML><U>삭제하기</U></HTML>");
     JPanel jp_center = new JPanel(); // 리스트 출력
     JScrollPane jsp_display = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -57,9 +62,10 @@ public class Main implements ActionListener, MouseListener {
     JButton jbtn_chat = new JButton("채팅방");
 
     ////////////////////////// [생성자] //////////////////////////
-    public Main(Client client, String userId) {
+    public Main(Client client, String userId, String userNick) {
         this.client = client;
         this.userId = userId;
+        this.userNick = userNick;
         jl_list = new JList<String>(dlm);
         // 사용자의 친구목록 불러오기 500#아이디
         try {
@@ -94,11 +100,18 @@ public class Main implements ActionListener, MouseListener {
         // 친구|채팅 Jlb설정
         jlb_secChan.setForeground(new Color(135, 90, 75));
         jlb_secChan.setFont(setFontNJOp.b12);
-        jlb_secChan.setBounds(23, 73, 200, 20);
+        jlb_secChan.setBounds(25, 70, 200, 20);
+        jlb_secChan.setText(userNick + "님의 친구");
         jp_main.add(jlb_secChan);
+
+        jlb_del.addMouseListener(this);
+        jlb_del.setForeground(new Color(135, 90, 75));
+        jlb_del.setFont(setFontNJOp.b12);
+        jlb_del.setBounds(308, 470, 200, 20);
+        jp_main.add(jlb_del);
         // 중앙 리스트 출력
         jsp_display.setBorder(new LineBorder(Color.white, 0));
-        jsp_display.setBounds(20, 96, 340, 389);
+        jsp_display.setBounds(20, 93, 340, 375);
         jsp_display.getVerticalScrollBar().setUnitIncrement(16);
         jl_list.addMouseListener(this);
         jl_list.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -195,6 +208,35 @@ public class Main implements ActionListener, MouseListener {
         }
     }
 
+    // 친구 삭제 성공
+    public void del_friend() {
+        JOptionPane.showMessageDialog(client, "친구 삭제가 완료되었습니다.", "친구 목록", JOptionPane.WARNING_MESSAGE,
+                setImage.img_confirm);
+    }
+
+    // 친구 삭제 실패
+    public void fail_del_friend() {
+        JOptionPane.showMessageDialog(client, "친구 삭제에 실패하였습니다..", "친구 목록", JOptionPane.WARNING_MESSAGE,
+                setImage.img_notFound);
+    }
+
+    // 채팅방 삭제 성공
+    public void del_chat() {
+        JOptionPane.showMessageDialog(client, "채팅방 삭제가 완료되었습니다.", "채팅 목록", JOptionPane.WARNING_MESSAGE,
+                setImage.img_confirm);
+    }
+
+    // 채팅방 삭제 실패
+    public void fail_del_chat() {
+        JOptionPane.showMessageDialog(client, "채팅방 삭제에 실패하였습니다..", "채팅 목록", JOptionPane.WARNING_MESSAGE,
+                setImage.img_notFound);
+    }
+
+    // 마이페이지 닉네임 받아오기
+    public void setNick(String newNick) {
+        this.userNick = newNick;
+    }
+
     ////////////////////////// [이벤트] //////////////////////////
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -227,7 +269,7 @@ public class Main implements ActionListener, MouseListener {
             System.out.println("jbtn_myPage(내 화면) 클릭");
             client.setTitle("친구 목록");
             jbtn_firChan.setText("친구 추가");
-            jlb_secChan.setText("친구");
+            jlb_secChan.setText(userNick + "님의 친구");
             jsp_display.getVerticalScrollBar().setValue(0);
             // 사용자의 친구목록 불러오기 500#아이디
             try {
@@ -248,7 +290,7 @@ public class Main implements ActionListener, MouseListener {
             System.out.println("jbtn_chat(채팅방) 클릭");
             client.setTitle("채팅 목록");
             jbtn_firChan.setText("새 채팅");
-            jlb_secChan.setText("채팅방");
+            jlb_secChan.setText(userNick + "님의 채팅방");
             jsp_display.getVerticalScrollBar().setValue(0);
 
             // 활성화 버튼 색 변경
@@ -271,10 +313,75 @@ public class Main implements ActionListener, MouseListener {
                 JOptionPane.showMessageDialog(client, msg, "info", JOptionPane.INFORMATION_MESSAGE);
             }
         }
+
+        // 친구 목록일 경우
+        if ("친구 목록".equals(client.getTitle())) {
+            selNick = (String) jl_list.getSelectedValue();
+        }
+        // 채팅 목록일 경우
+        else if ("채팅 목록".equals(client.getTitle())) {
+            selChat = (String) jl_list.getSelectedValue();
+        }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+        Object obj = e.getSource();
+        // 삭제 라벨 눌렀을 때
+        if (obj == jlb_del) {
+            // 친구 목록일 경우
+            if ("친구 목록".equals(client.getTitle())) {
+                // 선택한 값이 없을 경우
+                if ("".equals(selNick) || selNick == null) {
+                    JOptionPane.showMessageDialog(client, "삭제할 친구를 선택해주세요.", "친구 목록", JOptionPane.WARNING_MESSAGE,
+                            setImage.img_info);
+                }
+                // 선택한 값이 있을 경우
+                else {
+                    // 확인하는 JOP
+                    int result = JOptionPane.showConfirmDialog(null, selNick + "님을 삭제하시겠습니까?", "친구 목록",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_delete);
+                    // yes를 눌렀을 때
+                    if (result == JOptionPane.YES_OPTION) {
+                        // 서버로 닉네임 전달 511#아이디#친구닉네임
+                        dlm.removeElement(selNick);
+                        try {
+                            client.oos.writeObject(Protocol.DEL_FRIEND
+                                    + Protocol.seperator + userId
+                                    + Protocol.seperator + selNick);
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+
+            }
+            // 채팅 목록일 경우
+            else if ("채팅 목록".equals(client.getTitle())) {
+                // 선택한 값이 없을 경우
+                if ("".equals(selChat) || selChat == null) {
+                    JOptionPane.showMessageDialog(client, "삭제할 채팅방을 선택해주세요.", "채팅 목록", JOptionPane.WARNING_MESSAGE,
+                            setImage.img_info);
+                }
+                // 선택한 값이 있을 경우
+                else {
+                    // 확인하는 JOP
+                    int result = JOptionPane.showConfirmDialog(null, selChat + "을 삭제하시겠습니까?", "채팅 목록",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_delete);
+                    // yes를 눌렀을 때
+                    if (result == JOptionPane.YES_OPTION) {
+                        // 서버로 닉네임 전달 512#채팅방번호 -> 채팅방번호로 수정필요!!
+                        dlm.removeElement(selChat);
+                        try {
+                            client.oos.writeObject(Protocol.DEL_CHAT
+                                    + Protocol.seperator + selChat);
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -292,7 +399,7 @@ public class Main implements ActionListener, MouseListener {
     ////////////////////////// [테스트용 메인메소드] //////////////////////////
     public static void main(String[] args) {
         Client c = new Client();
-        Main m = new Main(c, "test");
+        Main m = new Main(c, "test", "test");
         c.initDisplay();
         m.initDisplay();
     }
