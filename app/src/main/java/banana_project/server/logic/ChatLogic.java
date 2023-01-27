@@ -47,17 +47,25 @@ public class ChatLogic {
         //로그작성
         ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
             ,new LogVO(Protocol.CHAT_START, "Room number :"+chatnum, ""));
-        String sql= "select * from tb_chat_contents where chat_no=?";
+//        String sql= "select to_date(chat_date,'YY/MM/DD') , chat_contents, user_id, chatnum from tb_chat_contents where chat_no=?";
+        StringBuilder sb=new StringBuilder();
+
+        sb.append(" select a.ddd , b.user_nickname, a.chat_contents, a.chat_no from ");
+        sb.append("         (select to_date(chat_date,'YY/MM/DD')  ddd, user_id, chat_contents, chat_no from    ");
+        sb.append("                 tb_chat_contents where chat_no= ? ) a,   ");
+        sb.append("         (SELECT user_id, user_nickname FROM tb_user) b  ");
+        sb.append(" where a.user_id = b.user_id ");
+
 
         try{
             con=dbMgr.getConnection();
-            pst=con.prepareStatement(sql);
+            pst=con.prepareStatement(sb.toString());
             pst.setInt(1,chatnum);
             rs=pst.executeQuery();
             while(rs.next()){//대기하다가 오면 값넣어주기
-                String chat_date=rs.getString("chat_date");
-                String chat_contents=rs.getString("chat_contents");
-                String user_id=rs.getString("user_id");
+                String chat_date=rs.getString(1);
+                String chat_contents=rs.getString(2);
+                String user_id=rs.getString(3);
                 ccvo= new ChatContentsVO();
                 ccvo.setChat_content(chat_contents);
                 ccvo.setChat_date(chat_date);
@@ -68,9 +76,11 @@ public class ChatLogic {
         }catch(SQLException se) { //채팅방없음
             se.printStackTrace();
             System.out.println("SQLException :" + se.getMessage());
-            System.out.println("쿼리문 : " + sql.toString());
+//            System.out.println("쿼리문 : " + sql.toString());
             ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
                     ,new LogVO(Protocol.WRONG_NUM, "Wrong Room number :"+chatnum, ""));
+        } catch (Exception e) {
+            e.printStackTrace();
         }finally{
             // DB 사용한 자원 반납
             try {
@@ -165,14 +175,14 @@ public class ChatLogic {
         ChatLogic cl=new ChatLogic();
         ChatContentsVO ccvo=new ChatContentsVO();
         ChatUserListVO cuser=new ChatUserListVO();
-        ccvo.setChat_no(11);
-        ccvo.setUser_id("test@domail.com");
-        ccvo.setChat_content("얘들아 우리 점심 머먹을까?^^");
-        cuser.setChat_no(11);
-        cuser.setUser_id("test@domail.com");
+//        ccvo.setChat_no(11);
+//        ccvo.setUser_id("test@domail.com");
+//        ccvo.setChat_content("얘들아 우리 점심 머먹을까?^^");
+//        cuser.setChat_no(11);
+//        cuser.setUser_id("test@domail.com");
 //        int result=cl.insertChat(ccvo);
-//        List<ChatContentsVO> result =cl.ChatCall(11);
-        int result=cl.delChatContents(cuser);
+        List<ChatContentsVO> result =cl.ChatCall(11);
+//        int result=cl.delChatContents(cuser);
         System.out.println(result);
 
 
