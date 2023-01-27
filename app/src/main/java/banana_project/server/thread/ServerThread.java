@@ -828,7 +828,7 @@ public class ServerThread extends Thread {
             String userPw = st.nextToken();
             // DB체크
             server.jta_log.append("회원탈퇴 DB 체크 시작" + "\n");
-            int result = memberLogic.deleteAccount(UserVO.builder().user_id(userId).build());
+            int result = memberLogic.deleteAccount(UserVO.builder().user_id(userId).user_pw(userPw).build());
             server.jta_log.append("Result: " + result + "\n");
             // 체크 결과 swith문
             switch (result) {
@@ -838,7 +838,7 @@ public class ServerThread extends Thread {
               }
                 break;
               // 마이페이지 회원탈퇴 실패 523
-              case -1, 0: {
+              case -1, 0, 523: {
                 oos.writeObject(Protocol.FAIL_DACNT);
               }
                 break;

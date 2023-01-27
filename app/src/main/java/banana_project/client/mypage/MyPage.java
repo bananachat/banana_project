@@ -420,7 +420,7 @@ public class MyPage implements ActionListener {
         else if (!pwFirst.equals("")) {
           // 비밀번호 형식이 아닐 경우
           if (!Pattern.matches(pwCheck, pwFirst)) {
-            JOptionPane.showMessageDialog(client, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "로그인",
+            JOptionPane.showMessageDialog(client, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "마이페이지",
                 JOptionPane.WARNING_MESSAGE, setImage.img_info);
           } else { // 해야하는것
             // 비밀번호 형식일 경우 -> DB에 있는 비밀번호와 닉네임을 둘 다 변경
@@ -464,11 +464,13 @@ public class MyPage implements ActionListener {
       }
     }
 
-    // 탈퇴하기 버튼을 눌렀을 때
-    else if (obj == jbtn_resign)
-
-    {
+    // 탈퇴하기 버튼을 눌렀을 때 524#
+    else if (obj == jbtn_resign) {
       jd_resign.setVisible(true);
+      jtf_resignId.setText(dbId);
+      jtf_resignId.setEditable(false);
+
+
     }
 
     // JDg 속 탈퇴하기 버튼 눌렀을 때
@@ -487,7 +489,7 @@ public class MyPage implements ActionListener {
             JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
 
-      // 아이디 비밀번호 DB체크(비밀번호는 로직에서 체크하기 -> 비밀번호 관련 은재언니한테 문의하기)
+      // 아이디 비밀번호 DB체크
       else {
         try {
           client.oos.writeObject(Protocol.DEL_ACNT + Protocol.seperator + userId + Protocol.seperator + userPw);
