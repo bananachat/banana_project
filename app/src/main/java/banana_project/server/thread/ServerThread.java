@@ -71,7 +71,7 @@ public class ServerThread extends Thread {
   /**
    * 단톡방에서 말하기 구현
    * 
-   * 1. 일단 모두에게 보내고 ChatRoom에서 if문 채팅방넘버로 거르기(일단 전송 후 거르기)
+   * 1. 일단 모두에게 보내고 서버스레드 전역변수 chatNo로 거르기
    *
    * @param msg
    */
@@ -87,7 +87,7 @@ public class ServerThread extends Thread {
   /**
    * 단톡방에서 말하기 구현
    * 
-   * 2.채팅넘버와 서버스레드 같이 저장한다 가정(스레드부터 거르고 전송)
+   * 2.채팅넘버와 서버스레드 같이 저장한다 가정
    * 
    * @param msg
    * @param roomTitle
@@ -861,20 +861,23 @@ public class ServerThread extends Thread {
 
             if (result != null) {
               String resultList = "";
-              String date="";
+              String date = "";
               String nick = "";
-              String ccon = ""; //채팅 내용
-              for (int i = 0; i < result.size() - 1; i++) {//-1인 이유? 문자열을 바꿀때 한번 더 돈다. 리스트 마지막번호
+              String ccon = ""; // 채팅 내용
+              for (int i = 0; i < result.size() - 1; i++) {// -1인 이유? 문자열을 바꿀때 한번 더 돈다. 리스트 마지막번호
 
-                date = result.get(i).getChat_date();;
-                nick = result.get(i).getUser_id();;
-                ccon = result.get(i).getChat_content();;
-                resultList += (date + "#" +nick+"#"+ ccon + "#");
+                date = result.get(i).getChat_date();
+                ;
+                nick = result.get(i).getUser_id();
+                ;
+                ccon = result.get(i).getChat_content();
+                ;
+                resultList += (date + "#" + nick + "#" + ccon + "#");
               }
-              date=result.get(result.size() - 1).getChat_date();
-              nick=result.get(result.size() - 1).getUser_id();
-              ccon=result.get(result.size() - 1).getChat_content();
-              resultList += (date + "#" +nick+"#"+ ccon);
+              date = result.get(result.size() - 1).getChat_date();
+              nick = result.get(result.size() - 1).getUser_id();
+              ccon = result.get(result.size() - 1).getChat_content();
+              resultList += (date + "#" + nick + "#" + ccon);
               // 클라이언트에 전송 700#결과(날짜#닉네임#채팅내용)
               oos.writeObject(Protocol.CHAT_START
                   + Protocol.seperator + resultList);
@@ -896,13 +899,12 @@ public class ServerThread extends Thread {
                 .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNo)).user_id(userId)
                     .chat_content(chatCont).build());
             server.jta_log.append("result: " + result + "\n");
-
             // 메시지 저장 및 전달
-            // 가정-서버스레드를 다 저장하고 모든 서버스레드에 전달하되 챗넘버가 같은경우에만 메시지전달
             switch (result) {
               // 저장성공
               case 1: {
                 // 같은 단톡방에 말 전달하기 701#채팅방넘버#닉네임#메시지
+                // 서버스레드를 다 저장하고 모든 서버스레드에 전달하되 챗넘버가 같은경우에만 메시지전달
                 broadCasting(chatNo, userNick, chatCont);
                 server.jta_log.append("그룹채팅 메시지 저장 성공" + "\n");
               }
@@ -913,11 +915,11 @@ public class ServerThread extends Thread {
                 server.jta_log.append("그룹채팅 메시지 저장 실패" + "\n");
               }
                 break;
-            }
+              }
           }
             break;
 
-          // 메시지 출력 701#닉네임#메시지내용
+            // 메시지 출력 701#닉네임#메시지내용
           case Protocol.SEND_MSG: {
             String recvNo = st.nextToken();
             String recvNick = st.nextToken();

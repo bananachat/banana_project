@@ -3,28 +3,36 @@ package banana_project.client.room;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.BoxView;
+import javax.swing.text.ComponentView;
 import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Element;
+import javax.swing.text.IconView;
+import javax.swing.text.LabelView;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.ParagraphView;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
+import javax.swing.text.StyledEditorKit;
+import javax.swing.text.View;
+import javax.swing.text.ViewFactory;
 
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
-import banana_project.server.thread.Protocol;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.regex.Pattern;
 
 public class ChatRoom implements ActionListener, FocusListener {
     /**
@@ -59,7 +67,7 @@ public class ChatRoom implements ActionListener, FocusListener {
     // JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     // JTextArea jta_chat = new JTextArea();
     // [South]
-    JTextField jtf_chat = new JTextField("메시지를 입력하세요.", 20);
+    JTextField jtf_chat = new JTextField(" 메시지를 입력하세요.", 20);
     JButton jbtn_send = new JButton("전송");
 
     // jtp 설정
@@ -143,14 +151,11 @@ public class ChatRoom implements ActionListener, FocusListener {
         // jta_chat.setLineWrap(true);
         // jp_center.add(jta_chat);
 
-        // jtp 테스트설정
-        jtp_chat.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 20));
+        // jtp 설정
+        jtp_chat.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
         jtp_chat.setFont(setFontNJOp.b16);
-        jtp_chat.setForeground(new Color(135, 90, 75));
         jtp_chat.setBackground(Color.white);
         jtp_chat.setEditable(false);
-        jtp_chat.setEditable(false);
-        jp_Pchat.add(jsp_display);
 
         // 스크롤바 설정
         jsp_display.getVerticalScrollBar().setBackground(Color.white);
@@ -202,41 +207,70 @@ public class ChatRoom implements ActionListener, FocusListener {
     /**
      * 채팅방 불러오기 메소드
      * 
-     * @param result
+     * @param rList
      */
-    public void chat_start(String result) {
-        st = new StringTokenizer(result, "#");
-        chatDate = st.nextToken();
-        String chatNick = st.nextToken();
-        String chatCont = st.nextToken();
-
-        // 채팅방에 날짜 출력
-        StringTokenizer setDate = new StringTokenizer(chatDate, "/");
-        while (setDate.hasMoreTokens()) {
-            String year = setDate.nextToken();
-            String month = setDate.nextToken();
-            String day = setDate.nextToken();
-            // jta_chat.append(" " + year + "년 " + month + "월" + day + "일 ");
-        }
-        // jta_chat.append(chatNick + ": " + chatCont);
-
-        // 토큰(대화내용)이 남아있다면
-        while (st.hasMoreTokens()) {
-            String chatDate2 = st.nextToken();
-            chatNick = st.nextToken();
-            chatCont = st.nextToken();
-
-            // 날짜가 바뀌었을 때 해당날짜 출력
+    public void chat_start(List<Map<String, String>> rList) {
+        for (int i = 0; i < rList.size(); i++) {
+            String chatDate2 = rList.get(i).get("chatDate");
+            String chatNick = rList.get(i).get("chatNick");
+            String chatCont = rList.get(i).get("chatCont");
+            // 날짜가 바뀔때마다 채팅방에 출력
             if (!chatDate.equals(chatDate2)) {
                 this.chatDate = chatDate2;
+                StringTokenizer setDate = new StringTokenizer(chatDate, "/");
                 while (setDate.hasMoreTokens()) {
                     String year = setDate.nextToken();
                     String month = setDate.nextToken();
                     String day = setDate.nextToken();
-                    // jta_chat.append(" " + year + "년 " + month + "월" + day + "일 ");
+                    // 날짜 출력하기
+                    StyledDocument doc = jtp_chat.getStyledDocument();
+                    SimpleAttributeSet sas = new SimpleAttributeSet();
+                    // 폰트색상
+                    sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(255, 200, 20));
+                    // 가운데정렬
+                    StyleConstants.setAlignment(sas, StyleConstants.ALIGN_CENTER);
+                    doc.setParagraphAttributes(0, doc.getLength(), sas, false);
+                    try {
+                        sd_display.insertString(sd_display.getLength(),
+                                "< " + year + "년 " + month + "월" + day + "일 >" + "\n", sas);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-            // jta_chat.append(chatNick + ": " + chatCont);
+            // 로그인유저가 친 채팅일 경우
+            if (userNick.equals(chatNick)) {
+                // jtp text 설정
+                StyledDocument doc = jtp_chat.getStyledDocument();
+                SimpleAttributeSet sas = new SimpleAttributeSet();
+                // 폰트 컬러
+                sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(135, 90, 75));
+                // 오른쪽 정렬
+                StyleConstants.setAlignment(sas, StyleConstants.ALIGN_RIGHT);
+                doc.setParagraphAttributes(0, doc.getLength(), sas, false);
+                try {
+                    sd_display.insertString(sd_display.getLength(), wrapText(msg) + "\n", sas);
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                }
+            }
+            // 다른 유저가 친 채팅일 경우
+            else {
+                msg = chatNick + ": " + chatCont;
+                // jtp text 설정
+                StyledDocument doc = jtp_chat.getStyledDocument();
+                SimpleAttributeSet sas = new SimpleAttributeSet();
+                // 폰트 컬러
+                sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(80, 114, 167));
+                // 왼쪽 정렬
+                StyleConstants.setAlignment(sas, StyleConstants.ALIGN_LEFT);
+                doc.setParagraphAttributes(0, doc.getLength(), sas, false);
+                try {
+                    sd_display.insertString(sd_display.getLength(), wrapText(msg), sas);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -247,15 +281,19 @@ public class ChatRoom implements ActionListener, FocusListener {
      * @param recvMsg
      */
     public void recv_msg(String recvNick, String recvMsg) {
-        // jta_chat.append(recvNick + ": " + recvMsg);
+        msg = recvNick + ": " + recvMsg;
+        // jtp text 설정
+        StyledDocument doc = jtp_chat.getStyledDocument();
         SimpleAttributeSet sas = new SimpleAttributeSet();
         // 폰트 컬러
         sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(80, 114, 167));
+        // 왼쪽 정렬
+        StyleConstants.setAlignment(sas, StyleConstants.ALIGN_LEFT);
+        doc.setParagraphAttributes(0, doc.getLength(), sas, false);
         try {
-            sd_display.insertString(sd_display.getLength(), recvNick + ": " + recvMsg + "\n",
-                    sas);
-        } catch (Exception e2) {
-            e2.printStackTrace();
+            sd_display.insertString(sd_display.getLength(), wrapText(msg), sas);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -263,6 +301,34 @@ public class ChatRoom implements ActionListener, FocusListener {
     public void fail_msg() {
         JOptionPane.showMessageDialog(client, "메시지 전송에 실패했습니다.", "채팅방", JOptionPane.WARNING_MESSAGE,
                 setImage.img_delete);
+    }
+
+    /**
+     * Jtp 글자 줄바꿈 대체 메소드
+     * 
+     * @param msg
+     * @return
+     */
+    public String wrapText(String msg) {
+        // 글자 끊어주기
+        StringBuffer sb = new StringBuffer();
+        // 한글포함
+        if (Pattern.matches("^[ㄱ-ㅎ가-힣]+[0-9a-zA-Z]*$", msg) && msg.getBytes().length > 30) {
+            sb.append(msg);
+            for (int i = 1; i < (msg.getBytes().length / 30) + 2; i++) {
+                sb.insert((11 * i), "\n");
+            }
+            msg = String.valueOf(sb);
+        }
+        // 한글제외 영어, 숫자
+        else if (msg.length() > 18) {
+            sb.append(msg);
+            for (int i = 1; i < (msg.length() / 18) + 1; i++) {
+                sb.insert((17 * i), "\n");
+            }
+            msg = String.valueOf(sb);
+        }
+        return msg;
     }
 
     /**
@@ -282,20 +348,23 @@ public class ChatRoom implements ActionListener, FocusListener {
         else if (obj == jbtn_send || obj == jtf_chat) {
             msg = jtf_chat.getText();
             // jtf에 아무것도 입력하지 않았을 경우
-            if ("".equals(msg) || "메시지를 입력하세요.".equals(msg)) {
+            if ("".equals(msg) || " 메시지를 입력하세요.".equals(msg)) {
                 // 메시지 입력 경고창
                 JOptionPane.showMessageDialog(client, "전송할 메시지를 입력해주세요.", "채팅방", JOptionPane.WARNING_MESSAGE,
                         setImage.img_info);
             }
             // 내용을 입력했을 경우
             else {
-                // jta_chat.append(userNick + ": " + msg + "\n");
+                // jtp text 설정
+                StyledDocument doc = jtp_chat.getStyledDocument();
                 SimpleAttributeSet sas = new SimpleAttributeSet();
                 // 폰트 컬러
                 sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(135, 90, 75));
+                // 오른쪽 정렬
+                StyleConstants.setAlignment(sas, StyleConstants.ALIGN_RIGHT);
+                doc.setParagraphAttributes(0, doc.getLength(), sas, false);
                 try {
-                    sd_display.insertString(sd_display.getLength(), userNick + ": " + msg + "\n",
-                            sas);
+                    sd_display.insertString(sd_display.getLength(), wrapText(msg) + "\n", sas);
                 } catch (Exception e2) {
                     e2.printStackTrace();
                 }
@@ -324,7 +393,7 @@ public class ChatRoom implements ActionListener, FocusListener {
         // 메시지jtf를 클릭했을 때
         if (obj == jtf_chat) {
             jtf_chat.setForeground(Color.BLACK);
-            if ("메시지를 입력하세요.".equals(jtf_chat.getText())) {
+            if (" 메시지를 입력하세요.".equals(jtf_chat.getText())) {
                 jtf_chat.setText("");
             }
         }
@@ -337,7 +406,7 @@ public class ChatRoom implements ActionListener, FocusListener {
         if (obj == jtf_chat) {
             if ("".equals(jtf_chat.getText())) {
                 jtf_chat.setForeground(Color.GRAY);
-                jtf_chat.setText("메시지를 입력하세요.");
+                jtf_chat.setText(" 메시지를 입력하세요.");
             }
         }
     }

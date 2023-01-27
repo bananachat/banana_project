@@ -2,7 +2,9 @@ package banana_project.client.login;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -403,8 +405,20 @@ public class ClientThread extends Thread {
            */
           // 채팅방 불러오기 700#채팅방번호
           case Protocol.CHAT_START: {
-            String result = st.nextToken();
-            client.main.chatRoom.chat_start(result);
+            List<Map<String, String>> rList = new ArrayList<>();
+            Map<String, String> rMap = null;
+            // list map에 담기
+            while (st.hasMoreTokens()) {
+              String chatDate = st.nextToken();
+              String chatNick = st.nextToken();
+              String chatCont = st.nextToken();
+              rMap = new HashMap<>();
+              rMap.put("chatDate", chatDate);
+              rMap.put("chatNick", chatNick);
+              rMap.put("chatCont", chatCont);
+              rList.add(rMap);
+            }
+            client.main.chatRoom.chat_start(rList);
           }
             break;
 
