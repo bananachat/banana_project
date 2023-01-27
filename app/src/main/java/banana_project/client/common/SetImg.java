@@ -15,6 +15,8 @@ public class SetImg {
     public static final ImageIcon img_find = new ImageIcon(imgPath + "logo_find.png");
     // 회원가입 로고 이미지
     public static final ImageIcon img_join = new ImageIcon(imgPath + "logo_join.png");
+    // 마이페이지 로고 이미지
+    public static final ImageIcon img_mypage = new ImageIcon(imgPath + "logo_mypage.png");
 
     // 채팅방 이미지
     // 채팅방 돌아가기 버튼 이미지

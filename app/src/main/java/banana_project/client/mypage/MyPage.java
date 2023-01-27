@@ -53,7 +53,7 @@ public class MyPage implements ActionListener {
   JButton jbtn_checkNick = new JButton("중복확인"); // 닉네임 중복체크버튼
   JButton jbtn_resign = new JButton("탈퇴하기"); // 탈퇴 버튼
   JButton jbtn_save = new JButton("확인"); // 확인 버튼
-  JButton jbtn_main = new JButton(setImage.img_join);// 마이페이지 로고용 버튼
+  JButton jbtn_main = new JButton(setImage.img_mypage);// 마이페이지 로고용 버튼
   // Jlb
   JLabel jlb_name = new JLabel("이름");
   JLabel jlb_hp = new JLabel("핸드폰번호");
@@ -187,7 +187,7 @@ public class MyPage implements ActionListener {
     // 로고 이미지 설정
     jbtn_main.setBackground(new Color(255, 230, 120));
     jbtn_main.setBorderPainted(false); // 버튼 외곽선 없애기
-    jbtn_main.setBounds(85, 22, 210, 90); // 바나나 이미지 고정
+    jbtn_main.setBounds(75, 22, 240, 100); // 바나나 이미지 고정
     // JP 설정
     jp_mypage.setBackground(new Color(255, 230, 120));
     // JF 설정
@@ -469,7 +469,6 @@ public class MyPage implements ActionListener {
       jd_resign.setVisible(true);
       jtf_resignId.setText(dbId);
       jtf_resignId.setEditable(false);
-
 
     }
 
