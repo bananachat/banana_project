@@ -3,32 +3,23 @@ package banana_project.client.room;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.BoxView;
-import javax.swing.text.ComponentView;
 import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Element;
-import javax.swing.text.IconView;
-import javax.swing.text.LabelView;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.ParagraphView;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
-import javax.swing.text.StyledEditorKit;
-import javax.swing.text.View;
-import javax.swing.text.ViewFactory;
 
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
+import banana_project.server.thread.Protocol;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -57,15 +48,10 @@ public class ChatRoom implements ActionListener, FocusListener {
     SetFontNJOp setFontNJOp = new SetFontNJOp();
     // JP
     JPanel jp_Pchat = new JPanel(null);
-    // JPanel jp_center = new JPanel(new BorderLayout());
     // [North]
     JButton jbtn_back = new JButton(setImage.img_backbtn);
     JButton jbtn_fNick = new JButton("친구 닉네임");
-    // [Center]
-    // JScrollPane jsp_display = new JScrollPane(jp_center,
-    // JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-    // JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    // JTextArea jta_chat = new JTextArea();
+
     // [South]
     JTextField jtf_chat = new JTextField(" 메시지를 입력하세요.", 20);
     JButton jbtn_send = new JButton("전송");
@@ -312,19 +298,19 @@ public class ChatRoom implements ActionListener, FocusListener {
     public String wrapText(String msg) {
         // 글자 끊어주기
         StringBuffer sb = new StringBuffer();
-        // 한글포함
-        if (Pattern.matches("^[ㄱ-ㅎ가-힣]+[0-9a-zA-Z]*$", msg) && msg.getBytes().length > 30) {
-            sb.append(msg);
-            for (int i = 1; i < (msg.getBytes().length / 30) + 2; i++) {
-                sb.insert((11 * i), "\n");
+        // 영어, 숫자 30자이상
+        if (Pattern.matches("^[a-zA-Z0-9]*$", msg) && msg.length() >= 30) {
+            sb.append(" " + msg);
+            for (int i = 1; i < (msg.length() / 30) + 1; i++) {
+                sb.insert((29 * i), "\n");
             }
             msg = String.valueOf(sb);
         }
-        // 한글제외 영어, 숫자
-        else if (msg.length() > 18) {
-            sb.append(msg);
-            for (int i = 1; i < (msg.length() / 18) + 1; i++) {
-                sb.insert((17 * i), "\n");
+        // 한글포함 15자이상
+        else if (msg.length() >= 15) {
+            sb.append(" " + msg);
+            for (int i = 1; i < (msg.length() / 15) + 1; i++) {
+                sb.insert((14 * i), "\n");
             }
             msg = String.valueOf(sb);
         }

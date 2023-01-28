@@ -214,24 +214,28 @@ public class Main implements ActionListener, MouseListener {
     public void del_friend() {
         JOptionPane.showMessageDialog(client, "친구 삭제가 완료되었습니다.", "친구 목록", JOptionPane.WARNING_MESSAGE,
                 setImage.img_confirm);
+        selNick = "";
     }
 
     // 친구 삭제 실패
     public void fail_del_friend() {
         JOptionPane.showMessageDialog(client, "친구 삭제에 실패하였습니다..", "친구 목록", JOptionPane.WARNING_MESSAGE,
                 setImage.img_notFound);
+        selNick = "";
     }
 
     // 채팅방 삭제 성공
     public void del_chat() {
         JOptionPane.showMessageDialog(client, "채팅방 삭제가 완료되었습니다.", "채팅 목록", JOptionPane.WARNING_MESSAGE,
                 setImage.img_confirm);
+        selChat = "";
     }
 
     // 채팅방 삭제 실패
     public void fail_del_chat() {
         JOptionPane.showMessageDialog(client, "채팅방 삭제에 실패하였습니다..", "채팅 목록", JOptionPane.WARNING_MESSAGE,
                 setImage.img_notFound);
+        selChat = "";
     }
 
     // 마이페이지 닉네임 받아오기
@@ -323,6 +327,15 @@ public class Main implements ActionListener, MouseListener {
             if (e.getClickCount() == 2) {
                 String msg = jl_list.getSelectedValue() + "을 두번 눌렀습니다.";
                 JOptionPane.showMessageDialog(client, msg, "info", JOptionPane.INFORMATION_MESSAGE);
+
+                // 채팅방을 더블클릭 -> 채팅방열기
+                if ("채팅 목록".equals(client.getTitle())) {
+                    selChat = (String) jl_list.getSelectedValue(); // 채팅방번호로 수정필요!
+                    String userList = (String) jl_list.getSelectedValue(); // 채팅방이름(닉네임#닉네임)
+                    // 채팅방 열림
+                    chatRoom = new ChatRoom(client, userId, userNick, selChat, userList);
+                    chatRoom.initDisplay();
+                }
             }
         }
 
@@ -356,7 +369,6 @@ public class Main implements ActionListener, MouseListener {
                     // yes를 눌렀을 때
                     if (result == JOptionPane.YES_OPTION) {
                         // 서버로 닉네임 전달 511#아이디#친구닉네임
-                        dlm.removeElement(selNick);
                         try {
                             client.oos.writeObject(Protocol.DEL_FRIEND
                                     + Protocol.seperator + userId

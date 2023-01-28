@@ -209,25 +209,33 @@ public class ClientThread extends Thread {
           }
             break;
 
-          // main 친구 삭제
+          // main 친구 삭제 511#아이디
           case Protocol.DEL_FRIEND: {
+            String userId = st.nextToken();
+            // 친구목록 다시 불러오기
+            client.oos.writeObject(Protocol.PRT_FRDLIST
+                + Protocol.seperator + userId);
             client.main.del_friend();
           }
             break;
 
-          // main 친구 삭제 실패
+          // main 친구 삭제 실패 524
           case Protocol.FAIL_DEL_FRIEND: {
             client.main.fail_del_friend();
           }
             break;
 
-          // main 채팅방 삭제
+          // main 채팅방 삭제 512#아이디
           case Protocol.DEL_CHAT: {
+            String userId = st.nextToken();
+            // 채팅방목록 다시 불러오기
+            client.oos.writeObject(Protocol.PRT_CHATLIST
+                + Protocol.seperator + userId);
             client.main.del_chat();
           }
             break;
 
-          // main 채팅방 삭제 실패
+          // main 채팅방 삭제 실패 525
           case Protocol.FAIL_DEL_CHAT: {
             client.main.fail_del_chat();
           }

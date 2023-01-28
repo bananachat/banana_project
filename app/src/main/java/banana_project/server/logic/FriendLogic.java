@@ -39,15 +39,13 @@ public class FriendLogic {
     // DB에서 가져온 친구리스트
     String[] friendsList = null;
 
-
-
     /**
      * [사용자 친구리스트 출력]
      * [0]_PROTOCOL - 604: 친구 검색 결과가 없음 | 607: 친구 검색 존재,
      * [1]_Friends - 친구리스트
      *
-     * @param uservo        사용자 정보
-     * @return lResult      [0]_Protocol/[1]_Friends
+     * @param uservo 사용자 정보
+     * @return lResult [0]_Protocol/[1]_Friends
      */
     public List<Object> printFriend(UserVO uservo) {
         System.out.println("FriendLogic.printFriend() 메소드 시작");
@@ -62,8 +60,8 @@ public class FriendLogic {
 
         // 로그 작성
         // Protocol 500 : PRT_FRDLIST, 친구목록 출력
-        ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName()
-                    , new LogVO(500, uservo.toString(), uservo.getUser_id()));
+        ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new LogVO(500, uservo.toString(), uservo.getUser_id()));
 
         System.out.println("UserVO : " + uservo.toString());
         System.out.println("로그: " + ll.toString());
@@ -94,10 +92,10 @@ public class FriendLogic {
                 protocol = 607;
             }
 
-            for(int i = 0; i < vfList.size()-1; i++) {
+            for (int i = 0; i < vfList.size() - 1; i++) {
                 friends += vfList.get(i) + "#";
             }
-            friends += vfList.get(vfList.size()-1);
+            friends += vfList.get(vfList.size() - 1);
 
         } catch (SQLException se) {
             se.printStackTrace();
@@ -124,16 +122,14 @@ public class FriendLogic {
         return lResult;
     } // end of printFriend (사용자 친구리스트 출력)
 
-
-
     /**
      * [친구 닉네임으로 조회]
      * vResult."PROTOCOL" - 604: 친구 검색 결과가 없음 | 607: 친구 검색 존재,
-     * vResult."F_ID      - 친구리스트
+     * vResult."F_ID - 친구리스트
      *
-     * @param uservo        사용자 정보
-     * @param friendNick      조회할 친구 닉네임
-     * @return vResult      친구 조회 결과
+     * @param uservo     사용자 정보
+     * @param friendNick 조회할 친구 닉네임
+     * @return vResult 친구 조회 결과
      */
     public List<Object> findFriend(UserVO uservo, String friendNick) {
         System.out.println("FriendLogic_printFriend() 메소드 시작");
@@ -145,8 +141,8 @@ public class FriendLogic {
         String fList = "";
 
         // 로그 작성
-        ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName()
-                    , new LogVO(600, uservo.toString(), uservo.getUser_id()));
+        ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName(),
+                new LogVO(600, uservo.toString(), uservo.getUser_id()));
 
         System.out.println("UserVO : " + uservo.toString() + "\nfriendName : " + friendNick);
 
@@ -168,10 +164,10 @@ public class FriendLogic {
             pstmt.setString(2, friendNick);
 
             // 쿼리문 결과
-            rs = pstmt.executeQuery();       // 호출: true, 실패: false
+            rs = pstmt.executeQuery(); // 호출: true, 실패: false
 
             // 조회 성공 시
-            while(rs.next()) {
+            while (rs.next()) {
                 fList = rs.getString(1);
 
                 // EXIST_FRIEND = 친구 검색 존재
@@ -203,15 +199,13 @@ public class FriendLogic {
         return lResult;
     } // end of findFriend (친구 이름으로 조회)
 
-
-
     /**
      * [사용자 닉네임으로 조회 - 모든 사용자 중]
      * vResult."PROTOCOL" - 604: 친구 검색 결과가 없음 | 607: 친구 검색 존재,
-     * vResult."friendName"      - 친구리스트
+     * vResult."friendName" - 친구리스트
      *
-     * @param friendNick      조회할 친구 ID
-     * @return vResult      친구 조회 결과
+     * @param friendNick 조회할 친구 ID
+     * @return vResult 친구 조회 결과
      */
     public List<Object> findFriend(String friendNick) {
         System.out.println("FriendLogic_printFriend()<-모든사용자중 메소드 시작");
@@ -223,8 +217,9 @@ public class FriendLogic {
         String fList = "";
 
         // 로그 작성
-//        ll.writeLog(ConstantsLog.ENTER_LOG, Thread.currentThread().getStackTrace()[1].getMethodName()
-//                , new LogVO(600, uservo.toString(), uservo.getUser_id()));
+        // ll.writeLog(ConstantsLog.ENTER_LOG,
+        // Thread.currentThread().getStackTrace()[1].getMethodName()
+        // , new LogVO(600, uservo.toString(), uservo.getUser_id()));
 
         System.out.println("friendName : " + friendNick);
 
@@ -240,10 +235,10 @@ public class FriendLogic {
             pstmt.setString(1, friendNick);
 
             // 쿼리문 결과
-            rs = pstmt.executeQuery();       // 호출: true, 실패: false
+            rs = pstmt.executeQuery(); // 호출: true, 실패: false
 
             // 조회 성공 시
-            while(rs.next()) {
+            while (rs.next()) {
                 fList = rs.getString(1);
 
                 // EXIST_FRIEND = 친구 검색 존재
@@ -275,16 +270,14 @@ public class FriendLogic {
         return lResult;
     } // end of findFriend (친구 이름으로 조회)
 
-
-
     /**
      * [선택한 닉네임을 친구 추가]
      * 607 : 친구 검색 존재,
-     * 605  : 친구 추가 이벤트
+     * 605 : 친구 추가 이벤트
      *
-     * @param uservo            사용자 정보
-     * @param selectNick          선택한 계정ID
-     * @return protocol         607:친구 검색 존재 | 605: 친구 추가 이벤트
+     * @param uservo     사용자 정보
+     * @param selectNick 선택한 계정ID
+     * @return protocol 607:친구 검색 존재 | 605: 친구 추가 이벤트
      */
     public int addFriend(UserVO uservo, String selectNick) {
         System.out.println("FriendLogic.addFriend() 메소드 시작");
@@ -296,7 +289,6 @@ public class FriendLogic {
 
         System.out.println("사용자 ID : " + uservo.getUser_id());
         System.out.println("선택한 계정ID : " + selectNick);
-
 
         // 해당 친구가 DB에 없는지 확인
         StringBuilder selQuarry = new StringBuilder();
@@ -396,16 +388,14 @@ public class FriendLogic {
         return protocol;
     } // end of addFriend (친구 추가)
 
-
-
     /**
      * [선택한 닉네임을 친구 삭제]
      * 604: 검색 결과가 없음
      * 511: 친구 삭제
      *
-     * @param uservo            사용자 정보
-     * @param selectID          선택한 계정ID
-     * @return protocol         604: 검색 결과가 없음 | 511: 친구 삭제
+     * @param uservo   사용자 정보
+     * @param selectID 선택한 계정ID
+     * @return protocol 604: 검색 결과가 없음 | 511: 친구 삭제
      */
     public int delFriend(UserVO uservo, String selectID) {
         System.out.println("FriendLogic.addFriend() 메소드 시작");
@@ -491,10 +481,7 @@ public class FriendLogic {
         return protocol;
     } // end of delFriend (친구 삭제)
 
-
-
     // TODO: "친구 정보 조회" 기능 추가 시 작성 필요
-
 
     // 단위테스트
     public static void main(String[] args) {
@@ -505,22 +492,22 @@ public class FriendLogic {
         uVO.setUser_id("banana@email.com");
         String selectName1 = "바나나";
         String selectName2 = "자고싶어2";
-//
-//        // 친구추가
-////        r = fl.addFriend(uVO, selectID1);
-////        System.out.println(r);
-//
-//        // 친구 삭제
-////        r = fl.delFriend(uVO, selectID);
-////        System.out.println(r);
-//
-//        // 친구 조회
+        //
+        // // 친구추가
+        //// r = fl.addFriend(uVO, selectID1);
+        //// System.out.println(r);
+        //
+        // // 친구 삭제
+        //// r = fl.delFriend(uVO, selectID);
+        //// System.out.println(r);
+        //
+        // // 친구 조회
         List<Object> m = new ArrayList<>();
         m = fl.findFriend(uVO, selectName2);
-//        m = fl.findFriend(selectName1);
-//
-//        // 친구 리스트 출력
+        // m = fl.findFriend(selectName1);
+        //
+        // // 친구 리스트 출력
         List<Object> l = new ArrayList<Object>();
-//        l = fl.printFriend(uVO);
+        // l = fl.printFriend(uVO);
     }
 }

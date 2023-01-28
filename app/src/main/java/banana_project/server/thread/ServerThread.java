@@ -48,6 +48,7 @@ public class ServerThread extends Thread {
       memberLogic = new MemberLogic();
       friendLogic = new FriendLogic();
       chatLogic = new ChatLogic();
+      chatListLogic = new ChatListLogic();
       oos = new ObjectOutputStream(client.getOutputStream()); // 말하기
       ois = new ObjectInputStream(client.getInputStream()); // 듣기
       // 현재 서버에 입장한 클라이언트 스레드 추가하기
@@ -433,6 +434,7 @@ public class ServerThread extends Thread {
           /**
            * main 친구 삭제
            */
+          // 511#아이디#친구닉네임
           case Protocol.DEL_FRIEND: {
             String userId = st.nextToken();
             String selNick = st.nextToken();
@@ -441,12 +443,13 @@ public class ServerThread extends Thread {
             int result = friendLogic.delFriend(UserVO.builder().user_id(userId).build(), selNick);
             server.jta_log.append("result: " + result + "\n");
             switch (result) {
-              // 친구 삭제 성공
+              // 친구 삭제 성공 511#아이디
               case Protocol.DEL_FRIEND: {
-                oos.writeObject(Protocol.DEL_FRIEND);
+                oos.writeObject(Protocol.DEL_FRIEND
+                    + Protocol.seperator + userId);
               }
                 break;
-              // 친구 삭제 실패
+              // 친구 삭제 실패 604 -> 524
               case Protocol.NF_RESULT: {
                 oos.writeObject(Protocol.FAIL_DEL_FRIEND);
               }
@@ -458,7 +461,9 @@ public class ServerThread extends Thread {
           /**
            * main 채팅방 삭제
            */
+          // 512#아이디#채팅방번호
           case Protocol.DEL_CHAT: {
+            String userId = st.nextToken();
             String userId = st.nextToken();
             String selChat = st.nextToken();
 
@@ -468,12 +473,13 @@ public class ServerThread extends Thread {
             int result = chatLogic.delChatContents(chatlistvo);
             server.jta_log.append("result: " + result + "\n");
             switch (result) {
-              // 채팅방 삭제 성공
+              // 채팅방 삭제 성공 512#아이디
               case 1: {
-                oos.writeObject(Protocol.DEL_CHAT);
+                oos.writeObject(Protocol.DEL_CHAT
+                    + Protocol.seperator + userId);
               }
                 break;
-              // 채팅방 삭제 실패
+              // 채팅방 삭제 실패 525
               case 0, -1: {
                 oos.writeObject(Protocol.FAIL_DEL_CHAT);
               }
@@ -821,24 +827,17 @@ public class ServerThread extends Thread {
             int chatNo = Integer.parseInt(st.nextToken());
             // DB체크
             server.jta_log.append("채팅방 불러오기 DB 체크 시작" + "\n");
-
-            // 로직 수정할것!
-            // 날짜(2023/01/21)#닉네임#채팅내용 String형식으로 준다고 가정
             List<ChatContentsVO> result = chatLogic.ChatCall(chatNo);
-
+            server.jta_log.append("result: " + result + "\n");
             if (result != null) {
               String resultList = "";
               String date = "";
               String nick = "";
               String ccon = ""; // 채팅 내용
               for (int i = 0; i < result.size() - 1; i++) {// -1인 이유? 문자열을 바꿀때 한번 더 돈다. 리스트 마지막번호
-
                 date = result.get(i).getChat_date();
-                ;
                 nick = result.get(i).getUser_id();
-                ;
                 ccon = result.get(i).getChat_content();
-                ;
                 resultList += (date + "#" + nick + "#" + ccon + "#");
               }
               date = result.get(result.size() - 1).getChat_date();
@@ -882,11 +881,11 @@ public class ServerThread extends Thread {
                 server.jta_log.append("그룹채팅 메시지 저장 실패" + "\n");
               }
                 break;
-              }
+            }
           }
             break;
 
-            // 메시지 출력 701#닉네임#메시지내용
+          // 메시지 출력 701#닉네임#메시지내용
           case Protocol.SEND_MSG: {
             String recvNo = st.nextToken();
             String recvNick = st.nextToken();
