@@ -395,8 +395,8 @@ public class FriendLogic {
      * 604: 검색 결과가 없음
      * 511: 친구 삭제
      *
-     * @param uservo    사용자 정보
-     * @param selNick   선택한 계정 닉네임
+     * @param uservo  사용자 정보
+     * @param selNick 선택한 계정 닉네임
      * @return protocol 604: 검색 결과가 없음 | 511: 친구 삭제
      */
     public int delFriend(UserVO uservo, String selNick) {
@@ -418,7 +418,8 @@ public class FriendLogic {
         String whereClause = " USER_ID = " + uservo.getUser_id() + " AND F_id" + selNick;
 
         // 해당 친구가 DB에 없는지 확인
-//        String selQuarry = "SELECT * FROM TB_FRIENDS_LIST WHERE USER_ID = ? AND F_ID = ?";
+        // String selQuarry = "SELECT * FROM TB_FRIENDS_LIST WHERE USER_ID = ? AND F_ID
+        // = ?";
         StringBuilder selQuarry = new StringBuilder();
         selQuarry.append(" SELECT fl.f_id FROM TB_FRIENDS_LIST fl                      ");
         selQuarry.append("         , (SELECT user_id, user_nickname FROM tb_user) ur   ");
@@ -436,7 +437,7 @@ public class FriendLogic {
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 isOk = 1;
-                f_id = rs.getString(1);     // 삭제할 친구의 ID
+                f_id = rs.getString(1); // 삭제할 친구의 ID
             }
 
         } catch (SQLException se) {
@@ -459,12 +460,12 @@ public class FriendLogic {
             // 해당 ID 친구 삭제
 
             String sql = "DELETE FROM TB_FRIENDS_LIST WHERE USER_ID = ? AND F_ID = ?";
-//            StringBuilder delQuarry = new StringBuilder();
-//            delQuarry.append(" DELETE FROM TB_FRIENDS_LIST fl                              ");
-//            delQuarry.append("         , (SELECT user_id, user_nickname FROM tb_user) ur   ");
-//            delQuarry.append(" WHERE fl.f_id = ur.user_id                                  ");
-//            delQuarry.append("         AND fl.user_id = ?                                  ");
-//            delQuarry.append("         AND ur.user_nickname = ?                            ");
+            // StringBuilder delQuarry = new StringBuilder();
+            // delQuarry.append(" DELETE FROM TB_FRIENDS_LIST fl ");
+            // delQuarry.append(" , (SELECT user_id, user_nickname FROM tb_user) ur ");
+            // delQuarry.append(" WHERE fl.f_id = ur.user_id ");
+            // delQuarry.append(" AND fl.user_id = ? ");
+            // delQuarry.append(" AND ur.user_nickname = ? ");
 
             try {
                 conn = dbMgr.getConnection();
@@ -512,20 +513,20 @@ public class FriendLogic {
         String selectNick2 = "자고싶어2";
         //
         // // 친구추가
-         r = fl.addFriend(uVO, selectNick1);
-         System.out.println(r);
+        r = fl.addFriend(uVO, selectNick1);
+        System.out.println(r);
         //
         // // 친구 삭제
         //// r = fl.delFriend(uVO, selectID);
         //// System.out.println(r);
         //
         // // 친구 조회
-//        List<Object> m = new ArrayList<>();
-//        m = fl.findFriend(uVO, selectName2);
-//        // m = fl.findFriend(selectName1);
-//        //
-//        // // 친구 리스트 출력
-//        List<Object> l = new ArrayList<Object>();
-//        // l = fl.printFriend(uVO);
+        // List<Object> m = new ArrayList<>();
+        // m = fl.findFriend(uVO, selectName2);
+        // // m = fl.findFriend(selectName1);
+        // //
+        // // // 친구 리스트 출력
+        // List<Object> l = new ArrayList<Object>();
+        // // l = fl.printFriend(uVO);
     }
 }

@@ -215,7 +215,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     public void fail_add_friend() {
         // 실패 후 필요한 작업 작성
         // 대충 이런?
-        JOptionPane.showMessageDialog(this, "친구 추가에 실패하였습니다.", "친구 추가", JOptionPane.INFORMATION_MESSAGE,
+        JOptionPane.showMessageDialog(main.client, "친구 추가에 실패하였습니다.", "친구 추가", JOptionPane.INFORMATION_MESSAGE,
                 setImage.img_notFound);
     }
 
@@ -234,7 +234,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
     // 채팅방 생성 실패
     public void fail_create_chatroom() {
-        JOptionPane.showMessageDialog(this, "채팅방 생성 실패하였습니다.", "새 채팅", JOptionPane.INFORMATION_MESSAGE,
+        JOptionPane.showMessageDialog(main.client, "채팅방 생성 실패하였습니다.", "새 채팅", JOptionPane.INFORMATION_MESSAGE,
                 setImage.img_notFound);
     }
 
@@ -283,10 +283,11 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 // 친구 선택을 안했을 경우
                 System.out.println("선택한 친구가 없음");
                 msg = "친구를 선택하세요";
-                JOptionPane.showMessageDialog(this, msg, "친구 추가", JOptionPane.INFORMATION_MESSAGE, setImage.img_info);
+                JOptionPane.showMessageDialog(main.client, msg, "친구 추가", JOptionPane.INFORMATION_MESSAGE,
+                        setImage.img_info);
             } else {
                 // 1명 선택했을 경우
-                if (copy_list.size() == 1){
+                if (copy_list.size() == 1) {
                     num = (copy_list.get(0));
                 }
                 // 2명 이상 선택했을 경우

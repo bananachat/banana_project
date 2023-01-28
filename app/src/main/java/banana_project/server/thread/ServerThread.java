@@ -26,9 +26,6 @@ public class ServerThread extends Thread {
   Socket client = null;
   ObjectOutputStream oos = null;
   ObjectInputStream ois = null;
-  String userId = null;
-  String userNick = null;
-  String chatNo = null;
 
   /**
    * 생성자
@@ -152,8 +149,6 @@ public class ServerThread extends Thread {
               case Protocol.LOGIN_S: {
                 UserVO resultVO = memberLogic.getUserInfo(UserVO.builder().user_id(userId).build());
                 String userNick = resultVO.getUser_nickname();
-                this.userId = userId;
-                this.userNick = userNick;
                 oos.writeObject(Protocol.LOGIN_S
                     + Protocol.seperator + userId
                     + Protocol.seperator + userNick);
@@ -662,6 +657,7 @@ public class ServerThread extends Thread {
             server.jta_log.append("채팅방 만들기\n");
 
             int result = chatListLogic.createChat(userList);
+            server.jta_log.append("result: " + result + "\n");
 
             switch (result) {
               case Protocol.CREATE_CHAT -> {
@@ -746,7 +742,6 @@ public class ServerThread extends Thread {
             switch (result) {
               // 닉네임 수정 성공 516
               case 1: {
-                this.userNick = newNick;
                 oos.writeObject(Protocol.EDIT_MNICK
                     + Protocol.seperator + newNick);
               }
@@ -853,10 +848,11 @@ public class ServerThread extends Thread {
               nick = result.get(result.size() - 1).getUser_id();
               ccon = result.get(result.size() - 1).getChat_content();
               resultList += (date + "#" + nick + "#" + ccon);
-              // 클라이언트에 전송 700#결과(날짜#닉네임#채팅내용)
+              // 클라이언트에 전송 700#채팅방번호#결과(날짜#닉네임#채팅내용)
               oos.writeObject(Protocol.CHAT_START
+                  + Protocol.seperator + chatNo
                   + Protocol.seperator + resultList);
-              this.chatNo = String.valueOf(chatNo);
+              // this.chatNo = String.valueOf(chatNo);
             } else {
               server.jta_log.append("result: null" + "\n");
             }
@@ -869,6 +865,7 @@ public class ServerThread extends Thread {
             String userId = st.nextToken();
             String userNick = st.nextToken();
             String chatCont = st.nextToken();
+            server.jta_log.append(chatNo + userId + userNick + chatCont + "\n");
             server.jta_log.append("그룹채팅 저장 DB 체크 시작" + "\n");
             int result = chatLogic
                 .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNo)).user_id(userId)
@@ -894,19 +891,6 @@ public class ServerThread extends Thread {
           }
             break;
 
-          // 메시지 출력 701#닉네임#메시지내용
-          case Protocol.SEND_MSG: {
-            String recvNo = st.nextToken();
-            String recvNick = st.nextToken();
-            String recvMsg = st.nextToken();
-            // 자기가 보낸 메시지가 아니고 채팅방넘버가 같으면 클라이언트로 전송
-            if (!userNick.equals(recvNick) && chatNo.equals(recvNo)) {
-              oos.writeObject(Protocol.SEND_MSG
-                  + Protocol.seperator + recvNick
-                  + Protocol.seperator + recvMsg);
-            }
-          }
-            break;
           // case Protocol.WHISPER: {
           // String nickName = st.nextToken();// 보내는 넘
           // // insert here - 받는 넘

@@ -149,18 +149,17 @@ public class ClientThread extends Thread {
           /**
            * PwFindDialog 스레드 -> 아직 미구현!!
            */
-          //비밀번호 재설정 성공#404
+          // 비밀번호 재설정 성공#404
           case Protocol.RESET_PW: {
             client.pwfind.pwFindDialog.reset_pw();
             break;
           }
-          //비밀번호 재설정 실패 #405
+          // 비밀번호 재설정 실패 #405
           case Protocol.RESETFAIL_PW: {
             client.pwfind.pwFindDialog.fail_pw();
 
-          break;
+            break;
           }
- 
 
           /**
            * Main 스레드
@@ -424,6 +423,7 @@ public class ClientThread extends Thread {
            */
           // 채팅방 불러오기 700#채팅방번호
           case Protocol.CHAT_START: {
+            String chatNo = st.nextToken();
             List<Map<String, String>> rList = new ArrayList<>();
             Map<String, String> rMap = null;
             // list map에 담기
@@ -443,9 +443,10 @@ public class ClientThread extends Thread {
 
           // 메시지 출력 701#닉네임#메시지내용
           case Protocol.SEND_MSG: {
+            String recvNo = st.nextToken();
             String recvNick = st.nextToken();
             String recvMsg = st.nextToken();
-            client.main.chatRoom.recv_msg(recvNick, recvMsg);
+            client.main.chatRoom.recv_msg(recvNo, recvNick, recvMsg);
           }
             break;
 
