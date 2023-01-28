@@ -266,7 +266,12 @@ public class ChatListLogic {
 
                 // 쿼리 동작 레코드 수
                 // 성공: 1 / 실패: 0
-                result2 = pstmt.executeUpdate();
+                if (i == 0) {
+                    result2 = pstmt.executeUpdate();
+                } else {
+                    result2 *= pstmt.executeUpdate();
+                }
+
 
             } catch (SQLException se) {
                 se.printStackTrace();

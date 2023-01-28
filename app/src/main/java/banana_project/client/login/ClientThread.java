@@ -195,19 +195,9 @@ public class ClientThread extends Thread {
               String list = st.nextToken();
               vList.add(list); // 채팅번호|채팅명
             }
-            System.out.println("클스리스트 : " + vList);
+            System.out.println("채팅리스트 : " + vList);
 
-            for (int i = 0; i < vList.size(); i++) {
-              cl = new StringTokenizer(vList.get(i), "|");
-              ChatListVO chatListVO = new ChatListVO();
-
-              chatListVO.setChat_no(Integer.parseInt(cl.nextToken()));
-              chatListVO.setChat_title(cl.nextToken());
-
-              chatList.add(chatListVO);
-            }
-
-            client.main.print_chatList(chatList);
+            client.main.print_chatList(vList);
           }
             break;
 

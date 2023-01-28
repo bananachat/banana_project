@@ -198,15 +198,13 @@ public class Main implements ActionListener, MouseListener {
     }
 
     // 채팅리스트 있을때 메소드
-    public void print_chatList(List<ChatListVO> list) {
-        ChatListVO clVO = null;
+    public void print_chatList(Vector<String> cList) {
         jl_list.setFont(setFontNJOp.b16);
         jl_list.setEnabled(true);
         dlm.removeAllElements();
 
-        for (int i = 0; i < list.size(); i++) {
-            clVO = list.get(i);
-            dlm.addElement(clVO.getChat_no() + "|" + clVO.getChat_title()); // 번호|타이틀
+        for (int i = 0; i < cList.size(); i++) {
+            dlm.addElement(cList.get(i));       // 번호|타이틀
         }
     }
 
