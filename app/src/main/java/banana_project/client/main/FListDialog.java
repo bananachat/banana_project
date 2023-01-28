@@ -25,6 +25,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     Main main = null;
     String chatNo = null;
     String userList = null;
+    String title = null;
 
     /**
      * 화면부 선언
@@ -55,6 +56,18 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     ////////////////////////// [생성자] //////////////////////////
     public FListDialog(Main main) {
         this.main = main;
+        jl_list = new JList(dlm);
+
+        // 임시 리스트 출력
+//        createList();
+
+        // 친구검색 출력 600#아이디
+        try {
+            this.main.client.oos.writeObject(Protocol.PRT_USERS
+                    + Protocol.seperator + this.main.userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     ////////////////////////// [메소드] //////////////////////////
@@ -67,7 +80,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         for (int i = 0; i < 20; i++) {
             dlm.addElement(Integer.toString(i));
         }
-        jl_list = new JList(dlm);
     } // end of createList()
 
     ////////////////////////// [화면출력] //////////////////////////
@@ -79,6 +91,8 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
      * @param isView 다이얼로그 출력 유무
      */
     public void setDialog(String title, boolean isView) {
+        this.title = title;
+
         // [North]
         jtf_search.addActionListener(this); // jtf_search : 친구 검색
         jtf_search.addFocusListener(this);
@@ -100,7 +114,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         // [Center]
         // 친구 리스트 출력
         jp_center.removeAll();
-        createList();
+
 
         jsp_display.setBorder(new LineBorder(Color.white, 0));
         jsp_display.setBounds(20, 75, 294, 225);
@@ -180,9 +194,19 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
     // 친구 추가 성공
     public void add_friend() {
+        // ↓ 👏👏👏
         // 성공 후 필요한 작업 작성~~~
         dlm.clear(); // 친구리스트 초기화
         copy_list.clear(); // 선택한 친구리스트 초기화
+
+        // 메인페이지 내 친구 목록 새로 호출
+        // 사용자의 친구목록 불러오기 500#아이디
+        try {
+            main.client.oos.writeObject(Protocol.PRT_FRDLIST
+                    + Protocol.seperator + main.userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         System.out.println("친구검색 다이얼로그 종료");
         this.dispose();
@@ -200,7 +224,9 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         dlm.clear(); // 친구리스트 초기화
         copy_list.clear(); // 선택한 친구리스트 초기화
 
-        //TODO: 채팅방 호출
+        // 채팅방 열림
+        main.chatRoom = new ChatRoom(main.client, main.userId, main.userNick, chatNo, userList);
+        main.chatRoom.initDisplay();
 
         System.out.println("친구검색 다이얼로그 종료");
         this.dispose();
@@ -219,9 +245,30 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         if (obj == jbtn_search || obj == jtf_search) {
             // 친구 검색 이벤트 호출
             System.out.println("search 이벤트 호출");
-            System.out.println("입력값 : \"" + jtf_search.getText() + "\"");
+            String nickname =  jtf_search.getText();
 
-            // TODO: 검색한 친구 리스트 호출
+            System.out.println("입력값 : \"" + nickname + "\"");
+
+            if ("친구 추가".equals(title)) {
+                // 모든 사용자 중에 검색 601#아이디#사용자닉네임
+                try {
+                    this.main.client.oos.writeObject(Protocol.SRCH_USERS
+                            + Protocol.seperator + this.main.userId
+                            + Protocol.seperator + nickname);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            } else if ("새 채팅".equals(title)){
+                // 친구 중에 검색 603#아이디#사용자닉네임
+                try {
+                    this.main.client.oos.writeObject(Protocol.SRCH_FRIEDNDS
+                            + Protocol.seperator + this.main.userId
+                            + Protocol.seperator + nickname);
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                }
+            }
+
 
         } // end of 친구 검색
 
@@ -246,7 +293,8 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 num += (copy_list.get(copy_list.size() - 1));
 
                 // 상황별 메시지 변경
-                if ("친구 추가".equals(main.jbtn_firChan.getText())) {
+                if ("친구 추가".equals(title)) {
+//                if ("친구 추가".equals(main.jbtn_firChan.getText())) {
                     System.out.println("친구 추가...");
 
                     msg = num + "을(를) 친구 추가합니다";
@@ -261,7 +309,8 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                         e2.printStackTrace();
                     }
 
-                } else if ("새 채팅".equals(main.jbtn_firChan.getText())) {
+                } else if ("새 채팅".equals(title)) {
+//                } else if ("새 채팅".equals(main.jbtn_firChan.getText())) {
                     System.out.println("새 채팅...");
 
                     msg = num + "와(과) 채팅 시작합니다";
@@ -269,7 +318,15 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                     String user = main.userId; // 사용자 ID
                     num += "," + user;
 
-                    //TODO: 서버스레드로 통신 필요
+                    // 채팅방 만들기 606#아이디#닉네임리스트
+                    try {
+                        main.client.oos.writeObject(
+                                Protocol.CREATE_CHAT +
+                                        Protocol.seperator + main.userId +
+                                        Protocol.seperator + num);
+                    } catch (Exception e3) {
+                        e3.printStackTrace();
+                    }
                 }
 
                 // 복사한 친구들 리스트 출력
@@ -285,10 +342,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
                 System.out.println("친구검색 다이얼로그 종료");
                 this.dispose();
-
-                // 채팅방 열림
-                main.chatRoom = new ChatRoom(main.client, main.userId, main.userNick, chatNo, userList);
-                main.chatRoom.initDisplay();
             }
 
         } // end of 친구|채팅 추가 이벤트
