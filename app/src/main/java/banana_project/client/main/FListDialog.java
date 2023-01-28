@@ -345,11 +345,11 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 // JOptionPane.INFORMATION_MESSAGE);
                 System.out.println(msg);
 
-                dlm.clear(); // 친구리스트 초기화
-                copy_list.clear(); // 선택한 친구리스트 초기화
-
-                System.out.println("친구검색 다이얼로그 종료");
-                this.dispose();
+//                dlm.clear(); // 친구리스트 초기화
+//                copy_list.clear(); // 선택한 친구리스트 초기화
+//
+//                System.out.println("친구검색 다이얼로그 종료");
+//                this.dispose();
             }
 
         } // end of 친구|채팅 추가 이벤트

@@ -266,7 +266,7 @@ public class ChatListLogic {
 
                 // 쿼리 동작 레코드 수
                 // 성공: 1 / 실패: 0
-                result *= pstmt.executeUpdate();
+                result2 = pstmt.executeUpdate();
 
             } catch (SQLException se) {
                 se.printStackTrace();
@@ -283,6 +283,8 @@ public class ChatListLogic {
                     e.printStackTrace();
                 }
             }
+
+            System.out.println("쿼리1 : " + result + " | 쿼리2 : " + result2);
         }
 
         if ((result*result2) == 1) {

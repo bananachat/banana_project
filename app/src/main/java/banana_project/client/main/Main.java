@@ -272,7 +272,7 @@ public class Main implements ActionListener, MouseListener {
         } // end of Main 내 이벤트
           // 친구목록 버튼 클릭
         else if (obj == jbtn_friends) {
-            System.out.println("jbtn_myPage(내 화면) 클릭");
+            System.out.println("jbtn_friends(친구리스트) 클릭");
             client.setTitle("친구 목록");
             jbtn_firChan.setText("친구 추가");
             jlb_secChan.setText(userNick + "님의 친구");
