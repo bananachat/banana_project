@@ -293,10 +293,10 @@ public class FriendLogic {
         // 해당 친구가 DB에 없는지 확인
         StringBuilder selQuarry = new StringBuilder();
         selQuarry.append("SELECT ur.user_nickname FROM    ");
-        selQuarry.append(" (SELECT f_id FROM tb_friends_list WHERE user_id= :x ) fl    ");
+        selQuarry.append(" (SELECT f_id FROM tb_friends_list WHERE user_id= ? ) fl    ");
         selQuarry.append("        , (SELECT user_id, user_nickname FROM tb_user) ur   ");
         selQuarry.append("WHERE fl.f_id = ur.user_id  ");
-        selQuarry.append("AND ur.user_nickname = :y   ");
+        selQuarry.append("AND ur.user_nickname = ?   ");
 
         try {
             conn = dbMgr.getConnection();
@@ -393,11 +393,11 @@ public class FriendLogic {
      * 604: 검색 결과가 없음
      * 511: 친구 삭제
      *
-     * @param uservo   사용자 정보
-     * @param selectID 선택한 계정ID
+     * @param uservo    사용자 정보
+     * @param selNick   선택한 계정 닉네임
      * @return protocol 604: 검색 결과가 없음 | 511: 친구 삭제
      */
-    public int delFriend(UserVO uservo, String selectID) {
+    public int delFriend(UserVO uservo, String selNick) {
         System.out.println("FriendLogic.addFriend() 메소드 시작");
         // NF_RESULT = 검색 결과가 없음
         protocol = 604;
@@ -406,26 +406,35 @@ public class FriendLogic {
         int isOk = -1;
         int result = 0;
 
+        String f_id = "";
+
         System.out.println("사용자 ID : " + uservo.getUser_id());
-        System.out.println("선택한 계정ID : " + selectID);
+        System.out.println("선택한 계정NICK : " + selNick);
 
         // 쿼리문에 사용할 변수
         String table = " TB_FRIENDS_LIST ";
-        String whereClause = " USER_ID = " + uservo.getUser_id() + " AND F_id" + selectID;
+        String whereClause = " USER_ID = " + uservo.getUser_id() + " AND F_id" + selNick;
 
         // 해당 친구가 DB에 없는지 확인
-        String selQuarry = "SELECT * FROM TB_FRIENDS_LIST WHERE USER_ID = ? AND F_ID = ?";
+//        String selQuarry = "SELECT * FROM TB_FRIENDS_LIST WHERE USER_ID = ? AND F_ID = ?";
+        StringBuilder selQuarry = new StringBuilder();
+        selQuarry.append(" SELECT fl.f_id FROM TB_FRIENDS_LIST fl                      ");
+        selQuarry.append("         , (SELECT user_id, user_nickname FROM tb_user) ur   ");
+        selQuarry.append(" WHERE fl.f_id = ur.user_id                                  ");
+        selQuarry.append("         AND fl.user_id = ?                                  ");
+        selQuarry.append("         AND ur.user_nickname = ?                            ");
 
         try {
             conn = dbMgr.getConnection();
-            pstmt = conn.prepareStatement(selQuarry);
+            pstmt = conn.prepareStatement(selQuarry.toString());
 
             pstmt.setString(1, uservo.getUser_id());
-            pstmt.setString(2, selectID);
+            pstmt.setString(2, selNick);
 
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 isOk = 1;
+                f_id = rs.getString(1);     // 삭제할 친구의 ID
             }
 
         } catch (SQLException se) {
@@ -442,18 +451,25 @@ public class FriendLogic {
         }
 
         System.out.println("select 쿼리 성공유무: " + isOk);
+        System.out.println("삭제할 친구의 ID: " + f_id);
 
         if (isOk == 1) {
             // 해당 ID 친구 삭제
 
             String sql = "DELETE FROM TB_FRIENDS_LIST WHERE USER_ID = ? AND F_ID = ?";
+//            StringBuilder delQuarry = new StringBuilder();
+//            delQuarry.append(" DELETE FROM TB_FRIENDS_LIST fl                              ");
+//            delQuarry.append("         , (SELECT user_id, user_nickname FROM tb_user) ur   ");
+//            delQuarry.append(" WHERE fl.f_id = ur.user_id                                  ");
+//            delQuarry.append("         AND fl.user_id = ?                                  ");
+//            delQuarry.append("         AND ur.user_nickname = ?                            ");
 
             try {
                 conn = dbMgr.getConnection();
                 pstmt = conn.prepareStatement(sql);
 
                 pstmt.setString(1, uservo.getUser_id());
-                pstmt.setString(2, selectID);
+                pstmt.setString(2, f_id);
 
                 // 쿼리 동작 레코드 수
                 // 성공: 1 / 실패: 0
