@@ -329,7 +329,7 @@ public class FriendLogic {
             // 해당 ID 친구 추가
             String selectID = "";
 
-            String findID = "SELECT user_id FROM tb_user WHERE user_nickname = ?";
+            String findID = " SELECT user_id FROM tb_user WHERE user_nickname = ? ";
 
             try {
                 conn = dbMgr.getConnection();
@@ -339,7 +339,9 @@ public class FriendLogic {
 
                 rs = pstmt.executeQuery();
 
-                selectID = rs.getString(1);
+                while (rs.next()) {
+                    selectID = rs.getString(1);
+                }
 
             } catch (SQLException se) {
                 se.printStackTrace();
@@ -506,24 +508,24 @@ public class FriendLogic {
         int r = 0;
 
         uVO.setUser_id("banana@email.com");
-        String selectName1 = "바나나";
-        String selectName2 = "자고싶어2";
+        String selectNick1 = "banana1";
+        String selectNick2 = "자고싶어2";
         //
         // // 친구추가
-        //// r = fl.addFriend(uVO, selectID1);
-        //// System.out.println(r);
+         r = fl.addFriend(uVO, selectNick1);
+         System.out.println(r);
         //
         // // 친구 삭제
         //// r = fl.delFriend(uVO, selectID);
         //// System.out.println(r);
         //
         // // 친구 조회
-        List<Object> m = new ArrayList<>();
-        m = fl.findFriend(uVO, selectName2);
-        // m = fl.findFriend(selectName1);
-        //
-        // // 친구 리스트 출력
-        List<Object> l = new ArrayList<Object>();
-        // l = fl.printFriend(uVO);
+//        List<Object> m = new ArrayList<>();
+//        m = fl.findFriend(uVO, selectName2);
+//        // m = fl.findFriend(selectName1);
+//        //
+//        // // 친구 리스트 출력
+//        List<Object> l = new ArrayList<Object>();
+//        // l = fl.printFriend(uVO);
     }
 }
