@@ -6,6 +6,7 @@ import banana_project.client.mypage.MyPage;
 import banana_project.client.room.ChatRoom;
 import banana_project.server.thread.Protocol;
 import banana_project.server.vo.ChatListVO;
+import banana_project.server.vo.ChatUserListVO;
 import banana_project.server.vo.UserVO;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 public class Main implements ActionListener, MouseListener {
@@ -204,7 +206,7 @@ public class Main implements ActionListener, MouseListener {
 
         for (int i = 0; i < list.size(); i++) {
             clVO = list.get(i);
-            dlm.addElement(clVO.getChat_title());
+            dlm.addElement(clVO.getChat_no() + "|" + clVO.getChat_title());     //  번호|타이틀
         }
     }
 
@@ -271,6 +273,7 @@ public class Main implements ActionListener, MouseListener {
             jbtn_firChan.setText("친구 추가");
             jlb_secChan.setText(userNick + "님의 친구");
             jsp_display.getVerticalScrollBar().setValue(0);
+
             // 사용자의 친구목록 불러오기 500#아이디
             try {
                 client.oos.writeObject(Protocol.PRT_FRDLIST
@@ -278,6 +281,7 @@ public class Main implements ActionListener, MouseListener {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
+
             // 활성화 버튼 색 변경
             jbtn_friends.setBackground(Color.white);
             jbtn_friends.setForeground(new Color(130, 65, 60));
@@ -292,6 +296,14 @@ public class Main implements ActionListener, MouseListener {
             jbtn_firChan.setText("새 채팅");
             jlb_secChan.setText(userNick + "님의 채팅방");
             jsp_display.getVerticalScrollBar().setValue(0);
+
+            // 사용자 채팅리스트 출력 502#아이디
+            try {
+                client.oos.writeObject(Protocol.PRT_CHATLIST
+                        + Protocol.seperator + userId);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
 
             // 활성화 버튼 색 변경
             jbtn_chat.setBackground(Color.white);
@@ -372,9 +384,16 @@ public class Main implements ActionListener, MouseListener {
                     if (result == JOptionPane.YES_OPTION) {
                         // 서버로 닉네임 전달 512#채팅방번호 -> 채팅방번호로 수정필요!!
                         dlm.removeElement(selChat);
+
+                        // 채팅리스트 "번호|타이틀"
+                        // print_chatList() 참조
+                        StringTokenizer selChatTok = new StringTokenizer(selChat, "|");
+                        int chatNum = Integer.parseInt(selChatTok.nextToken());        // 채팅방 번호
+
                         try {
                             client.oos.writeObject(Protocol.DEL_CHAT
-                                    + Protocol.seperator + selChat);
+                                    + Protocol.seperator + userId
+                                    + Protocol.seperator + chatNum);
                         } catch (Exception e1) {
                             e1.printStackTrace();
                         }
