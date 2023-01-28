@@ -29,12 +29,12 @@ public class ChatRoom implements ActionListener, FocusListener {
     /**
      * 서버 연결부 선언
      */
-    StringTokenizer st = null;
     Client client = null;
     String userId = null;
     String userNick = null;
     String chatNo = null;
     String msg = null;
+    StringTokenizer setUser = null;
     // 채팅참여유저 담기
     String userList = null;
     // 날짜변수
@@ -71,16 +71,16 @@ public class ChatRoom implements ActionListener, FocusListener {
         this.userNick = userNick;
         this.chatNo = chatNo;
         this.userList = userList; // 닉네임#닉네임 형식
-        st = new StringTokenizer(userList, ",");
+        setUser = new StringTokenizer(userList, ",");
 
         // 채팅방 상단 그룹채팅(참여멤버숫자) 표시
-        if (st.countTokens() > 2) {
-            jbtn_fNick.setText("그룹채팅(" + st.countTokens() + ")");
+        if (setUser.countTokens() > 2) {
+            jbtn_fNick.setText("그룹채팅(" + setUser.countTokens() + ")");
         }
         // 채팅방 상단 1:1채팅 상대닉네임 표시
         else {
-            for (int i = 0; i < st.countTokens(); i++) {
-                String tempNick = st.nextToken();
+            for (int i = 0; i < setUser.countTokens(); i++) {
+                String tempNick = setUser.nextToken();
                 if (!userNick.equals(tempNick)) {
                     jbtn_fNick.setText(tempNick);
                 }

@@ -321,8 +321,9 @@ public class ClientThread extends Thread {
            */
           // 채팅방 만들기 성공 606
           case Protocol.CREATE_CHAT: {
+            String userList = st.nextToken();
             System.out.println("다이얼로그 - 채팅방 만들기");
-            client.main.flDialog.create_chatroom();
+            client.main.flDialog.create_chatroom(userList);
           }
             break;
 

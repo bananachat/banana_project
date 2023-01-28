@@ -59,7 +59,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         jl_list = new JList(dlm);
 
         // 임시 리스트 출력
-//        createList();
+        // createList();
 
         // 친구검색 출력 600#아이디
         try {
@@ -114,7 +114,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         // [Center]
         // 친구 리스트 출력
         jp_center.removeAll();
-
 
         jsp_display.setBorder(new LineBorder(Color.white, 0));
         jsp_display.setBounds(20, 75, 294, 225);
@@ -216,11 +215,12 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     public void fail_add_friend() {
         // 실패 후 필요한 작업 작성
         // 대충 이런?
-        JOptionPane.showMessageDialog(this, "친구 추가에 실패하였습니다.", "info", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "친구 추가에 실패하였습니다.", "친구 추가", JOptionPane.INFORMATION_MESSAGE,
+                setImage.img_notFound);
     }
 
     // 채팅방 생성 성공
-    public void create_chatroom() {
+    public void create_chatroom(String userList) {
         dlm.clear(); // 친구리스트 초기화
         copy_list.clear(); // 선택한 친구리스트 초기화
 
@@ -234,7 +234,8 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
     // 채팅방 생성 실패
     public void fail_create_chatroom() {
-        JOptionPane.showMessageDialog(this, "채팅방 생성 실패하였습니다.", "info", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "채팅방 생성 실패하였습니다.", "새 채팅", JOptionPane.INFORMATION_MESSAGE,
+                setImage.img_notFound);
     }
 
     ////////////////////////// [이벤트] //////////////////////////
@@ -245,7 +246,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         if (obj == jbtn_search || obj == jtf_search) {
             // 친구 검색 이벤트 호출
             System.out.println("search 이벤트 호출");
-            String nickname =  jtf_search.getText();
+            String nickname = jtf_search.getText();
 
             System.out.println("입력값 : \"" + nickname + "\"");
 
@@ -258,7 +259,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-            } else if ("새 채팅".equals(title)){
+            } else if ("새 채팅".equals(title)) {
                 // 친구 중에 검색 603#아이디#사용자닉네임
                 try {
                     this.main.client.oos.writeObject(Protocol.SRCH_FRIEDNDS
@@ -268,7 +269,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                     e2.printStackTrace();
                 }
             }
-
 
         } // end of 친구 검색
 
@@ -283,7 +283,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 // 친구 선택을 안했을 경우
                 System.out.println("선택한 친구가 없음");
                 msg = "친구를 선택하세요";
-                JOptionPane.showMessageDialog(this, msg, "info", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, msg, "친구 추가", JOptionPane.INFORMATION_MESSAGE, setImage.img_info);
             } else {
                 // 선택한 친구들 리스트, num 변수에 추가
                 for (int i = 0; i < copy_list.size() - 1; i++) {
@@ -294,7 +294,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
                 // 상황별 메시지 변경
                 if ("친구 추가".equals(title)) {
-//                if ("친구 추가".equals(main.jbtn_firChan.getText())) {
+                    // if ("친구 추가".equals(main.jbtn_firChan.getText())) {
                     System.out.println("친구 추가...");
 
                     msg = num + "을(를) 친구 추가합니다";
@@ -310,7 +310,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                     }
 
                 } else if ("새 채팅".equals(title)) {
-//                } else if ("새 채팅".equals(main.jbtn_firChan.getText())) {
+                    // } else if ("새 채팅".equals(main.jbtn_firChan.getText())) {
                     System.out.println("새 채팅...");
 
                     msg = num + "와(과) 채팅 시작합니다";
@@ -334,7 +334,8 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
                 jl_list.removeListSelectionListener(this); // 이벤트 해제
 
-                JOptionPane.showMessageDialog(this, msg, "info", JOptionPane.INFORMATION_MESSAGE);
+                // JOptionPane.showMessageDialog(this, msg, "info",
+                // JOptionPane.INFORMATION_MESSAGE);
                 System.out.println(msg);
 
                 dlm.clear(); // 친구리스트 초기화

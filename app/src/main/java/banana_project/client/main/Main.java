@@ -391,7 +391,7 @@ public class Main implements ActionListener, MouseListener {
                 // 선택한 값이 있을 경우
                 else {
                     // 확인하는 JOP
-                    int result = JOptionPane.showConfirmDialog(null, selChat + "을 삭제하시겠습니까?", "채팅 목록",
+                    int result = JOptionPane.showConfirmDialog(client, "채팅방을 삭제하시겠습니까?", "채팅 목록",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_delete);
                     // yes를 눌렀을 때
                     if (result == JOptionPane.YES_OPTION) {

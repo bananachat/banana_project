@@ -625,15 +625,22 @@ public class ServerThread extends Thread {
             int result = 0;// 초기값 대충,,,
 
             // 친구 목록 생성
-            String[] friendList = friendId.split(",");
-            for (int i = 0; i < friendList.length - 1; i++) {
-              result = friendLogic.addFriend(UserVO.builder().user_id(userId).build(), friendList[i]);
+            if (friendId.contains(",")) {
+              String[] friendList = friendId.split(",");
+              for (int i = 0; i < friendList.length - 1; i++) {
+                result = friendLogic.addFriend(UserVO.builder().user_id(userId).build(), friendList[i]);
+                server.jta_log.append("result: " + result + "\n");
+              }
+            } else {
+              result = friendLogic.addFriend(UserVO.builder().user_id(userId).build(), friendId);
+              server.jta_log.append("result: " + result + "\n");
             }
+
             switch (result) {
-              case 1 -> { // 이벤트 성공
+              case 605 -> { // 이벤트 성공
                 oos.writeObject(Protocol.ADD_FRIEND); // 605로 전달 (검색버튼(친구추가 → 모든 사용자 중에 검색))
               }
-              case -1 -> { // 이벤트 실패
+              case 607 -> { // 이벤트 실패
                 oos.writeObject(Protocol.FAIL_ADD_FRIEND); // 612로 전달 (친구 추가 실패)
               }
             }
@@ -657,7 +664,8 @@ public class ServerThread extends Thread {
 
             switch (result) {
               case Protocol.CREATE_CHAT -> {
-                oos.writeObject(Protocol.CREATE_CHAT); // 606로 전달 (채팅방 만들기 성공)
+                oos.writeObject(Protocol.CREATE_CHAT
+                    + Protocol.seperator + userList); // 606#유저목록 전달 (채팅방 만들기 성공)
               }
 
               case Protocol.FAIL_CRE_CHAT -> {
