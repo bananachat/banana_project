@@ -34,6 +34,7 @@ public class Protocol {
     public static final int	NF_FACNT = 402;	        //계정 존재하지 않음
     public static final int	EXIST_FACNT = 403;      //계정이 존재함
     public static final int	RESET_PW = 404; 	    //비밀번호 재설정
+    public static final int	RESETFAIL_PW = 405; 	    //비밀번호 재설정실패
 
     //          [리스트 화면]           //
     public static final int	PRT_FRDLIST = 500; 	    //친구목록 출력
