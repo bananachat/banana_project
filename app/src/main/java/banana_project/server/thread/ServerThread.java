@@ -409,6 +409,7 @@ public class ServerThread extends Thread {
                 ctitle = lChatList.get(lChatList.size() - 1).getChat_title();
 
                 resultList += (chNo + "|" + ctitle);
+                System.out.println("채팅리스트 : " + resultList);
 
                 oos.writeObject(Protocol.PRT_CHATLIST
                     + Protocol.seperator + resultList); // 502: 채팅리스트 출력

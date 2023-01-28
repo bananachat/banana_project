@@ -57,14 +57,10 @@ public class ChatListLogic {
 
         // 리턴값
         Map<String, Object> mResult = new HashMap<>();
-
         List<ChatListVO> lChatList = new ArrayList<>();
-        Vector<String> vChatNo = new Vector<String>();
-        Vector<String> vChatTitle = new Vector<String>();
 
         // 쿼리결과 기본 false
         Boolean result = false;
-
 
         // 로그 작성
         // Protocol 508 : BTN_CHATLIST, 채팅방목록 버튼 클릭
@@ -92,6 +88,7 @@ public class ChatListLogic {
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
+                //TODO: 리스트 출력 이슈
                 ChatListVO clVO = new ChatListVO();
                 clVO.setChat_no(rs.getInt(1));
                 clVO.setChat_title(rs.getString(2));
@@ -294,7 +291,7 @@ public class ChatListLogic {
         }
 
         // TODO: 만약에 모든 쿼리가 정상적으로 안될 경우, 추가한 데이터들 삭제 로직 작성 필요
-        System.out.println(protocol);
+        System.out.println("결과 프로토콜 : " + protocol);
 
         return protocol;
     } // end of createChat (채팅방 생성)
@@ -307,7 +304,7 @@ public class ChatListLogic {
         UserVO uVO = new UserVO();
         FriendLogic fl = new FriendLogic();
 
-        uVO.setUser_id("test10");
+        uVO.setUser_id("hong@mail.com");
 
         int i = 0;
         Map<String, Object> map = new HashMap<String, Object>();
@@ -315,10 +312,10 @@ public class ChatListLogic {
         String userList = "banana1, 장군님이나가신다1, 자고싶어2";
 
         // 채팅방 출력
-//        map = cl.printChatList(uVO);
+        map = cl.printChatList(uVO);
 
         // 채팅방 만들기
-        i = cl.createChat(userList);
+//        i = cl.createChat(userList);
     }
 
 }

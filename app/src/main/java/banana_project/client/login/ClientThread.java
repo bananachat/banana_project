@@ -189,7 +189,6 @@ public class ClientThread extends Thread {
           case Protocol.PRT_CHATLIST: {
             System.out.println("채팅리스트 존재");
             List<ChatListVO> chatList = new ArrayList<>();
-            ChatListVO chatListVO = new ChatListVO();
             Vector<String> vList = new Vector<>();
             StringTokenizer cl = null;
 
@@ -197,8 +196,12 @@ public class ClientThread extends Thread {
               String list = st.nextToken();
               vList.add(list); // 채팅번호|채팅명
             }
+            System.out.println("클스리스트 : " + vList);
+
             for (int i = 0; i < vList.size(); i++) {
               cl = new StringTokenizer(vList.get(i), "|");
+              ChatListVO chatListVO = new ChatListVO();
+
               chatListVO.setChat_no(Integer.parseInt(cl.nextToken()));
               chatListVO.setChat_title(cl.nextToken());
 
