@@ -320,12 +320,12 @@ public class ServerThread extends Thread {
           case Protocol.RESET_PW: {
             String userId = st.nextToken();
             String userPw = st.nextToken();
-            String userNw = st.nextToken();
-            int result = memberLogic.updateUserPW(UserVO.builder().user_pw(userNw).user_id(userId).build());
-            oos.writeObject(Protocol.RESET_PW);
+            int result = memberLogic.updateUserPW(UserVO.builder().user_pw(userPw).user_id(userId).build());
             if (result > 0) {
-              // 비밀번호 재설정 성공
+              oos.writeObject(Protocol.RESET_PW);
+              // 비밀번호 재설정 성공#404
             } else {
+              oos.writeObject(Protocol.RESETFAIL_PW);
               // 비밀번호 재설정 실패
             }
           }

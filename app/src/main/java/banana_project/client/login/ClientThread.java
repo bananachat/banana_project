@@ -149,11 +149,18 @@ public class ClientThread extends Thread {
           /**
            * PwFindDialog 스레드 -> 아직 미구현!!
            */
+          //비밀번호 재설정 성공#404
           case Protocol.RESET_PW: {
             client.pwfind.pwFindDialog.reset_pw();
-
-          }
             break;
+          }
+          //비밀번호 재설정 실패 #405
+          case Protocol.RESETFAIL_PW: {
+            client.pwfind.pwFindDialog.fail_pw();
+
+          break;
+          }
+ 
 
           /**
            * Main 스레드

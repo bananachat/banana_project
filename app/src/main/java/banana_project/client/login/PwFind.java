@@ -110,7 +110,7 @@ public class PwFind implements ActionListener, FocusListener {
   // 비번찾기 계정이 존재할때 메소드
   public void exist_facnt(String userId) {
     pwFindDialog = new PwFindDialog(this);
-    pwFindDialog.initDisplay();
+    pwFindDialog.initDisplay(userId);
   }
 
   // 비번찾기 계정이 존재하지 않을때 메소드
