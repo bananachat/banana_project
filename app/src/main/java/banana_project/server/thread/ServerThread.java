@@ -9,11 +9,13 @@ import banana_project.server.logic.ChatListLogic;
 import banana_project.server.logic.ChatLogic;
 import banana_project.server.vo.ChatContentsVO;
 import banana_project.server.vo.ChatListVO;
+import banana_project.server.vo.ChatUserListVO;
 import com.google.common.collect.ImmutableBiMap.Builder;
 
 import banana_project.server.logic.FriendLogic;
 import banana_project.server.logic.MemberLogic;
 import banana_project.server.vo.UserVO;
+import org.checkerframework.checker.units.qual.C;
 
 public class ServerThread extends Thread {
   MemberLogic memberLogic = null;
@@ -457,9 +459,13 @@ public class ServerThread extends Thread {
            * main 채팅방 삭제
            */
           case Protocol.DEL_CHAT: {
+            String userId = st.nextToken();
             String selChat = st.nextToken();
+
+            ChatUserListVO chatlistvo = ChatUserListVO.builder().user_id(userId).chat_no(Integer.parseInt(selChat)).build();
+
             server.jta_log.append("채팅방 삭제 DB 체크 시작" + "\n");
-            int result = chatLogic.delChatContents(null);
+            int result = chatLogic.delChatContents(chatlistvo);
             server.jta_log.append("result: " + result + "\n");
             switch (result) {
               // 채팅방 삭제 성공
@@ -555,45 +561,6 @@ public class ServerThread extends Thread {
             }
           }
             break;
-
-          /**
-           * [Main 다이얼로그 - 친구검색 출력(새채팅 → 친구목록)]
-           * 602 : PRT_FRIENDS = 친구검색 출력(새채팅 → 친구목록)
-           * 604 : NF_RESULT = 친구 검색 결과가 없음
-           * 800 : FAIL_CONN = 데이터베이스 접속 실패
-           */
-          // case Protocol.PRT_FRIENDS: {
-          // String userId = st.nextToken();
-          //
-          // // DB등록 및 체크
-          // server.jta_log.append("친구목록 DB 체크 시작" + "\n");
-          //
-          // List<Object> list =
-          // friendLogic.printFriend(UserVO.builder().user_id(userId).build());
-          //
-          // // 결과 프로토콜
-          // int result = Integer.parseInt(list.get(0).toString());
-          // server.jta_log.append("Result: " + result + "\n");
-          //
-          // switch (result) {
-          // case Protocol.EXIST_FRIEND: { // 607 : 친구 검색 존재
-          // String fList = String.valueOf(list.get(1));
-          // oos.writeObject(Protocol.PRT_FRDLIST
-          // + Protocol.seperator + fList); // 500로 전달 (친구목록 출력)
-          // }
-          // break;
-          // case Protocol.NF_RESULT: { // 604 : 친구 검색 결과가 없음
-          // oos.writeObject(Protocol.NF_FRDLIST); // 501로 전달 (친구리스트 없음)
-          // }
-          // break;
-          // case Protocol.FAIL_CONN: { // 800 : 데이터베이스 접속 실패
-          // System.out.println("DB 연결 실패");
-          // oos.writeObject(Protocol.NF_RESULT); // 501로 전달 (친구리스트 없음)
-          // }
-          // break;
-          // }
-          // }
-          // break;
 
           /**
            * [Main 다이얼로그 - 검색버튼(친구 중에 검색)]
