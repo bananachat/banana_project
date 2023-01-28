@@ -71,7 +71,7 @@ public class ChatRoom implements ActionListener, FocusListener {
         this.userNick = userNick;
         this.chatNo = chatNo;
         this.userList = userList; // 닉네임#닉네임 형식
-        st = new StringTokenizer(userList, "#");
+        st = new StringTokenizer(userList, ",");
 
         // 채팅방 상단 그룹채팅(참여멤버숫자) 표시
         if (st.countTokens() > 2) {

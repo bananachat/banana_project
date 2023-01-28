@@ -206,7 +206,7 @@ public class Main implements ActionListener, MouseListener {
 
         for (int i = 0; i < list.size(); i++) {
             clVO = list.get(i);
-            dlm.addElement(clVO.getChat_no() + "|" + clVO.getChat_title());     //  번호|타이틀
+            dlm.addElement(clVO.getChat_no() + "|" + clVO.getChat_title()); // 번호|타이틀
         }
     }
 
@@ -300,7 +300,6 @@ public class Main implements ActionListener, MouseListener {
             jbtn_firChan.setText("새 채팅");
             jlb_secChan.setText(userNick + "님의 채팅방");
             jsp_display.getVerticalScrollBar().setValue(0);
-
             // 사용자 채팅리스트 출력 502#아이디
             try {
                 client.oos.writeObject(Protocol.PRT_CHATLIST
@@ -325,15 +324,17 @@ public class Main implements ActionListener, MouseListener {
         if (e.getComponent() == jl_list) {
             // jl_list 목록을 두번 눌렀을때 이벤트
             if (e.getClickCount() == 2) {
-                String msg = jl_list.getSelectedValue() + "을 두번 눌렀습니다.";
-                JOptionPane.showMessageDialog(client, msg, "info", JOptionPane.INFORMATION_MESSAGE);
-
+                // String msg = jl_list.getSelectedValue() + "을 두번 눌렀습니다.";
+                // JOptionPane.showMessageDialog(client, msg, "info",
+                // JOptionPane.INFORMATION_MESSAGE);
                 // 채팅방을 더블클릭 -> 채팅방열기
                 if ("채팅 목록".equals(client.getTitle())) {
-                    selChat = (String) jl_list.getSelectedValue(); // 채팅방번호로 수정필요!
-                    String userList = (String) jl_list.getSelectedValue(); // 채팅방이름(닉네임#닉네임)
+                    selChat = (String) jl_list.getSelectedValue();
+                    StringTokenizer selChatTok = new StringTokenizer(selChat, "|");
+                    String chatNum = selChatTok.nextToken(); // 채팅방 번호
+                    String userList = selChatTok.nextToken(); // 채팅방이름(유저리스트)
                     // 채팅방 열림
-                    chatRoom = new ChatRoom(client, userId, userNick, selChat, userList);
+                    chatRoom = new ChatRoom(client, userId, userNick, chatNum, userList);
                     chatRoom.initDisplay();
                 }
             }
@@ -394,14 +395,12 @@ public class Main implements ActionListener, MouseListener {
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_delete);
                     // yes를 눌렀을 때
                     if (result == JOptionPane.YES_OPTION) {
-                        // 서버로 닉네임 전달 512#채팅방번호 -> 채팅방번호로 수정필요!!
-                        dlm.removeElement(selChat);
-
                         // 채팅리스트 "번호|타이틀"
                         // print_chatList() 참조
                         StringTokenizer selChatTok = new StringTokenizer(selChat, "|");
-                        int chatNum = Integer.parseInt(selChatTok.nextToken());        // 채팅방 번호
+                        int chatNum = Integer.parseInt(selChatTok.nextToken()); // 채팅방 번호
 
+                        // 서버로 닉네임 전달 512#채팅방번호
                         try {
                             client.oos.writeObject(Protocol.DEL_CHAT
                                     + Protocol.seperator + userId

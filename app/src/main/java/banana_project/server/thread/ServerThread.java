@@ -464,10 +464,10 @@ public class ServerThread extends Thread {
           // 512#아이디#채팅방번호
           case Protocol.DEL_CHAT: {
             String userId = st.nextToken();
-            String userId = st.nextToken();
-            String selChat = st.nextToken();
+            String chatNum = st.nextToken();
 
-            ChatUserListVO chatlistvo = ChatUserListVO.builder().user_id(userId).chat_no(Integer.parseInt(selChat)).build();
+            ChatUserListVO chatlistvo = ChatUserListVO.builder().user_id(userId).chat_no(Integer.parseInt(chatNum))
+                .build();
 
             server.jta_log.append("채팅방 삭제 DB 체크 시작" + "\n");
             int result = chatLogic.delChatContents(chatlistvo);
