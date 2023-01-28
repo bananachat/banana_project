@@ -71,7 +71,7 @@ public class ChatRoom implements ActionListener, FocusListener {
         this.userNick = userNick;
         this.chatNo = chatNo;
         this.userList = userList; // 닉네임#닉네임 형식
-        setUser = new StringTokenizer(userList, ",");
+        setUser = new StringTokenizer(userList, ", ");
 
         // 채팅방 상단 그룹채팅(참여멤버숫자) 표시
         if (setUser.countTokens() > 2) {
@@ -79,20 +79,21 @@ public class ChatRoom implements ActionListener, FocusListener {
         }
         // 채팅방 상단 1:1채팅 상대닉네임 표시
         else {
-            for (int i = 0; i < setUser.countTokens(); i++) {
-                String tempNick = setUser.nextToken();
-                if (!userNick.equals(tempNick)) {
-                    jbtn_fNick.setText(tempNick);
-                }
+            String tempNick1 = setUser.nextToken();
+            String tempNick2 = setUser.nextToken();
+            if (!userNick.equals(tempNick1)) {
+                jbtn_fNick.setText(tempNick1);
+            } else {
+                jbtn_fNick.setText(tempNick2);
             }
         }
         // 채팅방 정보 불러오기
-        // try {
-        // client.oos.writeObject(Protocol.CHAT_START
-        // + Protocol.seperator + chatNo);
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
+        try {
+            client.oos.writeObject(Protocol.CHAT_START
+                    + Protocol.seperator + chatNo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -133,6 +134,7 @@ public class ChatRoom implements ActionListener, FocusListener {
         jtp_chat.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
         jtp_chat.setFont(setFontNJOp.b16);
         jtp_chat.setBackground(Color.white);
+        jtp_chat.setCaretPosition(jtp_chat.getDocument().getLength());
         jtp_chat.setEditable(false);
 
         // 스크롤바 설정
@@ -189,9 +191,10 @@ public class ChatRoom implements ActionListener, FocusListener {
      */
     public void chat_start(List<Map<String, String>> rList) {
         for (int i = 0; i < rList.size(); i++) {
+            String chatCont = rList.get(i).get("chatCont");
             String chatDate2 = rList.get(i).get("chatDate");
             String chatNick = rList.get(i).get("chatNick");
-            String chatCont = rList.get(i).get("chatCont");
+            chatCont = rList.get(i).get("chatCont");
             // 날짜가 바뀔때마다 채팅방에 출력
             if (!chatDate.equals(chatDate2)) {
                 this.chatDate = chatDate2;
@@ -206,7 +209,7 @@ public class ChatRoom implements ActionListener, FocusListener {
                     // 폰트색상
                     sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(255, 200, 20));
                     // 가운데정렬
-                    StyleConstants.setAlignment(sas, StyleConstants.ALIGN_CENTER);
+                    // StyleConstants.setAlignment(sas, StyleConstants.ALIGN_CENTER);
                     doc.setParagraphAttributes(0, doc.getLength(), sas, false);
                     try {
                         sd_display.insertString(sd_display.getLength(),
@@ -218,38 +221,40 @@ public class ChatRoom implements ActionListener, FocusListener {
             }
             // 로그인유저가 친 채팅일 경우
             if (userNick.equals(chatNick)) {
+                msg = userNick + ": " + wrapText(chatCont, userNick.length());
                 // jtp text 설정
                 StyledDocument doc = jtp_chat.getStyledDocument();
                 SimpleAttributeSet sas = new SimpleAttributeSet();
                 // 폰트 컬러
                 sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(135, 90, 75));
                 // 오른쪽 정렬
-                StyleConstants.setAlignment(sas, StyleConstants.ALIGN_RIGHT);
+                // StyleConstants.setAlignment(sas, StyleConstants.ALIGN_RIGHT);
                 doc.setParagraphAttributes(0, doc.getLength(), sas, false);
                 try {
-                    sd_display.insertString(sd_display.getLength(), wrapText(msg) + "\n", sas);
+                    sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
                 } catch (Exception e2) {
                     e2.printStackTrace();
                 }
             }
             // 다른 유저가 친 채팅일 경우
             else {
-                msg = chatNick + ": " + chatCont;
+                msg = chatNick + ": " + wrapText(chatCont, chatNick.length());
                 // jtp text 설정
                 StyledDocument doc = jtp_chat.getStyledDocument();
                 SimpleAttributeSet sas = new SimpleAttributeSet();
                 // 폰트 컬러
                 sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(80, 114, 167));
                 // 왼쪽 정렬
-                StyleConstants.setAlignment(sas, StyleConstants.ALIGN_LEFT);
+                // StyleConstants.setAlignment(sas, StyleConstants.ALIGN_LEFT);
                 doc.setParagraphAttributes(0, doc.getLength(), sas, false);
                 try {
-                    sd_display.insertString(sd_display.getLength(), wrapText(msg) + "\n", sas);
+                    sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
+        jtp_chat.setCaretPosition(jtp_chat.getDocument().getLength());
     }
 
     /**
@@ -260,20 +265,21 @@ public class ChatRoom implements ActionListener, FocusListener {
      */
     public void recv_msg(String recvNo, String recvNick, String recvMsg) {
         if (!userNick.equals(recvNick) && chatNo.equals(recvNo)) {
-            msg = recvNick + ": " + recvMsg;
+            msg = recvNick + ": " + wrapText(recvMsg, recvNick.length());
             // jtp text 설정
             StyledDocument doc = jtp_chat.getStyledDocument();
             SimpleAttributeSet sas = new SimpleAttributeSet();
             // 폰트 컬러
             sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(80, 114, 167));
             // 왼쪽 정렬
-            StyleConstants.setAlignment(sas, StyleConstants.ALIGN_LEFT);
+            // StyleConstants.setAlignment(sas, StyleConstants.ALIGN_LEFT);
             doc.setParagraphAttributes(0, doc.getLength(), sas, false);
             try {
-                sd_display.insertString(sd_display.getLength(), wrapText(msg) + "\n", sas);
+                sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            jtp_chat.setCaretPosition(jtp_chat.getDocument().getLength());
         }
     }
 
@@ -289,22 +295,22 @@ public class ChatRoom implements ActionListener, FocusListener {
      * @param msg
      * @return
      */
-    public String wrapText(String msg) {
+    public String wrapText(String msg, int nickCnt) {
         // 글자 끊어주기
         StringBuffer sb = new StringBuffer();
-        // 영어, 숫자 30자이상
-        if (Pattern.matches("^[a-zA-Z0-9]*$", msg) && msg.length() >= 30) {
+        // 영어, 숫자
+        if (Pattern.matches("^[a-zA-Z0-9]*$", msg) && msg.length() + nickCnt >= 30) {
             sb.append(" " + msg);
-            for (int i = 1; i < (msg.length() / 30) + 1; i++) {
-                sb.insert((29 * i), "\n");
+            for (int i = 0; i < (msg.length() / 30); i++) {
+                sb.insert(((29 - nickCnt) + (29 * i)), "\n");
             }
             msg = String.valueOf(sb);
         }
-        // 한글포함 15자이상
-        else if (msg.length() >= 15) {
+        // 한글포함
+        else if (msg.length() >= 18) {
             sb.append(" " + msg);
-            for (int i = 1; i < (msg.length() / 15) + 1; i++) {
-                sb.insert((14 * i), "\n");
+            for (int i = 1; i < (msg.length() / 18) + 1; i++) {
+                sb.insert((17 * i), "\n");
             }
             msg = String.valueOf(sb);
         }
@@ -341,10 +347,11 @@ public class ChatRoom implements ActionListener, FocusListener {
                 // 폰트 컬러
                 sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(135, 90, 75));
                 // 오른쪽 정렬
-                StyleConstants.setAlignment(sas, StyleConstants.ALIGN_RIGHT);
+                // StyleConstants.setAlignment(sas, StyleConstants.ALIGN_RIGHT);
                 doc.setParagraphAttributes(0, doc.getLength(), sas, false);
                 try {
-                    sd_display.insertString(sd_display.getLength(), wrapText(msg) + "\n", sas);
+                    sd_display.insertString(sd_display.getLength(),
+                            userNick + ": " + wrapText(msg, userNick.length()) + "\n", sas);
                     // 대화저장 707#채팅방넘버#아이디#닉네임#메시지
                     client.oos.writeObject(Protocol.SAVE_CHAT
                             + Protocol.seperator + chatNo
@@ -355,6 +362,7 @@ public class ChatRoom implements ActionListener, FocusListener {
                     e2.printStackTrace();
                 }
                 jtf_chat.setText("");
+                jtp_chat.setCaretPosition(jtp_chat.getDocument().getLength());
             }
         }
     }

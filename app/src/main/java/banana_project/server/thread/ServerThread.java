@@ -830,28 +830,38 @@ public class ServerThread extends Thread {
           case Protocol.CHAT_START: {
             int chatNo = Integer.parseInt(st.nextToken());
             // DB체크
-            server.jta_log.append("채팅방 불러오기 DB 체크 시작" + "\n");
+            server.jta_log.append(chatNo + "번 채팅방 불러오기 DB 체크" + "\n");
             List<ChatContentsVO> result = chatLogic.ChatCall(chatNo);
-            server.jta_log.append("result: " + result + "\n");
-            if (result != null) {
+            boolean isOk = !result.isEmpty();
+            server.jta_log.append("result: " + result + isOk + "\n");
+            if (isOk) {
+              server.jta_log.append("채팅내용 저장 시작" + "\n");
               String resultList = "";
               String date = "";
               String nick = "";
               String ccon = ""; // 채팅 내용
-              for (int i = 0; i < result.size() - 1; i++) {// -1인 이유? 문자열을 바꿀때 한번 더 돈다. 리스트 마지막번호
-                date = result.get(i).getChat_date();
-                nick = result.get(i).getUser_id();
-                ccon = result.get(i).getChat_content();
-                resultList += (date + "#" + nick + "#" + ccon + "#");
+              if (result.size() == 0) {
+                date = result.get(0).getChat_date();
+                nick = result.get(0).getUser_id();
+                ccon = result.get(0).getChat_content();
+                resultList += (date + "#" + nick + "#" + ccon);
+              } else {
+                for (int i = 0; i < result.size() - 1; i++) {// -1인 이유? 문자열을 바꿀때 한번 더 돈다. 리스트 마지막번호
+                  date = result.get(i).getChat_date();
+                  nick = result.get(i).getUser_id();
+                  ccon = result.get(i).getChat_content();
+                  resultList += (date + "#" + nick + "#" + ccon + "#");
+                }
+                date = result.get(result.size() - 1).getChat_date();
+                nick = result.get(result.size() - 1).getUser_id();
+                ccon = result.get(result.size() - 1).getChat_content();
+                resultList += (date + "#" + nick + "#" + ccon);
               }
-              date = result.get(result.size() - 1).getChat_date();
-              nick = result.get(result.size() - 1).getUser_id();
-              ccon = result.get(result.size() - 1).getChat_content();
-              resultList += (date + "#" + nick + "#" + ccon);
               // 클라이언트에 전송 700#채팅방번호#결과(날짜#닉네임#채팅내용)
               oos.writeObject(Protocol.CHAT_START
                   + Protocol.seperator + chatNo
                   + Protocol.seperator + resultList);
+              server.jta_log.append("채팅내용 전송 시작" + "\n");
               // this.chatNo = String.valueOf(chatNo);
             } else {
               server.jta_log.append("result: null" + "\n");

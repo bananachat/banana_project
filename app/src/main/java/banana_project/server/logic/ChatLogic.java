@@ -40,7 +40,6 @@ public class ChatLogic {
      * @return
      */
     public List<ChatContentsVO> ChatCall(int chatnum){ //채팅방 넘버만 간단하게 받아오기
-        //리턴값 -> 날짜(2023/01/21)#닉네임#채팅내용 String형식 바꿔주세요!
         List<ChatContentsVO> crs = new ArrayList<>();//chatcontentsVO를 리스트에 넣어줄려고
         ChatContentsVO ccvo=null; //sql로 디비에 있는거 받아서 담아주기
 
