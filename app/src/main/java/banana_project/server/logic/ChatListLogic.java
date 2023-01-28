@@ -224,21 +224,48 @@ public class ChatListLogic {
 
         for (int i=0; i<count; i++) {
             String stUserNick = st.nextToken();
+            String userID = "";
 
-            StringBuilder sql3 = new StringBuilder();
-            // insert into tb_chat_user_list (chat_no, user_id, flag)
-            // VALUES (?, (select user_id from tb_user where user_nickname = ?), 1);
-            sql3.append("INSERT INTO tb_chat_user_list (chat_no, user_id, flag) ");
-            sql3.append(" VALUES (?, ");        // maxNum
-            sql3.append(" (SELECT user_id FROM tb_user WHERE user_nickname = ? ) "); // stUserID
-            sql3.append(" , 1) ");
+            String selID = "SELECT user_id FROM tb_user WHERE user_nickname = ? "; // 사용자 ID로 반
 
             try {
                 conn = dbMgr.getConnection();
-                pstmt = conn.prepareStatement(sql3.toString());
+                pstmt = conn.prepareStatement(selID);
+
+                pstmt.setString(1, stUserNick);
+
+                rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+                    userID = rs.getString(1);
+                }
+
+            } catch (SQLException se) {
+                se.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                // DB 사용한 자원 반납
+                try {
+                    dbMgr.freeConnection(conn, pstmt, rs);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            System.out.println("사용자 ID : " + userID);
+
+//            StringBuilder sql3 = new StringBuilder();
+            // insert into tb_chat_user_list (chat_no, user_id, flag)
+            // VALUES (?, (select user_id from tb_user where user_nickname = ?), 1);
+            String sql3 = "INSERT INTO tb_chat_user_list (chat_no, user_id, flag) VALUES ( ?, ? , 1) ";
+
+            try {
+                conn = dbMgr.getConnection();
+                pstmt = conn.prepareStatement(sql3);
 
                 pstmt.setInt(1, maxNum);
-                pstmt.setString(2, stUserNick);
+                pstmt.setString(2, userID);
 
                 // 쿼리 동작 레코드 수
                 // 성공: 1 / 실패: 0
@@ -267,6 +294,7 @@ public class ChatListLogic {
         }
 
         // TODO: 만약에 모든 쿼리가 정상적으로 안될 경우, 추가한 데이터들 삭제 로직 작성 필요
+        System.out.println(protocol);
 
         return protocol;
     } // end of createChat (채팅방 생성)
@@ -284,13 +312,13 @@ public class ChatListLogic {
         int i = 0;
         Map<String, Object> map = new HashMap<String, Object>();
 
-        String userList = "test4, test5, test6";
+        String userList = "banana1, 장군님이나가신다1, 자고싶어2";
 
         // 채팅방 출력
-        map = cl.printChatList(uVO);
+//        map = cl.printChatList(uVO);
 
         // 채팅방 만들기
-//        i = cl.createChat(userList);
+        i = cl.createChat(userList);
     }
 
 }

@@ -293,7 +293,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 else {
                     // 선택한 친구들 리스트, num 변수에 추가
                     for (int i = 0; i < copy_list.size() - 1; i++) {
-                        num += (copy_list.get(i) + ",");
+                        num += (copy_list.get(i) + ", ");
                     }
                     // num += (copy_list.get(copy_list.size() - 1) + " "); -> ?
                     num += (copy_list.get(copy_list.size() - 1));
@@ -322,8 +322,8 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
                     msg = num + "와(과) 채팅 시작합니다";
 
-                    String user = main.userId; // 사용자 ID
-                    num += "," + user;
+                    String user = main.userNick; // 사용자 ID
+                    num += ", " + user;
 
                     // 채팅방 만들기 606#아이디#닉네임리스트
                     try {
