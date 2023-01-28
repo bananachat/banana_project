@@ -87,12 +87,12 @@ public class ChatRoom implements ActionListener, FocusListener {
             }
         }
         // 채팅방 정보 불러오기
-        // try {
-        // client.oos.writeObject(Protocol.CHAT_START
-        // + Protocol.seperator + chatNo);
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
+        try {
+            client.oos.writeObject(Protocol.CHAT_START
+                    + Protocol.seperator + chatNo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -128,14 +128,6 @@ public class ChatRoom implements ActionListener, FocusListener {
         jsp_display.setBounds(21, 65, 340, 410);
         jsp_display.getVerticalScrollBar().setUnitIncrement(16);
         jp_Pchat.add(jsp_display);
-        // jta
-        // jta_chat.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 20));
-        // jta_chat.setFont(setFontNJOp.b16);
-        // jta_chat.setForeground(new Color(135, 90, 75));
-        // jta_chat.setBackground(Color.white);
-        // jta_chat.setEditable(false);
-        // jta_chat.setLineWrap(true);
-        // jp_center.add(jta_chat);
 
         // jtp 설정
         jtp_chat.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
@@ -326,7 +318,7 @@ public class ChatRoom implements ActionListener, FocusListener {
         // 돌아가기 버튼
         if (obj == jbtn_back) {
             client.setContentPane(client.main.jp_main);
-            client.setTitle("친구 목록");
+            client.setTitle("채팅 목록");
             client.revalidate();
         }
 
@@ -351,21 +343,17 @@ public class ChatRoom implements ActionListener, FocusListener {
                 doc.setParagraphAttributes(0, doc.getLength(), sas, false);
                 try {
                     sd_display.insertString(sd_display.getLength(), wrapText(msg) + "\n", sas);
+                    // 대화저장 707#채팅방넘버#아이디#닉네임#메시지
+
+                    client.oos.writeObject(Protocol.SAVE_CHAT
+                            + Protocol.seperator + chatNo
+                            + Protocol.seperator + userId
+                            + Protocol.seperator + userNick
+                            + Protocol.seperator + msg);
                 } catch (Exception e2) {
                     e2.printStackTrace();
                 }
                 jtf_chat.setText("");
-
-                // 대화저장 707#채팅방넘버#아이디#닉네임#메시지
-                // try {
-                // client.oos.writeObject(Protocol.SAVE_CHAT
-                // + Protocol.seperator + chatNo
-                // + Protocol.seperator + userId
-                // + Protocol.seperator + userNick
-                // + Protocol.seperator + msg);
-                // } catch (Exception e2) {
-                // e2.printStackTrace();
-                // }
             }
         }
     }

@@ -182,7 +182,7 @@ public class ClientThread extends Thread {
           case Protocol.PRT_CHATLIST: {
             System.out.println("채팅리스트 존재");
             List<ChatListVO> chatList = new ArrayList<>();
-            ChatListVO chatListVO = null;
+            ChatListVO chatListVO = new ChatListVO();
             Vector<String> vList = new Vector<>();
             StringTokenizer cl = null;
 

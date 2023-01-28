@@ -285,12 +285,19 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 msg = "친구를 선택하세요";
                 JOptionPane.showMessageDialog(this, msg, "친구 추가", JOptionPane.INFORMATION_MESSAGE, setImage.img_info);
             } else {
-                // 선택한 친구들 리스트, num 변수에 추가
-                for (int i = 0; i < copy_list.size() - 1; i++) {
-                    num += (copy_list.get(i) + ",");
+                // 1명 선택했을 경우
+                if (copy_list.size() == 1){
+                    num = (copy_list.get(0));
                 }
-                // num += (copy_list.get(copy_list.size() - 1) + " "); -> ?
-                num += (copy_list.get(copy_list.size() - 1));
+                // 2명 이상 선택했을 경우
+                else {
+                    // 선택한 친구들 리스트, num 변수에 추가
+                    for (int i = 0; i < copy_list.size() - 1; i++) {
+                        num += (copy_list.get(i) + ",");
+                    }
+                    // num += (copy_list.get(copy_list.size() - 1) + " "); -> ?
+                    num += (copy_list.get(copy_list.size() - 1));
+                }
 
                 // 상황별 메시지 변경
                 if ("친구 추가".equals(title)) {
