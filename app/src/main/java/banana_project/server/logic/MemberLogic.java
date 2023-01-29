@@ -148,13 +148,18 @@ public class MemberLogic {
         //반환값 초기화
         int result = -1;
         //비밀번호 UPDATE sql 작성
-        String sql = "UPDATE TB_USER SET USER_PW=?, UPD_DATE=SYSDATE WHERE USER_ID=?";
+        String sql = "UPDATE TB_USER SET USER_PW=?, SALT=?, UPD_DATE=SYSDATE WHERE USER_ID=?";
         try {
+            //난수 생성
+            String salt = ep.getSalt();
+            //난수(Salt)를 합쳐서 PW 암호화
+            String password = ep.getEncrypt(uservo.getUser_pw(), salt);
             //회원 정보 업데이트 실행
             con = mgr.getConnection();
             pst = con.prepareStatement(sql);
-            pst.setString(1, uservo.getUser_pw());
-            pst.setString(2, uservo.getUser_id());
+            pst.setString(1, password);
+            pst.setString(2, salt);
+            pst.setString(3, uservo.getUser_id());
             result = pst.executeUpdate();
         } catch (SQLException se) { //SQLException 처리 로그 저장
             se.printStackTrace();
