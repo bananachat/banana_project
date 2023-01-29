@@ -226,7 +226,7 @@ public class MemJoin implements ActionListener, FocusListener {
     */
    public void exist_acnt() {
       JOptionPane.showMessageDialog(client, "이미 등록된 핸드폰번호입니다.", "회원가입", JOptionPane.ERROR_MESSAGE,
-            setImage.img_existAcnt);
+            setImage.img_exist);
    }
 
    /**
@@ -236,7 +236,7 @@ public class MemJoin implements ActionListener, FocusListener {
     */
    public void sign_sus(String userName) {
       JOptionPane.showMessageDialog(client, userName + "님의 바나나톡 가입을 축하합니다!", "회원가입", JOptionPane.ERROR_MESSAGE,
-            setImage.img_confirm);
+            setImage.img_add);
       client.setContentPane(client.jp_login);
       client.setTitle("바나나톡");
       client.revalidate();
@@ -325,7 +325,7 @@ public class MemJoin implements ActionListener, FocusListener {
          // 비밀번호 확인 불일치
          else if (!userPw.equals(userPwRe)) {
             JOptionPane.showMessageDialog(client, "비밀번호가 일치하지 않습니다.", "회원가입", JOptionPane.WARNING_MESSAGE,
-                  setImage.img_info);
+                  setImage.img_notFound);
          }
          // 아이디 중복확인을 하지 않았을 경우
          else if (!idTnF) {

@@ -51,7 +51,7 @@ public class Main implements ActionListener, MouseListener {
     JButton jbtn_firChan = new JButton("친구 추가"); // "친구추가 | 새 채팅"으로 텍스트 변환
 
     // [CENTER]
-    JLabel jlb_secChan = new JLabel(); // "친구 목록 | 채팅 목록"으로 텍스트 변환
+    public JLabel jlb_secChan = new JLabel(); // "친구 목록 | 채팅 목록"으로 텍스트 변환
     JLabel jlb_del = new JLabel("<HTML><U>삭제하기</U></HTML>");
     JPanel jp_center = new JPanel(); // 리스트 출력
     JScrollPane jsp_display = new JScrollPane(jp_center, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -215,28 +215,28 @@ public class Main implements ActionListener, MouseListener {
     // 친구 삭제 성공
     public void del_friend() {
         JOptionPane.showMessageDialog(client, "친구 삭제가 완료되었습니다.", "친구 목록", JOptionPane.WARNING_MESSAGE,
-                setImage.img_confirm);
+                setImage.img_add);
         selNick = "";
     }
 
     // 친구 삭제 실패
     public void fail_del_friend() {
         JOptionPane.showMessageDialog(client, "친구 삭제에 실패하였습니다..", "친구 목록", JOptionPane.WARNING_MESSAGE,
-                setImage.img_notFound);
+                setImage.img_delete);
         selNick = "";
     }
 
     // 채팅방 삭제 성공
     public void del_chat() {
         JOptionPane.showMessageDialog(client, "채팅방 삭제가 완료되었습니다.", "채팅 목록", JOptionPane.WARNING_MESSAGE,
-                setImage.img_confirm);
+                setImage.img_add);
         selChat = "";
     }
 
     // 채팅방 삭제 실패
     public void fail_del_chat() {
         JOptionPane.showMessageDialog(client, "채팅방 삭제에 실패하였습니다..", "채팅 목록", JOptionPane.WARNING_MESSAGE,
-                setImage.img_notFound);
+                setImage.img_delete);
         selChat = "";
     }
 
@@ -372,7 +372,7 @@ public class Main implements ActionListener, MouseListener {
                 // 선택한 값이 있을 경우
                 else {
                     // 확인하는 JOP
-                    int result = JOptionPane.showConfirmDialog(null, selNick + "님을 삭제하시겠습니까?", "친구 목록",
+                    int result = JOptionPane.showConfirmDialog(client, selNick + "님을 삭제하시겠습니까?", "친구 목록",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_delete);
                     // yes를 눌렀을 때
                     if (result == JOptionPane.YES_OPTION) {

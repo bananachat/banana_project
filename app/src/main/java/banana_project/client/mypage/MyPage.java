@@ -28,12 +28,12 @@ public class MyPage implements ActionListener {
    * 서버 연결부 선언
    */
   Client client = null;// 회원가입 프레임
-  Main main = null; // 메인화면 프레임
+  // Main main = null; // 메인화면 프레임
   String dbNick = null;
   String dbId = null;
   boolean nickTnF = false;
   String tempNick = null;
-    // 돌아가기 setTitle용
+  // 돌아가기 setTitle용
   String title = "";
 
   /**
@@ -298,11 +298,16 @@ public class MyPage implements ActionListener {
    */
   public void edit_mypage(String userNick) {
     dbNick = userNick;
-    main.setNick(userNick);
+    client.main.setNick(userNick);
     JOptionPane.showMessageDialog(client, "닉네임 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-        setImage.img_confirm);
+        setImage.img_add);
     client.setContentPane(client.main.jp_main);
     client.setTitle(title);
+    if ("친구 목록".equals(title)) {
+      client.main.jlb_secChan.setText(userNick + "님의 친구");
+    } else if ("채팅 목록".equals(title)) {
+      client.main.jlb_secChan.setText(userNick + "님의 채팅방");
+    }
     client.revalidate();
   }
 
@@ -311,7 +316,7 @@ public class MyPage implements ActionListener {
    */
   public void fail_mypage() {
     JOptionPane.showMessageDialog(client, "닉네임 변경에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-        setImage.img_notFound);
+        setImage.img_delete);
   }
 
   /**
@@ -319,11 +324,16 @@ public class MyPage implements ActionListener {
    */
   public void edit_mboth(String userNick) {
     dbNick = userNick;
-    main.setNick(userNick);
+    client.main.setNick(userNick);
     JOptionPane.showMessageDialog(client, "닉네임, 비밀번호 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-        setImage.img_confirm);
+        setImage.img_add);
     client.setContentPane(client.main.jp_main);
     client.setTitle(title);
+    if ("친구 목록".equals(title)) {
+      client.main.jlb_secChan.setText(userNick + "님의 친구");
+    } else if ("채팅 목록".equals(title)) {
+      client.main.jlb_secChan.setText(userNick + "님의 채팅방");
+    }
     client.revalidate();
   }
 
@@ -332,7 +342,7 @@ public class MyPage implements ActionListener {
    */
   public void fail_mboth() {
     JOptionPane.showMessageDialog(client, "닉네임,비밀번호 변경에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-        setImage.img_notFound);
+        setImage.img_delete);
   }
 
   /**
@@ -340,7 +350,7 @@ public class MyPage implements ActionListener {
    */
   public void edit_mpw() {
     JOptionPane.showMessageDialog(client, "비밀번호 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-        setImage.img_confirm);
+        setImage.img_add);
     client.setContentPane(client.main.jp_main);
     client.setTitle(title);
     client.revalidate();
@@ -352,16 +362,19 @@ public class MyPage implements ActionListener {
 
   public void fail_mpw() {
     JOptionPane.showMessageDialog(client, "비밀번호 변경에 실패하였습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
-        setImage.img_notFound);
+        setImage.img_delete);
   }
 
+  // 회원탈퇴
   public void del_acnt() {
-    JOptionPane.showMessageDialog(jd_resign, "바나나톡 탈퇴가 완료되었습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
-        setImage.img_delete);
+    JOptionPane.showMessageDialog(jd_resign, "바나나톡 탈퇴가 완료되었습니다.", "회원탈퇴",
+        JOptionPane.WARNING_MESSAGE,
+        setImage.img_packed);
     jd_resign.dispose();
     client.setContentPane(client.jp_login);
     client.setTitle("바나나톡");
     client.revalidate();
+
   }
 
   public void fail_dacnt() {
@@ -490,16 +503,20 @@ public class MyPage implements ActionListener {
         JOptionPane.showMessageDialog(jd_resign, "비밀번호를 입력해주세요.", "회원탈퇴",
             JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
-
-      // 아이디 비밀번호 DB체크
+      // 그 외의경우 탈퇴시작
       else {
-        try {
-          client.oos.writeObject(Protocol.DEL_ACNT + Protocol.seperator + userId + Protocol.seperator + userPw);
-
-        } catch (IOException ex) {
-          throw new RuntimeException(ex);
+        // 확인하는 JOP
+        int result = JOptionPane.showConfirmDialog(jd_resign, "정말로 바나나톡을 탈퇴하시겠습니까?", "회원탈퇴",
+            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_delete);
+        // yes를 눌렀을 때
+        if (result == JOptionPane.YES_OPTION) {
+          // 아이디 비밀번호 DB체크
+          try {
+            client.oos.writeObject(Protocol.DEL_ACNT + Protocol.seperator + userId + Protocol.seperator + userPw);
+          } catch (IOException ex) {
+            throw new RuntimeException(ex);
+          }
         }
-
       }
     }
     // 돌아가기 버튼을 눌렀을 때
@@ -515,7 +532,7 @@ public class MyPage implements ActionListener {
    */
   public static void main(String[] args) {
     Client c = new Client();
-    MyPage myPage = new MyPage(c, "test","test");
+    MyPage myPage = new MyPage(c, "test", "test");
     c.initDisplay();
     myPage.initDisplay();
   }

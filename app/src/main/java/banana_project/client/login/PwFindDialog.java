@@ -100,7 +100,7 @@ public class PwFindDialog extends JDialog implements ActionListener {
   // 비밀번호 재설정 성공
   public void reset_pw() {
     JOptionPane.showMessageDialog(this, "비밀번호가 재설정되었습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
-        setImage.img_confirm);
+        setImage.img_add);
     this.dispose();
     pwFind.client.setContentPane(pwFind.client.jp_login);
     pwFind.client.revalidate();
@@ -109,7 +109,7 @@ public class PwFindDialog extends JDialog implements ActionListener {
   // 비밀번호 재설정 실패
   public void fail_pw() {
     JOptionPane.showMessageDialog(this, "비밀번호재설정 실패하였습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
-        setImage.img_notFound);
+        setImage.img_delete);
     this.dispose();
     pwFind.client.setContentPane(pwFind.client.jp_login);
     pwFind.client.revalidate();

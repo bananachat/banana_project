@@ -31,12 +31,12 @@ public class SetImg {
     public static final ImageIcon img_confirm = new ImageIcon(imgPath + "mini_confirm.png");
     // JOp 취소 이미지
     public static final ImageIcon img_notFound = new ImageIcon(imgPath + "mini_notFound.png");
-    // JOp 추가 이미지
+    // JOp 추가,완료 이미지
     public static final ImageIcon img_add = new ImageIcon(imgPath + "mini_add.png");
     // JOp 삭제 이미지
     public static final ImageIcon img_delete = new ImageIcon(imgPath + "mini_delete.png");
     // JOp 존재 이미지
     public static final ImageIcon img_exist = new ImageIcon(imgPath + "mini_exist.png");
-    // JOp 계정존재 이미지
-    public static final ImageIcon img_existAcnt = new ImageIcon(imgPath + "mini_exist_account.png");
+    // JOp 탈퇴 이미지
+    public static final ImageIcon img_packed = new ImageIcon(imgPath + "mini_packed.png");
 }

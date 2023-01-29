@@ -219,7 +219,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         // 실패 후 필요한 작업 작성
         // 대충 이런?
         JOptionPane.showMessageDialog(this, "친구 추가에 실패하였습니다.", "친구 추가", JOptionPane.INFORMATION_MESSAGE,
-                setImage.img_notFound);
+                setImage.img_delete);
     }
 
     // 채팅방 생성 성공
@@ -238,7 +238,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     // 채팅방 생성 실패
     public void fail_create_chatroom() {
         JOptionPane.showMessageDialog(this, "채팅방 생성 실패하였습니다.", "새 채팅", JOptionPane.INFORMATION_MESSAGE,
-                setImage.img_notFound);
+                setImage.img_delete);
     }
 
     ////////////////////////// [이벤트] //////////////////////////
