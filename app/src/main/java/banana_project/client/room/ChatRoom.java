@@ -76,7 +76,7 @@ public class ChatRoom implements ActionListener, FocusListener {
      * @param status
      */
     public ChatRoom(Client client, String userId, String userNick, String chatNo, String userList, String title,
-            String status) {
+            Boolean isOk) {
         this.client = client;
         this.userId = userId;
         this.userNick = userNick;
@@ -102,7 +102,7 @@ public class ChatRoom implements ActionListener, FocusListener {
             client.setTitle("1:1 채팅");
         }
         // 새로만든 채팅방이 아닐경우 채팅방 정보 불러오기
-        if (!"new".equals(status)) {
+        if (isOk) {
             try {
                 client.oos.writeObject(Protocol.CHAT_START
                         + Protocol.seperator + chatNo);
@@ -443,7 +443,7 @@ public class ChatRoom implements ActionListener, FocusListener {
      */
     public static void main(String[] args) {
         Client c = new Client();
-        ChatRoom cr = new ChatRoom(c, "test@email.com", "test", "1", "banana#test", "타이틀", "old");
+        ChatRoom cr = new ChatRoom(c, "test@email.com", "test", "1", "banana#test", "타이틀", false);
         c.initDisplay();
         cr.initDisplay();
     }

@@ -365,7 +365,7 @@ public class Main implements ActionListener, MouseListener {
                     String userList = selChatTok.nextToken(); // 채팅방이름(유저리스트)
                     System.out.println("유저리스트" + userList);
                     // 채팅방 열림
-                    chatRoom = new ChatRoom(client, userId, userNick, chatNum, userList, title, "old");
+                    chatRoom = new ChatRoom(client, userId, userNick, chatNum, userList, title, true);
                     chatRoom.initDisplay();
                 }
             }

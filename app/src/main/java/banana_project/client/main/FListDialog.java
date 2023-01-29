@@ -239,7 +239,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         copy_list.clear(); // 선택한 친구리스트 초기화
 
         // 채팅방 열림
-        main.chatRoom = new ChatRoom(main.client, main.userId, main.userNick, chatNo, userList, "채팅 목록", "new");
+        main.chatRoom = new ChatRoom(main.client, main.userId, main.userNick, chatNo, userList, "채팅 목록", false);
         main.chatRoom.initDisplay();
 
         System.out.println("친구검색 다이얼로그 종료");
