@@ -70,6 +70,7 @@ public class Server extends JFrame implements Runnable, ActionListener {
         jta_log.append("client info: " + socket + "\n");
         ServerThread serverThread = new ServerThread(this);
         serverThread.start();
+        jta_log.setCaretPosition(jta_log.getDocument().getLength());
       }
     } catch (Exception e) {
       e.printStackTrace();

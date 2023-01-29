@@ -271,24 +271,23 @@ public class ChatRoom implements ActionListener, FocusListener {
      * @param recvNick
      * @param recvMsg
      */
-    public void recv_msg(String recvNo, String recvNick, String recvMsg) {
-        if (!userNick.equals(recvNick) && chatNo.equals(recvNo)) {
-            msg = recvNick + ": " + wrapText(recvMsg, recvNick.length());
-            // jtp text 설정
-            StyledDocument doc = jtp_chat.getStyledDocument();
-            SimpleAttributeSet sas = new SimpleAttributeSet();
-            // 폰트 컬러
-            sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(80, 114, 167));
-            // 왼쪽 정렬
-            // StyleConstants.setAlignment(sas, StyleConstants.ALIGN_LEFT);
-            doc.setParagraphAttributes(0, doc.getLength(), sas, false);
-            try {
-                sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            jtp_chat.setCaretPosition(jtp_chat.getDocument().getLength());
+    public void recv_msg(String recvNick, String recvMsg) {
+        msg = recvNick + ": " + wrapText(recvMsg, recvNick.length());
+        // jtp text 설정
+        StyledDocument doc = jtp_chat.getStyledDocument();
+        SimpleAttributeSet sas = new SimpleAttributeSet();
+        // 폰트 컬러
+        sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(80, 114, 167));
+        // 왼쪽 정렬
+        // StyleConstants.setAlignment(sas, StyleConstants.ALIGN_LEFT);
+        doc.setParagraphAttributes(0, doc.getLength(), sas, false);
+        try {
+            sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        jtp_chat.setCaretPosition(jtp_chat.getDocument().getLength());
+
     }
 
     // 메시지 전송 실패
@@ -336,6 +335,23 @@ public class ChatRoom implements ActionListener, FocusListener {
             client.setContentPane(client.main.jp_main);
             client.setTitle(client.main.title);
             client.revalidate();
+            if ("채팅 목록".equals(client.main.title)) {
+                // 사용자 채팅리스트 출력 502#아이디
+                try {
+                    client.oos.writeObject(Protocol.PRT_CHATLIST
+                            + Protocol.seperator + userId);
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                }
+            } else if ("친구 목록".equals(client.main.title)) {
+                // 사용자의 친구목록 불러오기 500#아이디
+                try {
+                    client.oos.writeObject(Protocol.PRT_FRDLIST
+                            + Protocol.seperator + userId);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
 
         // 전송 버튼

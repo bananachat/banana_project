@@ -22,6 +22,9 @@ public class ClientThread extends Thread {
    * 서버연결부 선언
    */
   Client client = null;
+  // 메세지 출력용
+  String chatNo = "";
+  String userNick = "";
 
   /**
    * 생성자
@@ -55,6 +58,8 @@ public class ClientThread extends Thread {
           case Protocol.LOGIN_S: {
             String userId = st.nextToken();
             String userNick = st.nextToken();
+            // 유저닉네임 담기
+            this.userNick = userNick;
             client.login_s(userId, userNick);
           }
             break;
@@ -321,6 +326,8 @@ public class ClientThread extends Thread {
           case Protocol.CREATE_CHAT: {
             String chatNo = st.nextToken();
             String userList = st.nextToken();
+            // 채팅방번호 담기
+            this.chatNo = chatNo;
             System.out.println("다이얼로그 - 채팅방 만들기");
             client.main.flDialog.create_chatroom(userList, chatNo);
           }
@@ -363,6 +370,8 @@ public class ClientThread extends Thread {
           // 닉네임 수정 성공 516
           case Protocol.EDIT_MNICK: {
             String newNick = st.nextToken();
+            // 유저 닉네임 담기
+            this.userNick = newNick;
             client.main.myPage.edit_mypage(newNick);
           }
             break;
@@ -386,6 +395,8 @@ public class ClientThread extends Thread {
           // 닉네임, 비번 수정 성공 520
           case Protocol.EDIT_MBOTH: {
             String newNick = st.nextToken();
+            // 유저 닉네임 담기
+            this.userNick = newNick;
             client.main.myPage.edit_mboth(newNick);
           }
             break;
@@ -414,6 +425,7 @@ public class ClientThread extends Thread {
           // 채팅방 불러오기 700#채팅방번호
           case Protocol.CHAT_START: {
             String chatNo = st.nextToken();
+            this.chatNo = chatNo;
             List<Map<String, String>> rList = new ArrayList<>();
             Map<String, String> rMap = null;
             // list map에 담기
@@ -436,7 +448,9 @@ public class ClientThread extends Thread {
             String recvNo = st.nextToken();
             String recvNick = st.nextToken();
             String recvMsg = st.nextToken();
-            client.main.chatRoom.recv_msg(recvNo, recvNick, recvMsg);
+            if (chatNo.equals(recvNo) && !userNick.equals(recvNick)) {
+              client.main.chatRoom.recv_msg(recvNick, recvMsg);
+            }
           }
             break;
 

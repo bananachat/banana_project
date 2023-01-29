@@ -103,10 +103,12 @@ public class ChatLogic {
         //로그저장-프로토콜 Save_Chat : 707
         ll.writeLog(ConstantsLog.ENTER_LOG,Thread.currentThread().getStackTrace()[1].getMethodName()
                 ,new LogVO(Protocol.SAVE_CHAT, "Room number :"+chatconvo.getChat_no(), ""));
-        String sql= "insert into TB_CHAT_CONTENTS ( chat_contents, user_id,chat_no)values(?,?,?)";
+        StringBuilder sql = new StringBuilder();
+        sql.append("insert into TB_CHAT_CONTENTS ( chat_contents, user_id,chat_no)values(?,?,?)");
+        // String sql= "insert into TB_CHAT_CONTENTS ( chat_contents, user_id,chat_no)values(?,?,?)";
         try {
             con=dbMgr.getConnection();
-            pst=con.prepareStatement(sql);
+            pst=con.prepareStatement(sql.toString());
 //            pst.setString(1,chatconvo.getChat_date());
             pst.setString(1,chatconvo.getChat_content());
             pst.setString(2,chatconvo.getUser_id());

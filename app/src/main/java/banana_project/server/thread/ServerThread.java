@@ -71,7 +71,7 @@ public class ServerThread extends Thread {
   /**
    * 단톡방에서 말하기 구현
    * 
-   * 1. 일단 모두에게 보내고 서버스레드 전역변수 chatNo로 거르기
+   * 1. 일단 모두에게 보내고 chatNo로 거르기
    *
    * @param msg
    */
@@ -880,7 +880,6 @@ public class ServerThread extends Thread {
             String userId = st.nextToken();
             String userNick = st.nextToken();
             String chatCont = st.nextToken();
-            server.jta_log.append(chatNo + userId + userNick + chatCont + "\n");
             server.jta_log.append("채팅 저장 DB 체크 시작" + "\n");
             int result = chatLogic
                 .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNo)).user_id(userId)
@@ -899,7 +898,7 @@ public class ServerThread extends Thread {
               // 저장실패 702
               case 0, -1: {
                 oos.writeObject(Protocol.FAIL_MSG);
-                server.jta_log.append("그룹채팅 메시지 저장 실패" + "\n");
+                server.jta_log.append("채팅 메시지 저장 실패" + "\n");
               }
                 break;
             }
