@@ -5,18 +5,12 @@ import banana_project.client.login.Client;
 import banana_project.client.mypage.MyPage;
 import banana_project.client.room.ChatRoom;
 import banana_project.server.thread.Protocol;
-import banana_project.server.vo.ChatListVO;
-import banana_project.server.vo.ChatUserListVO;
 import banana_project.server.vo.UserVO;
-
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-
 import java.awt.*;
 import java.awt.event.*;
-
-import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -91,6 +85,7 @@ public class Main implements ActionListener, MouseListener {
         jbtn_myPage.setFont(setFontNJOp.b14);
         jbtn_myPage.setBounds(20, 20, 160, 45);
         jp_main.add(jbtn_myPage);
+
         // jbtn_firChan 설정
         jbtn_firChan.addActionListener(this);
         jbtn_firChan.setBorderPainted(false);
@@ -113,6 +108,7 @@ public class Main implements ActionListener, MouseListener {
         jlb_del.setFont(setFontNJOp.b12);
         jlb_del.setBounds(308, 470, 200, 20);
         jp_main.add(jlb_del);
+
         // 중앙 리스트 출력
         jsp_display.setBorder(new LineBorder(Color.white, 0));
         jsp_display.setBounds(20, 93, 340, 375);
@@ -124,6 +120,7 @@ public class Main implements ActionListener, MouseListener {
         jp_center.setLayout(new GridLayout(jl_list.getMaxSelectionIndex(), 1));
         jp_center.add(jl_list);
         jp_main.add(jsp_display);
+
         // 스크롤바 설정
         jsp_display.getVerticalScrollBar().setBackground(Color.white);
         jsp_display.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
@@ -158,6 +155,7 @@ public class Main implements ActionListener, MouseListener {
         jbtn_friends.setFont(setFontNJOp.b14);
         jbtn_friends.setBounds(20, 500, 160, 45);
         jp_main.add(jbtn_friends);
+
         // jbtn_chat 설정
         jbtn_chat.addActionListener(this);
         jbtn_chat.setBorderPainted(false);
@@ -171,11 +169,14 @@ public class Main implements ActionListener, MouseListener {
         client.setTitle("친구 목록");
         client.setContentPane(jp_main);
         client.setVisible(true);
+
         // 타이틀 저장
         this.title = client.getTitle();
     }
 
-    // 친구가 없을때 메소드
+    /**
+     * 친구가 없을때 메소드
+     */
     public void nf_frdlist() {
         jl_list.setFont(setFontNJOp.b14);
         dlm.removeAllElements();
@@ -183,7 +184,9 @@ public class Main implements ActionListener, MouseListener {
         jl_list.setEnabled(false);
     }
 
-    // 친구가 있을때 메소드
+    /**
+     * 친구가 있을때 메소드
+     */
     public void prt_frdlist(Vector<String> fList) {
         jl_list.setFont(setFontNJOp.b16);
         jl_list.setEnabled(true);
@@ -193,7 +196,9 @@ public class Main implements ActionListener, MouseListener {
         }
     }
 
-    // 채팅리스트 없을때 메소드
+    /**
+     * 채팅리스트 없을때 메소드
+     */
     public void nf_chatList() {
         jl_list.setFont(setFontNJOp.b14);
         dlm.removeAllElements();
@@ -201,7 +206,11 @@ public class Main implements ActionListener, MouseListener {
         jl_list.setEnabled(false);
     }
 
-    // 채팅리스트 있을때 메소드
+    /**
+     * 채팅리스트 있을때 메소드
+     * 
+     * @param cList
+     */
     public void print_chatList(Vector<String> cList) {
         jl_list.setFont(setFontNJOp.b16);
         jl_list.setEnabled(true);
@@ -212,35 +221,47 @@ public class Main implements ActionListener, MouseListener {
         }
     }
 
-    // 친구 삭제 성공
+    /**
+     * 친구 삭제 성공
+     */
     public void del_friend() {
         JOptionPane.showMessageDialog(client, "친구 삭제가 완료되었습니다.", "친구 목록", JOptionPane.WARNING_MESSAGE,
                 setImage.img_add);
         selNick = "";
     }
 
-    // 친구 삭제 실패
+    /**
+     * 친구 삭제 실패
+     */
     public void fail_del_friend() {
         JOptionPane.showMessageDialog(client, "친구 삭제에 실패하였습니다..", "친구 목록", JOptionPane.WARNING_MESSAGE,
                 setImage.img_delete);
         selNick = "";
     }
 
-    // 채팅방 삭제 성공
+    /**
+     * 채팅방 삭제 성공
+     */
     public void del_chat() {
         JOptionPane.showMessageDialog(client, "채팅방 삭제가 완료되었습니다.", "채팅 목록", JOptionPane.WARNING_MESSAGE,
                 setImage.img_add);
         selChat = "";
     }
 
-    // 채팅방 삭제 실패
+    /**
+     * 채팅방 삭제 실패
+     */
     public void fail_del_chat() {
         JOptionPane.showMessageDialog(client, "채팅방 삭제에 실패하였습니다..", "채팅 목록", JOptionPane.WARNING_MESSAGE,
                 setImage.img_delete);
         selChat = "";
     }
 
-    // 마이페이지 닉네임 받아오기
+    /**
+     * 마이페이지 닉네임 받아오기
+     * 
+     * @param newNick
+     */
     public void setNick(String newNick) {
         this.userNick = newNick;
     }
@@ -254,6 +275,7 @@ public class Main implements ActionListener, MouseListener {
             myPage = new MyPage(client, userId, title);
             myPage.initDisplay();
         }
+
         // Main 내 이벤트 발생
         // "친구 추가 / 새 채팅" 버튼 클릭
         else if (obj == jbtn_firChan) {
@@ -272,7 +294,8 @@ public class Main implements ActionListener, MouseListener {
                 // TODO: 새 채팅 로직
             }
         } // end of Main 내 이벤트
-          // 친구목록 버튼 클릭
+
+        // 친구목록 버튼 클릭
         else if (obj == jbtn_friends) {
             System.out.println("jbtn_friends(친구리스트) 클릭");
             client.setTitle("친구 목록");
@@ -296,6 +319,7 @@ public class Main implements ActionListener, MouseListener {
             jbtn_chat.setBackground(new Color(130, 65, 60));
             jbtn_chat.setForeground(Color.WHITE);
         }
+
         // 채팅목록 버튼 클릭
         else if (obj == jbtn_chat) {
             UserVO userVO = new UserVO();
@@ -351,6 +375,7 @@ public class Main implements ActionListener, MouseListener {
         if ("친구 목록".equals(client.getTitle())) {
             selNick = (String) jl_list.getSelectedValue();
         }
+
         // 채팅 목록일 경우
         else if ("채팅 목록".equals(client.getTitle())) {
             selChat = (String) jl_list.getSelectedValue();
@@ -386,7 +411,6 @@ public class Main implements ActionListener, MouseListener {
                         }
                     }
                 }
-
             }
             // 채팅 목록일 경우
             else if ("채팅 목록".equals(client.getTitle())) {
@@ -406,7 +430,6 @@ public class Main implements ActionListener, MouseListener {
                         // print_chatList() 참조
                         StringTokenizer selChatTok = new StringTokenizer(selChat, "|");
                         int chatNum = Integer.parseInt(selChatTok.nextToken()); // 채팅방 번호
-
                         // 서버로 닉네임 전달 512#채팅방번호
                         try {
                             client.oos.writeObject(Protocol.DEL_CHAT

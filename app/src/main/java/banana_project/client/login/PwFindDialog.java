@@ -30,13 +30,17 @@ public class PwFindDialog extends JDialog implements ActionListener {
   // 이미지, 폰트, JOp 세팅 불러오기
   SetImg setImage = new SetImg();
   SetFontNJOp setFontNJOp = new SetFontNJOp();
+
   // Jp
   JPanel jp_pwReset = new JPanel(null);
+
   // Jtf
   JPasswordField jtf_pwFirst = new JPasswordField();
   JPasswordField jtf_pwSecond = new JPasswordField();
+
   // Jbtn
   JButton jbtn_pwReset = new JButton("비밀번호 재설정");
+
   // Jlb
   JLabel jlb_pwFirst = new JLabel("새로운 비밀번호");
   JLabel jlb_pwSecond = new JLabel("새로운 비밀번호 확인");
@@ -58,23 +62,27 @@ public class PwFindDialog extends JDialog implements ActionListener {
     jtf_pwFirst.addActionListener(this);
     jtf_pwSecond.addActionListener(this);
     jbtn_pwReset.addActionListener(this);
+
     // 패널에 추가
     jp_pwReset.add(jlb_pwFirst);
     jp_pwReset.add(jlb_pwSecond);
     jp_pwReset.add(jtf_pwFirst);
     jp_pwReset.add(jtf_pwSecond);
     jp_pwReset.add(jbtn_pwReset);
+
     // Jtf 설정
     jtf_pwFirst.setBounds(50, 90, 235, 45);
     jtf_pwSecond.setBounds(50, 190, 235, 45);
     jtf_pwFirst.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     jtf_pwSecond.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
     // 비밀번호 재설정 버튼
     jbtn_pwReset.setBorderPainted(false);
     jbtn_pwReset.setBackground(new Color(130, 65, 60));
     jbtn_pwReset.setForeground(Color.white);
     jbtn_pwReset.setFont(setFontNJOp.b14);
     jbtn_pwReset.setBounds(85, 270, 160, 45);
+
     // Jlb 설정
     jlb_pwFirst.setForeground(new Color(135, 90, 75));
     jlb_pwSecond.setForeground(new Color(135, 90, 75));
@@ -82,8 +90,10 @@ public class PwFindDialog extends JDialog implements ActionListener {
     jlb_pwSecond.setFont(setFontNJOp.b12);
     jlb_pwFirst.setBounds(50, 50, 90, 45);
     jlb_pwSecond.setBounds(50, 150, 120, 45);
+
     // Jp 설정
     jp_pwReset.setBackground(new Color(255, 230, 120));
+
     // JDg 설정
     this.setTitle("비밀번호 재설정");
     this.setIconImage(setImage.img_title.getImage()); // 타이틀창 이미지
@@ -97,7 +107,9 @@ public class PwFindDialog extends JDialog implements ActionListener {
     this.userId = userId;
   }
 
-  // 비밀번호 재설정 성공
+  /**
+   * 비밀번호 재설정 성공
+   */
   public void reset_pw() {
     JOptionPane.showMessageDialog(this, "비밀번호가 재설정되었습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
         setImage.img_add);
@@ -106,7 +118,9 @@ public class PwFindDialog extends JDialog implements ActionListener {
     pwFind.client.revalidate();
   }
 
-  // 비밀번호 재설정 실패
+  /**
+   * 비밀번호 재설정 실패
+   */
   public void fail_pw() {
     JOptionPane.showMessageDialog(this, "비밀번호재설정 실패하였습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
         setImage.img_delete);

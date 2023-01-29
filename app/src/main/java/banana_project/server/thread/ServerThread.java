@@ -4,18 +4,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.*;
-
 import banana_project.server.logic.ChatListLogic;
 import banana_project.server.logic.ChatLogic;
 import banana_project.server.vo.ChatContentsVO;
 import banana_project.server.vo.ChatListVO;
 import banana_project.server.vo.ChatUserListVO;
-import com.google.common.collect.ImmutableBiMap.Builder;
-
 import banana_project.server.logic.FriendLogic;
 import banana_project.server.logic.MemberLogic;
 import banana_project.server.vo.UserVO;
-import org.checkerframework.checker.units.qual.C;
 
 public class ServerThread extends Thread {
   MemberLogic memberLogic = null;
@@ -44,8 +40,8 @@ public class ServerThread extends Thread {
     try {
       memberLogic = new MemberLogic();
       friendLogic = new FriendLogic();
-      chatLogic = new ChatLogic();
       chatListLogic = new ChatListLogic();
+      chatLogic = new ChatLogic();
       oos = new ObjectOutputStream(client.getOutputStream()); // 말하기
       ois = new ObjectInputStream(client.getInputStream()); // 듣기
       // 현재 서버에 입장한 클라이언트 스레드 추가하기
@@ -69,11 +65,11 @@ public class ServerThread extends Thread {
   }
 
   /**
-   * 단톡방에서 말하기 구현
+   * 단톡방에서 말하기 -> 일단 모두에게 보내고 클라이언트스레드에서 chatNo로 거르기
    * 
-   * 1. 일단 모두에게 보내고 chatNo로 거르기
-   *
-   * @param msg
+   * @param chatNo
+   * @param sendNick
+   * @param sendMsg
    */
   public void broadCasting(String chatNo, String sendNick, String sendMsg) {
     for (ServerThread serverThread : server.globalList) {
@@ -81,32 +77,6 @@ public class ServerThread extends Thread {
           + Protocol.seperator + chatNo
           + Protocol.seperator + sendNick
           + Protocol.seperator + sendMsg);
-    }
-  }
-
-  /**
-   * 단톡방에서 말하기 구현
-   * 
-   * 2.채팅넘버와 서버스레드 같이 저장한다 가정
-   * 
-   * @param msg
-   * @param roomTitle
-   */
-  public void roomCasting(String chatNo, String sendId, String sendMsg, List<Map<String, Object>> userList) {
-    for (int i = 0; i < userList.size(); i++) {
-      // 만약 채팅방넘버가 같다면 해당 서버스레드에 메시지 전송
-      if (chatNo.equals(userList.get(i).get("chatNo"))) {
-        ServerThread serverThread = (ServerThread) userList.get(i).get("ServerThread");
-        try {
-          // 프로토콜#채팅방번호#아이디#메시지
-          serverThread.send(Protocol.SEND_MSG
-              + Protocol.seperator + chatNo
-              + Protocol.seperator + sendId
-              + Protocol.seperator + sendMsg);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
     }
   }
 
@@ -197,6 +167,7 @@ public class ServerThread extends Thread {
             }
           }
             break;
+
           // 닉네임 중복확인 203#닉네임
           case Protocol.NICK_CHK: {
             String userNick = st.nextToken();
@@ -219,6 +190,7 @@ public class ServerThread extends Thread {
             }
           }
             break;
+
           // 회원가입 시작 200#아이디#비밀번호#이름#핸드폰번호#닉네임
           case Protocol.SIGN_UP: {
             String userId = st.nextToken();
@@ -837,6 +809,7 @@ public class ServerThread extends Thread {
             // DB체크
             server.jta_log.append(chatNo + "번 채팅방 불러오기 DB 체크" + "\n");
             List<ChatContentsVO> result = chatLogic.ChatCall(chatNo);
+            // 결과가 비어있지 않다면 true
             boolean isOk = !result.isEmpty();
             server.jta_log.append("result: " + result + isOk + "\n");
             if (isOk) {
@@ -845,23 +818,17 @@ public class ServerThread extends Thread {
               String date = "";
               String nick = "";
               String ccon = ""; // 채팅 내용
-              if (result.size() == 0) {
-                date = result.get(0).getChat_date();
-                nick = result.get(0).getUser_id();
-                ccon = result.get(0).getChat_content();
-                resultList += (date + "#" + nick + "#" + ccon);
-              } else {
-                for (int i = 0; i < result.size() - 1; i++) {// -1인 이유? 문자열을 바꿀때 한번 더 돈다. 리스트 마지막번호
-                  date = result.get(i).getChat_date();
-                  nick = result.get(i).getUser_id();
-                  ccon = result.get(i).getChat_content();
-                  resultList += (date + "#" + nick + "#" + ccon + "#");
-                }
-                date = result.get(result.size() - 1).getChat_date();
-                nick = result.get(result.size() - 1).getUser_id();
-                ccon = result.get(result.size() - 1).getChat_content();
-                resultList += (date + "#" + nick + "#" + ccon);
+              for (int i = 0; i < result.size() - 1; i++) {// -1인 이유? 문자열을 바꿀때 한번 더 돈다. 리스트 마지막번호
+                date = result.get(i).getChat_date();
+                nick = result.get(i).getUser_id();
+                ccon = result.get(i).getChat_content();
+                resultList += (date + "#" + nick + "#" + ccon + "#");
               }
+              date = result.get(result.size() - 1).getChat_date();
+              nick = result.get(result.size() - 1).getUser_id();
+              ccon = result.get(result.size() - 1).getChat_content();
+              resultList += (date + "#" + nick + "#" + ccon);
+
               // 클라이언트에 전송 700#채팅방번호#결과(날짜#닉네임#채팅내용)
               oos.writeObject(Protocol.CHAT_START
                   + Protocol.seperator + chatNo
@@ -904,32 +871,6 @@ public class ServerThread extends Thread {
             }
           }
             break;
-
-          // case Protocol.WHISPER: {
-          // String nickName = st.nextToken();// 보내는 넘
-          // // insert here - 받는 넘
-          // String otherName = st.nextToken();// 보내는 넘
-          // // 귓속말로 보내진 메시지
-          // String msg1 = st.nextToken();
-          // for (ServerThread serverThread : server.globalList) {
-          // if (otherName.equals(serverThread.chatName)) {
-          // serverThread.send(Protocol.WHISPER + Protocol.seperator + nickName +
-          // Protocol.seperator + otherName
-          // + Protocol.seperator + msg1);
-          // break;
-          // }
-          // } // end of for
-          // this.send(Protocol.WHISPER + Protocol.seperator + nickName +
-          // Protocol.seperator + otherName
-          // + Protocol.seperator + msg1);
-          // }
-          // break;
-          // case Protocol.TALK_OUT: {
-          // String nickName = st.nextToken();
-          // server.globalList.remove(this);
-          // broadCasting(Protocol.TALK_OUT + Protocol.seperator + nickName);
-          // }
-          // break run_start;
         } // end of switch
       } // end of while
     } catch (Exception e) {

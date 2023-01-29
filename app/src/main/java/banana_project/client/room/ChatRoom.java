@@ -8,12 +8,10 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
-
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
 import banana_project.server.thread.Protocol;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,8 +46,10 @@ public class ChatRoom implements ActionListener, FocusListener {
     // 이미지, 폰트, JOp 세팅 불러오기
     SetImg setImage = new SetImg();
     SetFontNJOp setFontNJOp = new SetFontNJOp();
+
     // JP
     JPanel jp_Pchat = new JPanel(null);
+
     // [North]
     JButton jbtn_back = new JButton(setImage.img_backbtn);
     JButton jbtn_fNick = new JButton("친구 닉네임");
@@ -66,6 +66,14 @@ public class ChatRoom implements ActionListener, FocusListener {
 
     /**
      * 생성자
+     * 
+     * @param client
+     * @param userId
+     * @param userNick
+     * @param chatNo
+     * @param userList
+     * @param title
+     * @param status
      */
     public ChatRoom(Client client, String userId, String userNick, String chatNo, String userList, String title,
             String status) {
@@ -81,7 +89,6 @@ public class ChatRoom implements ActionListener, FocusListener {
         if (setUser.countTokens() > 2) {
             jbtn_fNick.setText("그룹채팅(" + setUser.countTokens() + ")");
             client.setTitle("그룹 채팅");
-
         }
         // 채팅방 상단 1:1채팅 상대닉네임 표시
         else {
@@ -94,8 +101,8 @@ public class ChatRoom implements ActionListener, FocusListener {
             }
             client.setTitle("1:1 채팅");
         }
+        // 새로만든 채팅방이 아닐경우 채팅방 정보 불러오기
         if (!"new".equals(status)) {
-            // 채팅방 정보 불러오기
             try {
                 client.oos.writeObject(Protocol.CHAT_START
                         + Protocol.seperator + chatNo);
@@ -123,6 +130,7 @@ public class ChatRoom implements ActionListener, FocusListener {
         jbtn_back.setForeground(new Color(130, 65, 60));
         jbtn_back.setBounds(21, 22, 30, 30);
         jp_Pchat.add(jbtn_back);
+
         // jlb
         jbtn_fNick.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jbtn_fNick.setBorderPainted(false);
@@ -203,6 +211,7 @@ public class ChatRoom implements ActionListener, FocusListener {
             String chatDate2 = rList.get(i).get("chatDate");
             String chatNick = rList.get(i).get("chatNick");
             chatCont = rList.get(i).get("chatCont");
+
             // 날짜가 바뀔때마다 채팅방에 출력
             if (!chatDate.equals(chatDate2)) {
                 this.chatDate = chatDate2;
@@ -227,9 +236,10 @@ public class ChatRoom implements ActionListener, FocusListener {
                     }
                 }
             }
+
             // 로그인유저가 친 채팅일 경우
             if (userNick.equals(chatNick)) {
-                msg = userNick + ": " + wrapText(chatCont, userNick.length());
+                msg = userNick + ":" + wrapText(chatCont, userNick.length());
                 // jtp text 설정
                 StyledDocument doc = jtp_chat.getStyledDocument();
                 SimpleAttributeSet sas = new SimpleAttributeSet();
@@ -244,9 +254,10 @@ public class ChatRoom implements ActionListener, FocusListener {
                     e2.printStackTrace();
                 }
             }
+
             // 다른 유저가 친 채팅일 경우
             else {
-                msg = chatNick + ": " + wrapText(chatCont, chatNick.length());
+                msg = chatNick + ":" + wrapText(chatCont, chatNick.length());
                 // jtp text 설정
                 StyledDocument doc = jtp_chat.getStyledDocument();
                 SimpleAttributeSet sas = new SimpleAttributeSet();
@@ -266,13 +277,13 @@ public class ChatRoom implements ActionListener, FocusListener {
     }
 
     /**
-     * 전송받은 메시지 출력
+     * 전송받은 메시지 출력 메소드
      * 
      * @param recvNick
      * @param recvMsg
      */
     public void recv_msg(String recvNick, String recvMsg) {
-        msg = recvNick + ": " + wrapText(recvMsg, recvNick.length());
+        msg = recvNick + ":" + wrapText(recvMsg, recvNick.length());
         // jtp text 설정
         StyledDocument doc = jtp_chat.getStyledDocument();
         SimpleAttributeSet sas = new SimpleAttributeSet();
@@ -287,10 +298,11 @@ public class ChatRoom implements ActionListener, FocusListener {
             e.printStackTrace();
         }
         jtp_chat.setCaretPosition(jtp_chat.getDocument().getLength());
-
     }
 
-    // 메시지 전송 실패
+    /**
+     * 메시지 전송 실패 메소드
+     */
     public void fail_msg() {
         JOptionPane.showMessageDialog(client, "메시지 전송에 실패했습니다.", "채팅방", JOptionPane.WARNING_MESSAGE,
                 setImage.img_delete);
@@ -300,26 +312,29 @@ public class ChatRoom implements ActionListener, FocusListener {
      * Jtp 글자 줄바꿈 대체 메소드
      * 
      * @param msg
+     * @param nickCnt
      * @return
      */
     public String wrapText(String msg, int nickCnt) {
         // 글자 끊어주기
         StringBuffer sb = new StringBuffer();
-        // 영어, 숫자
-        if (Pattern.matches("^[a-zA-Z0-9]*$", msg) && msg.length() + nickCnt >= 30) {
+        // 영어, 숫자일 경우
+        if (Pattern.matches("^[a-zA-Z0-9]*$", msg) && (msg.length() + nickCnt + 2) >= 30) {
             sb.append(" " + msg);
             for (int i = 0; i < (msg.length() / 30); i++) {
-                sb.insert(((29 - nickCnt) + (29 * i)), "\n");
+                sb.insert(((29 - nickCnt + 2) + (29 * i)), "\n");
             }
             msg = String.valueOf(sb);
         }
-        // 한글포함
+        // 그 외 한글포함
         else if (msg.length() >= 18) {
             sb.append(" " + msg);
-            for (int i = 1; i < (msg.length() / 18) + 1; i++) {
-                sb.insert((17 * i), "\n");
+            for (int i = 0; i < (msg.length() / 18); i++) {
+                sb.insert((17 - nickCnt + 2) + (17 * i), "\n");
             }
             msg = String.valueOf(sb);
+        } else {
+            msg = " " + msg;
         }
         return msg;
     }
@@ -335,6 +350,7 @@ public class ChatRoom implements ActionListener, FocusListener {
             client.setContentPane(client.main.jp_main);
             client.setTitle(client.main.title);
             client.revalidate();
+            // 이전 창이 채팅목록일 경우
             if ("채팅 목록".equals(client.main.title)) {
                 // 사용자 채팅리스트 출력 502#아이디
                 try {
@@ -343,7 +359,9 @@ public class ChatRoom implements ActionListener, FocusListener {
                 } catch (Exception e2) {
                     e2.printStackTrace();
                 }
-            } else if ("친구 목록".equals(client.main.title)) {
+            }
+            // 이전 창이 친구목록일 경우
+            else if ("친구 목록".equals(client.main.title)) {
                 // 사용자의 친구목록 불러오기 500#아이디
                 try {
                     client.oos.writeObject(Protocol.PRT_FRDLIST
@@ -375,7 +393,7 @@ public class ChatRoom implements ActionListener, FocusListener {
                 doc.setParagraphAttributes(0, doc.getLength(), sas, false);
                 try {
                     sd_display.insertString(sd_display.getLength(),
-                            userNick + ": " + wrapText(msg, userNick.length()) + "\n", sas);
+                            userNick + ":" + wrapText(msg, userNick.length()) + "\n", sas);
                     // 대화저장 707#채팅방넘버#아이디#닉네임#메시지
                     client.oos.writeObject(Protocol.SAVE_CHAT
                             + Protocol.seperator + chatNo

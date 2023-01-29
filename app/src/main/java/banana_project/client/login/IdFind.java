@@ -5,11 +5,9 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.server.thread.Protocol;
-
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,11 +27,14 @@ public class IdFind implements ActionListener, FocusListener {
   // 이미지, 폰트, JOp 세팅 불러오기
   SetImg setImage = new SetImg();
   SetFontNJOp setFontNJOp = new SetFontNJOp();
+
   // JP
   JPanel jp_idFind = new JPanel(null);
+
   // Jtf
   JTextField jtf_userName = new JTextField("이름"); // 이름 입력창
   JTextField jtf_userHp = new JTextField("핸드폰 번호 (-없이 숫자만 입력)"); // 전화번호 입력창
+
   // Jbtn
   JButton jbtn_back = new JButton("돌아가기"); // 돌아가기 버튼
   JButton jbtn_findId = new JButton("아이디 찾기"); // 아이디찾기 버튼
@@ -59,12 +60,14 @@ public class IdFind implements ActionListener, FocusListener {
     jbtn_findId.addActionListener(this);
     jtf_userHp.addActionListener(this);
     jtf_userName.addActionListener(this);
+
     // 패널에 추가
     jp_idFind.add(jtf_userName);
     jp_idFind.add(jtf_userHp);
     jp_idFind.add(jbtn_back);
     jp_idFind.add(jbtn_findId);
     jp_idFind.add(jbtn_main);
+
     // Jf 설정
     jtf_userName.setForeground(Color.gray);
     jtf_userHp.setForeground(Color.gray);
@@ -74,24 +77,29 @@ public class IdFind implements ActionListener, FocusListener {
     jtf_userHp.setBounds(60, 360, 270, 45);
     jtf_userName.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     jtf_userHp.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
     // 돌아가기 버튼 설정
     jbtn_back.setBorderPainted(false);
     jbtn_back.setBackground(new Color(130, 65, 60));
     jbtn_back.setForeground(Color.white);
     jbtn_back.setFont(setFontNJOp.b14);
     jbtn_back.setBounds(60, 420, 130, 45);
+
     // 아이디찾기 버튼 설정
     jbtn_findId.setBorderPainted(false);
     jbtn_findId.setBackground(new Color(130, 65, 60));
     jbtn_findId.setForeground(Color.white);
     jbtn_findId.setFont(setFontNJOp.b14);
     jbtn_findId.setBounds(200, 420, 130, 45);
+
     // 로고 이미지 설정
     jbtn_main.setBackground(new Color(255, 230, 120));
     jbtn_main.setBorderPainted(false); // 버튼 외곽선 없애기
     jbtn_main.setBounds(60, 35, 270, 250); // 바나나 이미지 고정
+
     // Jp 설정
     jp_idFind.setBackground(new Color(255, 230, 120)); // 패널색 노란색
+
     // JF설정
     client.setTitle("아이디 찾기");
     client.setContentPane(jp_idFind); // 액자에 도화지 끼우기
@@ -100,6 +108,9 @@ public class IdFind implements ActionListener, FocusListener {
 
   /**
    * 존재하는 아이디 메소드
+   * 
+   * @param UserName
+   * @param userId
    */
   public void exist_fid(String UserName, String userId) {
     JOptionPane.showMessageDialog(client,
@@ -126,6 +137,7 @@ public class IdFind implements ActionListener, FocusListener {
       client.setTitle("바나나톡");
       client.revalidate();
     }
+
     // 아이디찾기 버튼을 눌렀을 때
     else if (obj == jbtn_findId || obj == jtf_userName || obj == jtf_userHp) {
       String userName = jtf_userName.getText();
@@ -171,6 +183,7 @@ public class IdFind implements ActionListener, FocusListener {
         jtf_userName.setText("");
       }
     }
+
     // 핸드폰번호 jtf를 클릭했을 때
     else if (obj == jtf_userHp) {
       jtf_userHp.setForeground(Color.black);
@@ -190,6 +203,7 @@ public class IdFind implements ActionListener, FocusListener {
         jtf_userName.setText("이름");
       }
     }
+
     // 핸드폰번호 jtf를 공백으로두고 벗어났을 때
     else if (obj == jtf_userHp) {
       if ("".equals(jtf_userHp.getText())) {

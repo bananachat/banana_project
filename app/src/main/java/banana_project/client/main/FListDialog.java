@@ -5,14 +5,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
 import banana_project.client.room.ChatRoom;
 import banana_project.server.thread.Protocol;
-import banana_project.server.vo.UserVO;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +30,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     // 이미지, 폰트, JOp 세팅 불러오기
     SetImg setImage = new SetImg();
     SetFontNJOp setFontNJOp = new SetFontNJOp();
+
     // JP
     JPanel jp_fListDialog = new JPanel(null);
 
@@ -178,7 +176,11 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.setVisible(isView);
     }
 
-    // 친구가 있을 때 메소드
+    /**
+     * 친구가 있을 때 메소드
+     * 
+     * @param fList
+     */
     public void prt_frdList(Vector<String> fList) {
         jl_list.setEnabled(true);
         dlm.removeAllElements();
@@ -187,17 +189,19 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         }
     }
 
-    // 친구가 없을 때 메소드
+    /**
+     * 친구가 없을 때 메소드
+     */
     public void nf_frdList() {
         dlm.removeAllElements();
         dlm.addElement("사용자를 찾을 수 없습니다.");
         jl_list.setEnabled(false);
     }
 
-    // 친구 추가 성공
+    /**
+     * 친구 추가 성공
+     */
     public void add_friend() {
-        // ↓ 👏👏👏
-        // 성공 후 필요한 작업 작성~~~
         dlm.clear(); // 친구리스트 초기화
         copy_list.clear(); // 선택한 친구리스트 초기화
 
@@ -214,7 +218,9 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.dispose();
     }
 
-    // 친구 추가 실패
+    /**
+     * 친구 추가 실패
+     */
     public void fail_add_friend() {
         // 실패 후 필요한 작업 작성
         // 대충 이런?
@@ -222,7 +228,12 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 setImage.img_delete);
     }
 
-    // 채팅방 생성 성공
+    /**
+     * 채팅방 생성 성공
+     * 
+     * @param userList
+     * @param chatNo
+     */
     public void create_chatroom(String userList, String chatNo) {
         dlm.clear(); // 친구리스트 초기화
         copy_list.clear(); // 선택한 친구리스트 초기화
@@ -235,7 +246,9 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.dispose();
     }
 
-    // 채팅방 생성 실패
+    /**
+     * 채팅방 생성 실패
+     */
     public void fail_create_chatroom() {
         JOptionPane.showMessageDialog(this, "채팅방 생성 실패하였습니다.", "새 채팅", JOptionPane.INFORMATION_MESSAGE,
                 setImage.img_delete);
@@ -272,7 +285,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                     e2.printStackTrace();
                 }
             }
-
         } // end of 친구 검색
 
         else if (obj == jbtn_add) {
@@ -303,7 +315,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                     num += (copy_list.get(copy_list.size() - 1));
                 }
 
-                // 상황별 메시지 변경
+                // 친구 추가 창일 경우
                 if ("친구 추가".equals(title)) {
                     // if ("친구 추가".equals(main.jbtn_firChan.getText())) {
                     System.out.println("친구 추가...");
@@ -319,8 +331,9 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                     } catch (Exception e2) {
                         e2.printStackTrace();
                     }
-
-                } else if ("새 채팅".equals(title)) {
+                }
+                // 새 채팅 창일 경우
+                else if ("새 채팅".equals(title)) {
                     // } else if ("새 채팅".equals(main.jbtn_firChan.getText())) {
                     System.out.println("새 채팅...");
 
@@ -355,9 +368,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 // System.out.println("친구검색 다이얼로그 종료");
                 // this.dispose();
             }
-
         } // end of 친구|채팅 추가 이벤트
-
     } // end of ActionPerformed
 
     // JList 클릭 이벤트 호출
@@ -372,7 +383,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
             if (copy_list.size() == 0) {
                 // 처음 선택 시
                 copy_list.add(selValue);
-
             } else {
                 // 선택한 리스트 중 중복값이 있는지 확인
                 boolean isDup = copy_list.contains(selValue); // 중복 존재 시 true
@@ -384,7 +394,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                     copy_list.add(selValue);
                 }
             }
-
             System.out.println("선택한 리스트 : " + copy_list);
         } // end of if (리스트 클릭 이벤트)
     }

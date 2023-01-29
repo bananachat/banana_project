@@ -8,7 +8,6 @@ import java.awt.event.FocusListener;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
@@ -31,8 +30,10 @@ public class MemJoin implements ActionListener, FocusListener {
    // 이미지, 폰트, JOp 세팅 불러오기
    SetImg setImage = new SetImg();
    SetFontNJOp setFontNJOp = new SetFontNJOp();
+
    // JP
    JPanel jp_join = new JPanel(null);
+
    // Jtf
    JTextField jtf_userName = new JTextField(); // 이름 입력창
    JTextField jtf_userHp = new JTextField("-없이 숫자만 입력"); // 핸드폰번호 입력창
@@ -40,12 +41,14 @@ public class MemJoin implements ActionListener, FocusListener {
    JTextField jtf_nickName = new JTextField(); // 닉네임 입력창
    JPasswordField jtf_userPw = new JPasswordField(); // 비밀번호 입력창
    JPasswordField jtf_userPwRe = new JPasswordField(); // 비밀번호 확인 입력창
+
    // Jbtn
    JButton jbtn_checkId = new JButton("중복확인"); // 아이디 중복검사 버튼
    JButton jbtn_checkNick = new JButton("중복확인"); // 닉네임 중복검사 버튼
    JButton jbtn_join = new JButton("회원가입");// 회원가입 버튼
    JButton jbtn_cancel = new JButton("돌아가기");// 돌아가기 버튼
    JButton jbtn_main = new JButton(setImage.img_join);// 회원가입 로고용 버튼
+
    // Jlb
    JLabel jlb_name = new JLabel("이름");
    JLabel jlb_hp = new JLabel("핸드폰번호");
@@ -85,6 +88,7 @@ public class MemJoin implements ActionListener, FocusListener {
       jtf_nickName.addFocusListener(this);
       jtf_userPw.addFocusListener(this);
       jtf_userPwRe.addFocusListener(this);
+
       // 패널에 추가
       jp_join.add(jtf_userName);
       jp_join.add(jtf_userId);
@@ -104,6 +108,7 @@ public class MemJoin implements ActionListener, FocusListener {
       jp_join.add(jlb_pwRe);
       jp_join.add(jlb_pwtxt);
       jp_join.add(jbtn_main);
+
       // Jtf 설정
       jtf_userName.setForeground(Color.black);
       jtf_userId.setForeground(Color.gray);
@@ -123,6 +128,7 @@ public class MemJoin implements ActionListener, FocusListener {
       jtf_nickName.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
       jtf_userPw.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
       jtf_userPwRe.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
       // 아이디 중복검사 버튼 설정
       jbtn_checkId.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
       jbtn_checkId.setBorderPainted(false);
@@ -130,6 +136,7 @@ public class MemJoin implements ActionListener, FocusListener {
       jbtn_checkId.setForeground(Color.WHITE);
       jbtn_checkId.setFont(setFontNJOp.b12);
       jbtn_checkId.setBounds(295, 241, 75, 36);
+
       // 닉네임 중복검사 버튼 설정
       jbtn_checkNick.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
       jbtn_checkNick.setBorderPainted(false);
@@ -137,18 +144,21 @@ public class MemJoin implements ActionListener, FocusListener {
       jbtn_checkNick.setForeground(Color.WHITE);
       jbtn_checkNick.setFont(setFontNJOp.b12);
       jbtn_checkNick.setBounds(295, 293, 75, 36);
+
       // 돌아가기 버튼 설정
       jbtn_cancel.setBorderPainted(false);
       jbtn_cancel.setBackground(new Color(130, 65, 60));
       jbtn_cancel.setForeground(Color.white);
       jbtn_cancel.setFont(setFontNJOp.b14);
       jbtn_cancel.setBounds(70, 480, 120, 45);
+
       // 회원가입 버튼 설정
       jbtn_join.setBorderPainted(false);
       jbtn_join.setBackground(new Color(130, 65, 60));
       jbtn_join.setForeground(Color.white);
       jbtn_join.setFont(setFontNJOp.b14);
       jbtn_join.setBounds(210, 480, 120, 45);
+
       // Jlb
       jlb_name.setForeground(new Color(135, 90, 75));
       jlb_hp.setForeground(new Color(135, 90, 75));
@@ -171,12 +181,15 @@ public class MemJoin implements ActionListener, FocusListener {
       jlb_pw.setBounds(42, 343, 100, 40);
       jlb_pwRe.setBounds(16, 395, 100, 40);
       jlb_pwtxt.setBounds(104, 426, 150, 40);
+
       // 로고 이미지 설정
       jbtn_main.setBackground(new Color(255, 230, 120));
       jbtn_main.setBorderPainted(false); // 버튼 외곽선 없애기
       jbtn_main.setBounds(85, 22, 210, 90); // 바나나 이미지 고정
+
       // Jp
       jp_join.setBackground(new Color(255, 230, 120));
+
       // Jf 설정
       client.setTitle("회원가입");
       client.setContentPane(jp_join);
@@ -364,6 +377,7 @@ public class MemJoin implements ActionListener, FocusListener {
             }
          }
       }
+
       // 아이디 중복확인 버튼을 눌렀을 때
       else if (obj == jbtn_checkId) {
          String userId = jtf_userId.getText();
@@ -374,6 +388,7 @@ public class MemJoin implements ActionListener, FocusListener {
             e.printStackTrace();
          }
       }
+
       // 닉네임 중복확인 버튼을 눌렀을 때
       else if (obj == jbtn_checkNick) {
          String userNick = jtf_nickName.getText();
@@ -384,6 +399,7 @@ public class MemJoin implements ActionListener, FocusListener {
             e.printStackTrace();
          }
       }
+
       // 돌아가기 버튼을 눌렀을 때
       else if (obj == jbtn_cancel) {
          client.setContentPane(client.jp_login);
@@ -405,6 +421,7 @@ public class MemJoin implements ActionListener, FocusListener {
             jtf_userHp.setText("");
          }
       }
+
       // 아이디 jtf를 클릭했을 때
       if (obj == jtf_userId) {
          jtf_userId.setForeground(Color.black);
@@ -424,6 +441,7 @@ public class MemJoin implements ActionListener, FocusListener {
             jtf_userHp.setText("-없이 숫자만 입력");
          }
       }
+
       // 아이디 jtf를 공백으로두고 벗어났을 때
       else if (obj == jtf_userId) {
          if ("".equals(jtf_userId.getText())) {

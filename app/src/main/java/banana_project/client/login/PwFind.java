@@ -5,11 +5,9 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.server.thread.Protocol;
-
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,12 +28,15 @@ public class PwFind implements ActionListener, FocusListener {
   // 이미지, 폰트, JOp 세팅 불러오기
   SetImg setImage = new SetImg();
   SetFontNJOp setFontNJOp = new SetFontNJOp();
+
   // JP
   JPanel jp_pwFind = new JPanel(null);
+
   // jtf
   JTextField jtf_userName = new JTextField("이름");
   JTextField jtf_userId = new JTextField("example@email.com");
   JTextField jtf_userHp = new JTextField("핸드폰 번호 (-없이 숫자만 입력)");
+
   // Jbtn
   JButton jbtn_back = new JButton("돌아가기"); // 돌아가기 버튼
   JButton jbtn_findPw = new JButton("비밀번호 찾기"); // 비밀번호찾기 버튼
@@ -63,6 +64,7 @@ public class PwFind implements ActionListener, FocusListener {
     jtf_userName.addActionListener(this);
     jtf_userId.addActionListener(this);
     jtf_userHp.addActionListener(this);
+
     // 패널에 추가
     jp_pwFind.add(jtf_userName);
     jp_pwFind.add(jtf_userId);
@@ -70,6 +72,7 @@ public class PwFind implements ActionListener, FocusListener {
     jp_pwFind.add(jbtn_back);
     jp_pwFind.add(jbtn_findPw);
     jp_pwFind.add(jbtn_main);
+
     // Jtf 설정
     jtf_userName.setForeground(Color.gray);
     jtf_userId.setForeground(Color.gray);
@@ -83,37 +86,48 @@ public class PwFind implements ActionListener, FocusListener {
     jtf_userName.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     jtf_userId.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     jtf_userHp.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
     // 돌아가기 버튼 설정
     jbtn_back.setBorderPainted(false);
     jbtn_back.setBackground(new Color(130, 65, 60));
     jbtn_back.setForeground(Color.white);
     jbtn_back.setFont(setFontNJOp.b14);
     jbtn_back.setBounds(60, 465, 130, 45);
+
     // 비밀번호찾기 버튼 설정
     jbtn_findPw.setBorderPainted(false);
     jbtn_findPw.setBackground(new Color(130, 65, 60));
     jbtn_findPw.setForeground(Color.white);
     jbtn_findPw.setFont(setFontNJOp.b14);
     jbtn_findPw.setBounds(200, 465, 130, 45);
+
     // 로고 이미지 설정
     jbtn_main.setBackground(new Color(255, 230, 120));
     jbtn_main.setBorderPainted(false); // 버튼 외곽선 없애기
     jbtn_main.setBounds(60, 20, 270, 250); // 바나나 이미지 고정
+
     // Jp 설정
     jp_pwFind.setBackground(new Color(255, 230, 120)); // 패널색 노란색
+
     // JF설정
     client.setTitle("비밀번호 찾기");
     client.setContentPane(jp_pwFind); // 액자에 도화지 끼우기
     client.setVisible(true);
   }
 
-  // 비번찾기 계정이 존재할때 메소드
+  /**
+   * 비번찾기 계정이 존재할때 메소드
+   * 
+   * @param userId
+   */
   public void exist_facnt(String userId) {
     pwFindDialog = new PwFindDialog(this);
     pwFindDialog.initDisplay(userId);
   }
 
-  // 비번찾기 계정이 존재하지 않을때 메소드
+  /**
+   * 비번찾기 계정이 존재하지 않을때 메소드
+   */
   public void nf_facnt() {
     JOptionPane.showMessageDialog(client, "계정이 존재하지 않습니다.", "비밀번호 찾기", JOptionPane.ERROR_MESSAGE,
         setImage.img_notFound);
@@ -131,6 +145,7 @@ public class PwFind implements ActionListener, FocusListener {
       client.setTitle("바나나톡");
       client.revalidate();
     }
+
     // 비밀번호찾기 버튼을 눌렀을 때
     else if (obj == jbtn_findPw || obj == jtf_userName || obj == jtf_userId || obj == jtf_userHp) {
       String userName = jtf_userName.getText();
@@ -189,6 +204,7 @@ public class PwFind implements ActionListener, FocusListener {
         jtf_userName.setText("");
       }
     }
+
     // 아이디 jtf를 클릭했을 때
     else if (obj == jtf_userId) {
       jtf_userId.setForeground(Color.black);
@@ -196,6 +212,7 @@ public class PwFind implements ActionListener, FocusListener {
         jtf_userId.setText("");
       }
     }
+
     // 핸드폰번호 jtf를 클릭했을 때
     else if (obj == jtf_userHp) {
       jtf_userHp.setForeground(Color.black);
@@ -215,6 +232,7 @@ public class PwFind implements ActionListener, FocusListener {
         jtf_userName.setText("이름");
       }
     }
+
     // 아이디 jtf를 공백으로두고 벗어났을 때
     else if (obj == jtf_userId) {
       if ("".equals(jtf_userId.getText())) {
@@ -222,6 +240,7 @@ public class PwFind implements ActionListener, FocusListener {
         jtf_userId.setText("example@email.com");
       }
     }
+
     // 핸드폰번호 jtf를 공백으로두고 벗어났을 때
     else if (obj == jtf_userHp) {
       if ("".equals(jtf_userHp.getText())) {
