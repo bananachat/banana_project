@@ -39,6 +39,8 @@ public class ChatRoom implements ActionListener, FocusListener {
     String userList = null;
     // 날짜변수
     String chatDate = "";
+    // 돌아가기 setTitle용
+    String title = "";
 
     /**
      * 화면부 선언
@@ -65,17 +67,21 @@ public class ChatRoom implements ActionListener, FocusListener {
     /**
      * 생성자
      */
-    public ChatRoom(Client client, String userId, String userNick, String chatNo, String userList) {
+    public ChatRoom(Client client, String userId, String userNick, String chatNo, String userList, String title,
+            String status) {
         this.client = client;
         this.userId = userId;
         this.userNick = userNick;
         this.chatNo = chatNo;
-        this.userList = userList; // 닉네임#닉네임 형식
+        this.userList = userList; // 닉네임, 닉네임 형식
+        this.title = title;
         setUser = new StringTokenizer(userList, ", ");
 
         // 채팅방 상단 그룹채팅(참여멤버숫자) 표시
         if (setUser.countTokens() > 2) {
             jbtn_fNick.setText("그룹채팅(" + setUser.countTokens() + ")");
+            client.setTitle("그룹 채팅");
+
         }
         // 채팅방 상단 1:1채팅 상대닉네임 표시
         else {
@@ -86,13 +92,16 @@ public class ChatRoom implements ActionListener, FocusListener {
             } else {
                 jbtn_fNick.setText(tempNick2);
             }
+            client.setTitle("1:1 채팅");
         }
-        // 채팅방 정보 불러오기
-        try {
-            client.oos.writeObject(Protocol.CHAT_START
-                    + Protocol.seperator + chatNo);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!"new".equals(status)) {
+            // 채팅방 정보 불러오기
+            try {
+                client.oos.writeObject(Protocol.CHAT_START
+                        + Protocol.seperator + chatNo);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -179,7 +188,6 @@ public class ChatRoom implements ActionListener, FocusListener {
         jp_Pchat.add(jbtn_send);
 
         // Jf 설정
-        client.setTitle("1:1 채팅");
         client.setContentPane(jp_Pchat);
         client.setVisible(true);
     }
@@ -326,7 +334,7 @@ public class ChatRoom implements ActionListener, FocusListener {
         // 돌아가기 버튼
         if (obj == jbtn_back) {
             client.setContentPane(client.main.jp_main);
-            client.setTitle("채팅 목록");
+            client.setTitle(client.main.title);
             client.revalidate();
         }
 
@@ -401,7 +409,7 @@ public class ChatRoom implements ActionListener, FocusListener {
      */
     public static void main(String[] args) {
         Client c = new Client();
-        ChatRoom cr = new ChatRoom(c, "test@email.com", "test", "1", "banana#test");
+        ChatRoom cr = new ChatRoom(c, "test@email.com", "test", "1", "banana#test", "타이틀", "old");
         c.initDisplay();
         cr.initDisplay();
     }

@@ -33,6 +33,8 @@ public class Main implements ActionListener, MouseListener {
     // 친구, 채팅 삭제용
     String selNick = "";
     String selChat = "";
+    // 돌아가기 화면전환용 타이틀
+    public String title = "";
 
     /**
      * 화면부 선언
@@ -169,6 +171,8 @@ public class Main implements ActionListener, MouseListener {
         client.setTitle("친구 목록");
         client.setContentPane(jp_main);
         client.setVisible(true);
+        // 타이틀 저장
+        this.title = client.getTitle();
     }
 
     // 친구가 없을때 메소드
@@ -204,7 +208,7 @@ public class Main implements ActionListener, MouseListener {
         dlm.removeAllElements();
 
         for (int i = 0; i < cList.size(); i++) {
-            dlm.addElement(cList.get(i));       // 번호|타이틀
+            dlm.addElement(cList.get(i)); // 번호|타이틀
         }
     }
 
@@ -247,13 +251,13 @@ public class Main implements ActionListener, MouseListener {
         Object obj = e.getSource();
         // 마이페이지 버튼 클릭
         if (obj == jbtn_myPage) {
-            myPage = new MyPage(client, userId);
+            myPage = new MyPage(client, userId, title);
             myPage.initDisplay();
         }
         // Main 내 이벤트 발생
         // "친구 추가 / 새 채팅" 버튼 클릭
         else if (obj == jbtn_firChan) {
-            flDialog = new FListDialog(this);
+            flDialog = new FListDialog(this, title);
             System.out.println("jbtn_firChan(" + jbtn_firChan.getText() + ") 클릭");
             // 친구추가 버튼 클릭
             if ("친구 추가".equals(jbtn_firChan.getText())) {
@@ -272,6 +276,8 @@ public class Main implements ActionListener, MouseListener {
         else if (obj == jbtn_friends) {
             System.out.println("jbtn_friends(친구리스트) 클릭");
             client.setTitle("친구 목록");
+            // 타이틀 저장
+            this.title = "친구 목록";
             jbtn_firChan.setText("친구 추가");
             jlb_secChan.setText(userNick + "님의 친구");
             jsp_display.getVerticalScrollBar().setValue(0);
@@ -295,6 +301,8 @@ public class Main implements ActionListener, MouseListener {
             UserVO userVO = new UserVO();
             System.out.println("jbtn_chat(채팅방) 클릭");
             client.setTitle("채팅 목록");
+            // 타이틀 저장
+            this.title = "채팅 목록";
             jbtn_firChan.setText("새 채팅");
             jlb_secChan.setText(userNick + "님의 채팅방");
             jsp_display.getVerticalScrollBar().setValue(0);
@@ -333,7 +341,7 @@ public class Main implements ActionListener, MouseListener {
                     String userList = selChatTok.nextToken(); // 채팅방이름(유저리스트)
                     System.out.println("유저리스트" + userList);
                     // 채팅방 열림
-                    chatRoom = new ChatRoom(client, userId, userNick, chatNum, userList);
+                    chatRoom = new ChatRoom(client, userId, userNick, chatNum, userList, title, "old");
                     chatRoom.initDisplay();
                 }
             }

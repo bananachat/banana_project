@@ -54,19 +54,22 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     JButton jbtn_add = new JButton("추가");
 
     ////////////////////////// [생성자] //////////////////////////
-    public FListDialog(Main main) {
+    public FListDialog(Main main, String getTitle) {
         this.main = main;
         jl_list = new JList(dlm);
 
         // 임시 리스트 출력
         // createList();
 
-        // 친구검색 출력 600#아이디
-        try {
-            this.main.client.oos.writeObject(Protocol.PRT_USERS
-                    + Protocol.seperator + this.main.userId);
-        } catch (Exception e) {
-            e.printStackTrace();
+        // 채팅목록일 경우에만 친구검색 후 출력
+        if ("채팅 목록".equals(getTitle)) {
+            // 친구검색 출력 600#아이디
+            try {
+                this.main.client.oos.writeObject(Protocol.PRT_USERS
+                        + Protocol.seperator + this.main.userId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -220,12 +223,12 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     }
 
     // 채팅방 생성 성공
-    public void create_chatroom(String userList) {
+    public void create_chatroom(String userList, String chatNo) {
         dlm.clear(); // 친구리스트 초기화
         copy_list.clear(); // 선택한 친구리스트 초기화
 
         // 채팅방 열림
-        main.chatRoom = new ChatRoom(main.client, main.userId, main.userNick, chatNo, userList);
+        main.chatRoom = new ChatRoom(main.client, main.userId, main.userNick, chatNo, userList, "채팅 목록", "new");
         main.chatRoom.initDisplay();
 
         System.out.println("친구검색 다이얼로그 종료");
@@ -346,11 +349,11 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                 // JOptionPane.INFORMATION_MESSAGE);
                 System.out.println(msg);
 
-//                dlm.clear(); // 친구리스트 초기화
-//                copy_list.clear(); // 선택한 친구리스트 초기화
-//
-//                System.out.println("친구검색 다이얼로그 종료");
-//                this.dispose();
+                // dlm.clear(); // 친구리스트 초기화
+                // copy_list.clear(); // 선택한 친구리스트 초기화
+                //
+                // System.out.println("친구검색 다이얼로그 종료");
+                // this.dispose();
             }
 
         } // end of 친구|채팅 추가 이벤트

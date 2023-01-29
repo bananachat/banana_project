@@ -131,11 +131,10 @@ public class ClientThread extends Thread {
             break;
 
           /**
-           * PwFind스레드 -> 아직 미구현!!
+           * PwFind스레드
            */
           // 계정이 존재할 때
           case Protocol.EXIST_FACNT: {
-            // 아이디 받아오기 추가할것!!
             String userId = st.nextToken();
             client.pwfind.exist_facnt(userId);
             break;
@@ -320,9 +319,10 @@ public class ClientThread extends Thread {
            */
           // 채팅방 만들기 성공 606
           case Protocol.CREATE_CHAT: {
+            String chatNo = st.nextToken();
             String userList = st.nextToken();
             System.out.println("다이얼로그 - 채팅방 만들기");
-            client.main.flDialog.create_chatroom(userList);
+            client.main.flDialog.create_chatroom(userList, chatNo);
           }
             break;
 

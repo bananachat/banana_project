@@ -22,6 +22,7 @@ public class PwFindDialog extends JDialog implements ActionListener {
    * 서버연결부 선언
    */
   PwFind pwFind = null;
+  String userId = null;
 
   /**
    * 화면부 선언
@@ -39,8 +40,7 @@ public class PwFindDialog extends JDialog implements ActionListener {
   // Jlb
   JLabel jlb_pwFirst = new JLabel("새로운 비밀번호");
   JLabel jlb_pwSecond = new JLabel("새로운 비밀번호 확인");
-//userId
-String userId =null;
+
   /**
    * 생성자
    * 
@@ -93,9 +93,11 @@ String userId =null;
     this.setLocationRelativeTo(pwFind.client);
     this.setResizable(false);
     this.setVisible(true);
-    this.userId=userId;
+    // userId 설정
+    this.userId = userId;
   }
-//비밀번호 재설정 성공
+
+  // 비밀번호 재설정 성공
   public void reset_pw() {
     JOptionPane.showMessageDialog(this, "비밀번호가 재설정되었습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
         setImage.img_confirm);
@@ -103,7 +105,8 @@ String userId =null;
     pwFind.client.setContentPane(pwFind.client.jp_login);
     pwFind.client.revalidate();
   }
-  //비밀번호 재설정 실패
+
+  // 비밀번호 재설정 실패
   public void fail_pw() {
     JOptionPane.showMessageDialog(this, "비밀번호재설정 실패하였습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
         setImage.img_notFound);
@@ -111,7 +114,6 @@ String userId =null;
     pwFind.client.setContentPane(pwFind.client.jp_login);
     pwFind.client.revalidate();
   }
-
 
   /**
    * ActionListener 메소드
@@ -140,14 +142,12 @@ String userId =null;
         JOptionPane.showMessageDialog(this, "비밀번호가 일치하지 않습니다.", "비밀번호 재설정", JOptionPane.WARNING_MESSAGE,
             setImage.img_notFound);
       }
-      // 비밀번호 재성정 -> 404#아이디#새로운비번
+      // 비밀번호 재설정 -> 404#아이디#새로운비번
       else {
         try {
-
-          // 재설정된 메소드에 받아온 아이디정보 추가할것!
           pwFind.client.oos.writeObject(Protocol.RESET_PW
-          + Protocol.seperator + userId  + Protocol.seperator + newPw);
-
+              + Protocol.seperator + userId
+              + Protocol.seperator + newPw);
         } catch (Exception e2) {
           e2.printStackTrace();
         }

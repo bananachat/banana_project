@@ -315,16 +315,17 @@ public class ServerThread extends Thread {
           case Protocol.RESET_PW: {
             String userId = st.nextToken();
             String userPw = st.nextToken();
+            server.jta_log.append("비번재설정 DB 체크 시작" + "\n");
             int result = memberLogic.updateUserPW(UserVO.builder().user_pw(userPw).user_id(userId).build());
+            server.jta_log.append("result: " + result + "\n");
             if (result > 0) {
-              oos.writeObject(Protocol.RESET_PW);
               // 비밀번호 재설정 성공#404
+              oos.writeObject(Protocol.RESET_PW);
             } else {
-              oos.writeObject(Protocol.RESETFAIL_PW);
               // 비밀번호 재설정 실패
+              oos.writeObject(Protocol.RESETFAIL_PW);
             }
           }
-
             break;
 
           /**
@@ -656,13 +657,17 @@ public class ServerThread extends Thread {
             // DB와 같은지 체크
             server.jta_log.append("채팅방 만들기\n");
 
-            int result = chatListLogic.createChat(userList);
-            server.jta_log.append("result: " + result + "\n");
+            String returnVal = chatListLogic.createChat(userList);
+            server.jta_log.append("result: " + returnVal + "\n");
 
+            StringTokenizer setVal = new StringTokenizer(returnVal, "#");
+            int result = Integer.parseInt(setVal.nextToken());
+            String chatNo = setVal.nextToken();
             switch (result) {
               case Protocol.CREATE_CHAT -> {
                 oos.writeObject(Protocol.CREATE_CHAT
-                    + Protocol.seperator + userList); // 606#유저목록 전달 (채팅방 만들기 성공)
+                    + Protocol.seperator + chatNo
+                    + Protocol.seperator + userList); // 606#채팅방넘버#유저목록 전달 (채팅방 만들기 성공)
               }
 
               case Protocol.FAIL_CRE_CHAT -> {
@@ -876,7 +881,7 @@ public class ServerThread extends Thread {
             String userNick = st.nextToken();
             String chatCont = st.nextToken();
             server.jta_log.append(chatNo + userId + userNick + chatCont + "\n");
-            server.jta_log.append("그룹채팅 저장 DB 체크 시작" + "\n");
+            server.jta_log.append("채팅 저장 DB 체크 시작" + "\n");
             int result = chatLogic
                 .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNo)).user_id(userId)
                     .chat_content(chatCont).build());
@@ -888,7 +893,7 @@ public class ServerThread extends Thread {
                 // 같은 단톡방에 말 전달하기 701#채팅방넘버#닉네임#메시지
                 // 서버스레드를 다 저장하고 모든 서버스레드에 전달하되 챗넘버가 같은경우에만 메시지전달
                 broadCasting(chatNo, userNick, chatCont);
-                server.jta_log.append("그룹채팅 메시지 저장 성공" + "\n");
+                server.jta_log.append("채팅 메시지 저장 성공" + "\n");
               }
                 break;
               // 저장실패 702

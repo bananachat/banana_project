@@ -33,6 +33,8 @@ public class MyPage implements ActionListener {
   String dbId = null;
   boolean nickTnF = false;
   String tempNick = null;
+    // 돌아가기 setTitle용
+  String title = "";
 
   /**
    * 화면부 선언
@@ -81,8 +83,9 @@ public class MyPage implements ActionListener {
    * 
    * @param client
    */
-  public MyPage(Client client, String userId) {
+  public MyPage(Client client, String userId, String title) {
     this.client = client;
+    this.title = title;
     // 사용자정보 불러오기 504#아이디
     try {
       client.oos.writeObject(Protocol.BTN_MYPAGE
@@ -299,7 +302,7 @@ public class MyPage implements ActionListener {
     JOptionPane.showMessageDialog(client, "닉네임 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
         setImage.img_confirm);
     client.setContentPane(client.main.jp_main);
-    client.setTitle("친구 목록");
+    client.setTitle(title);
     client.revalidate();
   }
 
@@ -320,7 +323,7 @@ public class MyPage implements ActionListener {
     JOptionPane.showMessageDialog(client, "닉네임, 비밀번호 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
         setImage.img_confirm);
     client.setContentPane(client.main.jp_main);
-    client.setTitle("친구 목록");
+    client.setTitle(title);
     client.revalidate();
   }
 
@@ -339,7 +342,7 @@ public class MyPage implements ActionListener {
     JOptionPane.showMessageDialog(client, "비밀번호 변경이 완료되었습니다.", "마이페이지", JOptionPane.INFORMATION_MESSAGE,
         setImage.img_confirm);
     client.setContentPane(client.main.jp_main);
-    client.setTitle("친구 목록");
+    client.setTitle(title);
     client.revalidate();
   }
 
@@ -459,7 +462,7 @@ public class MyPage implements ActionListener {
       // 변경사항이 없는 경우
       else {
         client.setContentPane(client.main.jp_main);
-        client.setTitle("친구 목록");
+        client.setTitle(title);
         client.revalidate();
       }
     }
@@ -512,7 +515,7 @@ public class MyPage implements ActionListener {
    */
   public static void main(String[] args) {
     Client c = new Client();
-    MyPage myPage = new MyPage(c, "test");
+    MyPage myPage = new MyPage(c, "test","test");
     c.initDisplay();
     myPage.initDisplay();
   }
