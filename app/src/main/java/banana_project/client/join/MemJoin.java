@@ -259,7 +259,7 @@ public class MemJoin implements ActionListener, FocusListener {
     * 회원가입 실패 메소드
     */
    public void sign_err() {
-      JOptionPane.showMessageDialog(client, "회원가입에 실패하였습니다. 다른 핸드폰번호와 닉네임으로 시도해주세요", "회원가입", JOptionPane.ERROR_MESSAGE,
+      JOptionPane.showMessageDialog(client, "회원가입에 실패하였습니다. 다시 시도해주세요", "회원가입", JOptionPane.ERROR_MESSAGE,
             setImage.img_delete);
    }
 
