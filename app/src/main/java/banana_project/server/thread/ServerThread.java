@@ -508,7 +508,7 @@ public class ServerThread extends Thread {
 
             // DB등록 및 체크
             server.jta_log.append("main다이얼로그 사용자 검색\n");
-            List<Object> list = friendLogic.findFriend(friend_id);
+            List<Object> list = friendLogic.findAllUser(user_id, friend_id);
 
             // 결과 프로토콜
             int result = Integer.parseInt(list.get(0).toString());
