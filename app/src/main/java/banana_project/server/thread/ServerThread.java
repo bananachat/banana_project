@@ -371,12 +371,12 @@ public class ServerThread extends Thread {
                   chNo = Integer.toString(lChatList.get(i).getChat_no());
                   ctitle = lChatList.get(i).getChat_title();
 
-                  resultList += (chNo + "|" + ctitle + "#");
+                  resultList += (chNo + " | " + ctitle + "#");
                 }
                 chNo = Integer.toString(lChatList.get(lChatList.size() - 1).getChat_no());
                 ctitle = lChatList.get(lChatList.size() - 1).getChat_title();
 
-                resultList += (chNo + "|" + ctitle);
+                resultList += (chNo + " | " + ctitle);
                 System.out.println("채팅리스트 : " + resultList);
 
                 oos.writeObject(Protocol.PRT_CHATLIST
