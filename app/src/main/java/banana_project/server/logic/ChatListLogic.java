@@ -56,6 +56,7 @@ public class ChatListLogic {
         // 리턴값
         Map<String, Object> mResult = new HashMap<>();
         List<ChatListVO> lChatList = new ArrayList<>();
+        ArrayList<Integer> countList = new ArrayList<>();
 
         // 쿼리결과 기본 false
         Boolean result = false;
@@ -89,9 +90,14 @@ public class ChatListLogic {
                 // TODO: 리스트 출력 이슈
                 ChatListVO clVO = new ChatListVO();
                 clVO.setChat_no(rs.getInt(1));
-                clVO.setChat_title(rs.getString(2));
+                //채팅 타이틀이 22자 이상일 경우 타이틀 생략처리
+                if(rs.getString(2).length() > 22)
+                    clVO.setChat_title(rs.getString(2).substring(0, 22) + "...");
+                else
+                    clVO.setChat_title(rs.getString(2));
                 lChatList.add(clVO);
-
+                String[] temp = rs.getString(2).split(",");
+                countList.add(temp.length);
                 // PRT_CHATLIST = 채팅리스트 출력
                 protocol = 502;
             }
@@ -120,6 +126,7 @@ public class ChatListLogic {
         // 메소드 반환값
         mResult.put("PROTOCOL", protocol);
         mResult.put("CHAT_LIST", lChatList);
+        mResult.put("COUNT", countList);
 
         System.out.println("프로토콜 : " + mResult.get("PROTOCOL"));
         System.out.println("채팅방 정보 : " + mResult.get("CHAT_LIST"));

@@ -75,7 +75,7 @@ public class ChatRoom implements ActionListener, FocusListener {
      * @param title
      * @param status
      */
-    public ChatRoom(Client client, String userId, String userNick, String chatNo, String userList, String title,
+    public ChatRoom(Client client, String userId, String userNick, String chatNo, String userList, String title, int count,
             Boolean isOk) {
         this.client = client;
         this.userId = userId;
@@ -86,12 +86,12 @@ public class ChatRoom implements ActionListener, FocusListener {
         setUser = new StringTokenizer(userList, ", ");
 
         // 채팅방 상단 그룹채팅(참여멤버숫자) 표시
-        if (setUser.countTokens() > 2) {
-            jbtn_fNick.setText("그룹채팅(" + setUser.countTokens() + ")");
+          if (count > 2) {
+            jbtn_fNick.setText("그룹채팅(" + count + ")");
             client.setTitle("그룹 채팅");
         }
         // 채팅방 상단 1:1채팅 상대닉네임 표시
-        else if (setUser.countTokens() == 2) {
+        else if (count == 2) {
             String tempNick1 = setUser.nextToken();
             String tempNick2 = setUser.nextToken();
             if (!userNick.equals(tempNick1)) {
@@ -476,9 +476,9 @@ public class ChatRoom implements ActionListener, FocusListener {
      * @param args
      */
     public static void main(String[] args) {
-        Client c = new Client();
-        ChatRoom cr = new ChatRoom(c, "test@email.com", "test", "1", "banana#test", "타이틀", false);
-        c.initDisplay();
-        cr.initDisplay();
+//        Client c = new Client();
+//        ChatRoom cr = new ChatRoom(c, "test@email.com", "test", "1", "banana#test", "타이틀", false);
+//        c.initDisplay();
+//        cr.initDisplay();
     }
 }

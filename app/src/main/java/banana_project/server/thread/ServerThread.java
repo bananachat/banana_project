@@ -382,17 +382,21 @@ public class ServerThread extends Thread {
                 String ctitle = ""; // 채팅방 타이틀
                 List<ChatListVO> lChatList = new ArrayList<>();
                 lChatList = (List<ChatListVO>) mChatList.get("CHAT_LIST");
+                ArrayList<Integer> countList = (ArrayList<Integer>) mChatList.get("COUNT");
+                int chCount;
 
                 for (int i = 0; i < lChatList.size() - 1; i++) {
                   chNo = Integer.toString(lChatList.get(i).getChat_no());
                   ctitle = lChatList.get(i).getChat_title();
+                  chCount = countList.get(i);
 
-                  resultList += (chNo + "|" + ctitle + "#");
+                  resultList += (chNo + "|" + ctitle + "|" + chCount + "#");
                 }
                 chNo = Integer.toString(lChatList.get(lChatList.size() - 1).getChat_no());
                 ctitle = lChatList.get(lChatList.size() - 1).getChat_title();
+                chCount = countList.get(countList.size() - 1);
 
-                resultList += (chNo + "|" + ctitle);
+                resultList += (chNo + "|" + ctitle + "|" + chCount);
                 System.out.println("채팅리스트 : " + resultList);
 
                 oos.writeObject(Protocol.PRT_CHATLIST
