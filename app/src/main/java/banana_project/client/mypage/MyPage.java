@@ -335,6 +335,10 @@ public class MyPage implements ActionListener {
       client.main.jlb_secChan.setText(userNick + "님의 채팅방");
     }
     client.revalidate();
+    // 선택값 초기화
+    client.main.selChat = "";
+    client.main.selNick = "";
+
   }
 
   /**
@@ -366,6 +370,9 @@ public class MyPage implements ActionListener {
       client.main.jlb_secChan.setText(userNick + "님의 채팅방");
     }
     client.revalidate();
+    // 선택값 초기화
+    client.main.selChat = "";
+    client.main.selNick = "";
   }
 
   /**
@@ -385,6 +392,9 @@ public class MyPage implements ActionListener {
     client.setContentPane(client.main.jp_main);
     client.setTitle(title);
     client.revalidate();
+    // 선택값 초기화
+    client.main.selChat = "";
+    client.main.selNick = "";
   }
 
   /**
@@ -516,6 +526,9 @@ public class MyPage implements ActionListener {
         client.setContentPane(client.main.jp_main);
         client.setTitle(title);
         client.revalidate();
+        // 선택값 초기화
+        client.main.selChat = "";
+        client.main.selNick = "";
       }
     }
 

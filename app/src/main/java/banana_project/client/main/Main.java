@@ -25,8 +25,8 @@ public class Main implements ActionListener, MouseListener {
     String userId = null;
     String userNick = null;
     // 친구, 채팅 삭제용
-    String selNick = "";
-    String selChat = "";
+    public String selNick = "";
+    public String selChat = "";
     // 돌아가기 화면전환용 타이틀
     public String title = "";
 
@@ -354,9 +354,6 @@ public class Main implements ActionListener, MouseListener {
         if (e.getComponent() == jl_list) {
             // jl_list 목록을 두번 눌렀을때 이벤트
             if (e.getClickCount() == 2) {
-                // String msg = jl_list.getSelectedValue() + "을 두번 눌렀습니다.";
-                // JOptionPane.showMessageDialog(client, msg, "info",
-                // JOptionPane.INFORMATION_MESSAGE);
                 // 채팅방을 더블클릭 -> 채팅방열기
                 if ("채팅 목록".equals(client.getTitle())) {
                     selChat = (String) jl_list.getSelectedValue();
@@ -434,7 +431,8 @@ public class Main implements ActionListener, MouseListener {
                         try {
                             client.oos.writeObject(Protocol.DEL_CHAT
                                     + Protocol.seperator + userId
-                                    + Protocol.seperator + chatNum);
+                                    + Protocol.seperator + chatNum
+                                    + Protocol.seperator + userNick);
                         } catch (Exception e1) {
                             e1.printStackTrace();
                         }

@@ -73,9 +73,25 @@ public class ServerThread extends Thread {
    */
   public void broadCasting(String chatNo, String sendNick, String sendMsg) {
     for (ServerThread serverThread : server.globalList) {
+      // 701#채팅방번호#닉네임#메시지
       serverThread.send(Protocol.SEND_MSG
           + Protocol.seperator + chatNo
           + Protocol.seperator + sendNick
+          + Protocol.seperator + sendMsg);
+    }
+  }
+
+  /**
+   * 퇴장 메시지 전달
+   * 
+   * @param chatNo
+   * @param sendMsg
+   */
+  public void exitBroadCasting(String chatNo, String sendMsg) {
+    for (ServerThread serverThread : server.globalList) {
+      // 706#채팅방번호#퇴장메시지(닉네임님이 나갔습니다.)
+      serverThread.send(Protocol.EXIT_MEM
+          + Protocol.seperator + chatNo
           + Protocol.seperator + sendMsg);
     }
   }
@@ -371,12 +387,12 @@ public class ServerThread extends Thread {
                   chNo = Integer.toString(lChatList.get(i).getChat_no());
                   ctitle = lChatList.get(i).getChat_title();
 
-                  resultList += (chNo + " | " + ctitle + "#");
+                  resultList += (chNo + "|" + ctitle + "#");
                 }
                 chNo = Integer.toString(lChatList.get(lChatList.size() - 1).getChat_no());
                 ctitle = lChatList.get(lChatList.size() - 1).getChat_title();
 
-                resultList += (chNo + " | " + ctitle);
+                resultList += (chNo + "|" + ctitle);
                 System.out.println("채팅리스트 : " + resultList);
 
                 oos.writeObject(Protocol.PRT_CHATLIST
@@ -434,6 +450,7 @@ public class ServerThread extends Thread {
           case Protocol.DEL_CHAT: {
             String userId = st.nextToken();
             String chatNum = st.nextToken();
+            String userNick = st.nextToken();
 
             ChatUserListVO chatlistvo = ChatUserListVO.builder().user_id(userId).chat_no(Integer.parseInt(chatNum))
                 .build();
@@ -445,11 +462,19 @@ public class ServerThread extends Thread {
               // 채팅방 삭제 성공 512#아이디
               case 1: {
                 int result2 = chatListLogic.updChatTitle(Integer.parseInt(chatNum));
-
+                // 채팅방 타이틀 업데이트 성공
                 switch (result2) {
                   case 1 -> {
                     oos.writeObject(Protocol.DEL_CHAT
-                            + Protocol.seperator + userId);
+                        + Protocol.seperator + userId);
+                    // 채팅 저장
+                    int result3 = chatLogic
+                        .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNum)).user_id(userId)
+                            .chat_content("- " + userNick + "님이 나갔습니다. -").build());
+                    // 저장 성공하면 퇴장메시지 출력
+                    if (result3 == 1) {
+                      exitBroadCasting(chatNum, "- " + userNick + "님이 나갔습니다. -");
+                    }
                   }
                 }
               }

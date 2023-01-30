@@ -471,6 +471,17 @@ public class ClientThread extends Thread {
           }
             break;
 
+          // 퇴장 메시지 출력 706#채팅방번호#퇴장메시지(닉네임님이 나갔습니다.)
+          case Protocol.EXIT_MEM: {
+            String recvNo = st.nextToken();
+            String recvMsg = st.nextToken();
+            // 채팅방 번호가 같을경우 메시지 전송
+            if (chatNo.equals(recvNo)) {
+              client.main.chatRoom.exit_mem(recvMsg);
+            }
+          }
+            break;
+
         } // end of switch
       } catch (Exception e) {
         e.printStackTrace();
