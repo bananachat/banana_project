@@ -299,6 +299,100 @@ public class ChatListLogic {
         return returnVal;
     } // end of createChat (채팅방 생성)
 
+    /**
+     * [채팅방 타이틀 변경]
+     * 0: 타이틀 변경 실패
+     * 1: 타이틀 변경 성공
+     *
+     * @param chatNo 채팅방 번호
+     * @return  result
+     */
+    public int updChatTitle(int chatNo) {
+        // 리턴값 기본 0
+        int result = 0;
+
+        String userId = "";
+        Vector<String> vUserIDs = new Vector<String>();
+        String chatTitle = "";
+
+        System.out.println("채팅방 번호 : " + chatNo);
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("    SELECT u.user_nickname FROM     ");
+        sql.append("    (SELECT user_id FROM tb_chat_user_list WHERE chat_no = ? ) ul   ");
+        sql.append("        , (SELECT user_id, user_nickname FROM tb_user) u    ");
+        sql.append("    where ul.user_id = u.user_id    ");
+
+        try {
+            // 오라클 서버와 연결
+            conn = dbMgr.getConnection();
+            pstmt = conn.prepareStatement(sql.toString());
+
+            pstmt.setInt(1, chatNo);
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                userId = rs.getString(1);
+                vUserIDs.add(userId);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // DB 사용한 자원 반납
+            try {
+                dbMgr.freeConnection(conn, pstmt, rs);
+            } catch (Exception e) {
+                // 디버깅
+                e.printStackTrace();
+            }
+        }
+
+        for (int i = 0; i < vUserIDs.size() -1; i++) {
+            chatTitle += vUserIDs.get(i) + ", ";
+        }
+        chatTitle += vUserIDs.get(vUserIDs.size() -1);
+
+        System.out.println("변경된 채팅타이틀 : " + chatTitle);
+
+        String sql2 = "UPDATE tb_chat_list SET chat_title = ? WHERE chat_no = ?";
+        int quResult = 0;
+
+        try {
+            // 오라클 서버와 연결
+            conn = dbMgr.getConnection();
+            pstmt = conn.prepareStatement(sql2);
+
+            pstmt.setString(1, chatTitle);
+            pstmt.setInt(2, chatNo);
+
+            quResult = pstmt.executeUpdate();
+
+            if (quResult == 1) {
+                result = 1;
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // DB 사용한 자원 반납
+            try {
+                dbMgr.freeConnection(conn, pstmt, rs);
+            } catch (Exception e) {
+                // 디버깅
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println("새 채팅방 타이틀 : " + chatTitle);
+
+        return result;
+    }
+
+
     // 단위테스트
     public static void main(String[] args) {
         ChatListLogic cl = new ChatListLogic();

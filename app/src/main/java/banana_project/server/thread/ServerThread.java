@@ -444,8 +444,14 @@ public class ServerThread extends Thread {
             switch (result) {
               // 채팅방 삭제 성공 512#아이디
               case 1: {
-                oos.writeObject(Protocol.DEL_CHAT
-                    + Protocol.seperator + userId);
+                int result2 = chatListLogic.updChatTitle(Integer.parseInt(chatNum));
+
+                switch (result2) {
+                  case 1 -> {
+                    oos.writeObject(Protocol.DEL_CHAT
+                            + Protocol.seperator + userId);
+                  }
+                }
               }
                 break;
               // 채팅방 삭제 실패 525
