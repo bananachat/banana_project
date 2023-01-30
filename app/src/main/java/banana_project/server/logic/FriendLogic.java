@@ -294,7 +294,7 @@ public class FriendLogic {
         StringBuilder selQuarry = new StringBuilder();
         selQuarry.append("SELECT ur.user_nickname FROM    ");
         selQuarry.append(" (SELECT f_id FROM tb_friends_list WHERE user_id= ? ) fl    ");
-        selQuarry.append("        , (SELECT user_id, user_nickname FROM tb_user) ur   ");
+        selQuarry.append("        , (SELECT user_id, user_nickname FROM tb_user WHERE status=0) ur   ");
         selQuarry.append("WHERE fl.f_id = ur.user_id  ");
         selQuarry.append("AND ur.user_nickname = ?   ");
 
@@ -356,6 +356,8 @@ public class FriendLogic {
                 }
             }
 
+            System.out.println("선택한 사용자ID : " + selectID);
+
             String sql = "INSERT INTO TB_FRIENDS_LIST (USER_ID, F_ID) VALUES (?, ?)";
 
             try {
@@ -364,6 +366,36 @@ public class FriendLogic {
 
                 pstmt.setString(1, uservo.getUser_id());
                 pstmt.setString(2, selectID);
+
+                // 쿼리 동작 레코드 수
+                // 성공: 1 / 실패: 0
+                result = pstmt.executeUpdate();
+
+                if (result == 1) {
+                    // ADD_FRIEND = 친구 추가 이벤트
+                    protocol = 605;
+                }
+            } catch (SQLException se) {
+                se.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                // DB 사용한 자원 반납
+                try {
+                    dbMgr.freeConnection(conn, pstmt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            String sql2 = "INSERT INTO TB_FRIENDS_LIST (USER_ID, F_ID) VALUES (?, ?)";
+
+            try {
+                conn = dbMgr.getConnection();
+                pstmt = conn.prepareStatement(sql2);
+
+                pstmt.setString(1, selectID);
+                pstmt.setString(2, uservo.getUser_id());
 
                 // 쿼리 동작 레코드 수
                 // 성공: 1 / 실패: 0
