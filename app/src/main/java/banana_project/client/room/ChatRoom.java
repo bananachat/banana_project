@@ -91,7 +91,7 @@ public class ChatRoom implements ActionListener, FocusListener {
             client.setTitle("그룹 채팅");
         }
         // 채팅방 상단 1:1채팅 상대닉네임 표시
-        else {
+        else if (setUser.countTokens() == 2) {
             String tempNick1 = setUser.nextToken();
             String tempNick2 = setUser.nextToken();
             if (!userNick.equals(tempNick1)) {
@@ -100,6 +100,11 @@ public class ChatRoom implements ActionListener, FocusListener {
                 jbtn_fNick.setText(tempNick2);
             }
             client.setTitle("1:1 채팅");
+        }
+        // 나 혼자일 경우
+        else {
+            jbtn_fNick.setText(userNick);
+            client.setTitle("나와의 채팅");
         }
         // 새로만든 채팅방이 아닐경우 채팅방 정보 불러오기
         if (isOk) {
