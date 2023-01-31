@@ -152,7 +152,7 @@ public class FriendLogic {
         sql.append("        (SELECT f_id FROM tb_friends_list WHERE user_id= ? ) fl   ");
         sql.append("        , (SELECT user_id, user_nickname FROM tb_user) ur    ");
         sql.append("WHERE fl.f_id = ur.user_id  ");
-        sql.append("AND ur.user_nickname = ? ");
+        sql.append("AND ur.user_nickname like '%' || ? || '%' ");
 
         try {
             // 오라클 서버와 연결
