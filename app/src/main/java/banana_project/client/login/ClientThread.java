@@ -461,7 +461,7 @@ public class ClientThread extends Thread {
             String recvNick = st.nextToken();
             String recvMsg = st.nextToken();
             // 채팅방 번호가 같은 경우 메시지 전송
-            if (chatNo.equals(recvNo)) {
+            if (chatNo.equals(recvNo) && !userNick.equals(recvNick)) {
               client.main.chatRoom.recv_msg(recvNick, recvMsg);
             }
           }

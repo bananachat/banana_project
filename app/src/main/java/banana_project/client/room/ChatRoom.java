@@ -77,11 +77,11 @@ public class ChatRoom implements ActionListener, FocusListener {
      * @param status
      */
     public ChatRoom(Client client, String userId, String userNick, ChatListVO cv, String title,
-                    int count, Boolean isOk) {
+            int count) {
         this.client = client;
         this.userId = userId;
         this.userNick = userNick;
-        this.chatNo = cv.getChat_no() + "";
+        this.chatNo = String.valueOf(cv.getChat_no());
         this.userList = cv.getChat_title(); // 닉네임, 닉네임 형식
         this.title = title;
         setUser = new StringTokenizer(userList, ", ");
@@ -107,14 +107,11 @@ public class ChatRoom implements ActionListener, FocusListener {
             jbtn_fNick.setText(userNick);
             client.setTitle("나와의 채팅");
         }
-        // 새로만든 채팅방이 아닐경우 채팅방 정보 불러오기
-        if (isOk) {
-            try {
-                client.oos.writeObject(Protocol.CHAT_START
-                        + Protocol.seperator + chatNo);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            client.oos.writeObject(Protocol.CHAT_START
+                    + Protocol.seperator + chatNo);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -300,33 +297,16 @@ public class ChatRoom implements ActionListener, FocusListener {
      */
     public void recv_msg(String recvNick, String recvMsg) {
         msg = recvNick + ":" + wrapText(recvMsg, recvNick.length());
-        // 로그인 유저가 보낸 메시지인 경우
-        if (userNick.equals(recvNick)) {
-            // jtp text 설정
-            StyledDocument doc = jtp_chat.getStyledDocument();
-            SimpleAttributeSet sas = new SimpleAttributeSet();
-            // 폰트 컬러
-            sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(135, 90, 75));
-            doc.setParagraphAttributes(0, doc.getLength(), sas, false);
-            try {
-                sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        // 다른 유저가 보낸 메시지인 경우
-        else {
-            // jtp text 설정
-            StyledDocument doc = jtp_chat.getStyledDocument();
-            SimpleAttributeSet sas = new SimpleAttributeSet();
-            // 폰트 컬러
-            sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(80, 114, 167));
-            doc.setParagraphAttributes(0, doc.getLength(), sas, false);
-            try {
-                sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        // jtp text 설정
+        StyledDocument doc = jtp_chat.getStyledDocument();
+        SimpleAttributeSet sas = new SimpleAttributeSet();
+        // 폰트 컬러
+        sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(80, 114, 167));
+        doc.setParagraphAttributes(0, doc.getLength(), sas, false);
+        try {
+            sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         jtp_chat.setCaretPosition(jtp_chat.getDocument().getLength());
     }
@@ -437,7 +417,15 @@ public class ChatRoom implements ActionListener, FocusListener {
             }
             // 내용을 입력했을 경우
             else {
+                // jtp text 설정
+                StyledDocument doc = jtp_chat.getStyledDocument();
+                SimpleAttributeSet sas = new SimpleAttributeSet();
+                // 폰트 컬러
+                sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(135, 90, 75));
+                doc.setParagraphAttributes(0, doc.getLength(), sas, false);
                 try {
+                    sd_display.insertString(sd_display.getLength(),
+                            userNick + ":" + wrapText(msg, userNick.length()) + "\n", sas);
                     // 대화저장 707#채팅방넘버#아이디#닉네임#메시지
                     client.oos.writeObject(Protocol.SAVE_CHAT
                             + Protocol.seperator + chatNo

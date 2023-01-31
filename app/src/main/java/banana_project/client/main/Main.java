@@ -364,8 +364,7 @@ public class Main implements ActionListener, MouseListener {
                 if ("채팅 목록".equals(client.getTitle())) {
                     int index = jl_list.getSelectedIndex();
                     // 채팅방 열림
-                    chatRoom = new ChatRoom(client, userId, userNick, chatList.get(index), title, countList.get(index),
-                            true);
+                    chatRoom = new ChatRoom(client, userId, userNick, chatList.get(index), title, countList.get(index));
                     chatRoom.initDisplay();
                 }
             }
