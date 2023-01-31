@@ -215,7 +215,7 @@ public class FriendLogic {
         // 리턴값
         List<Object> lResult = new ArrayList<>();
         String userNick = "";
-        String fList = "";
+        Vector<String> fList = new Vector<>();
 
         // 로그 작성
         // ll.writeLog(ConstantsLog.ENTER_LOG,
@@ -277,7 +277,7 @@ public class FriendLogic {
 
                 // 조회 성공 시
                 while (rs.next()) {
-                    fList = rs.getString(1);
+                    fList.add(rs.getString(1));
 
                     // EXIST_FRIEND = 친구 검색 존재
                     protocol = 607;

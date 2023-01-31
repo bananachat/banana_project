@@ -561,7 +561,12 @@ public class ServerThread extends Thread {
 
               switch (result) {
                 case Protocol.EXIST_FRIEND: { // 607 : EXIST_FRIEND = 친구 검색 존재
-                  String findFri = String.valueOf(list.get(1));
+                  StringBuilder findFri = new StringBuilder();
+                  Vector<String> friendList = (Vector<String>) list.get(1);
+                  for(int i = 1; i < friendList.size(); i++) {
+                    findFri.append(friendList.get(i));
+                    if(i != friendList.size() - 1) findFri.append(Protocol.seperator);
+                  }
 
                   oos.writeObject(Protocol.EXIST_USER
                           + Protocol.seperator + findFri); // 611로 전달 (해당 사용자 존재)

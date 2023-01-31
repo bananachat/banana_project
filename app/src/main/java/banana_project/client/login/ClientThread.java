@@ -284,13 +284,13 @@ public class ClientThread extends Thread {
           case Protocol.EXIST_USER: {
             System.out.println("다이얼로그 - 검색한 사용자 출력");
             Vector<String> vList = new Vector<>();
-            String userId = st.nextToken();
-
-            vList.add(userId);
-
+            while(st.hasMoreTokens()) {
+              String userId = st.nextToken();
+              vList.add(userId);
+            }
             client.main.flDialog.prt_frdList(vList);
-          }
             break;
+          }
 
           /**
            * Main다이얼로그 친구 검색
