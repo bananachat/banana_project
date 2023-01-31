@@ -447,7 +447,7 @@ public class MyPage implements ActionListener {
       }
       // 닉네임이 형식에 안맞음
       else if (!Pattern.matches(nickCheck, userNick)) {
-        JOptionPane.showMessageDialog(client, "닉네임은 2~10자의 영문, 한글, 숫자로 입력해주세요.", "회원가입",
+        JOptionPane.showMessageDialog(client, "닉네임은 2~10자의 영문, 한글, 숫자로 입력해주세요.", "마이페이지",
             JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 그 외의 경우

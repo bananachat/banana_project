@@ -148,7 +148,7 @@ public class PwFindDialog extends JDialog implements ActionListener {
       }
       // 비밀번호 형식이 아닐 경우
       else if (!Pattern.matches(pwCheck, newPw)) {
-        JOptionPane.showMessageDialog(this, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "로그인",
+        JOptionPane.showMessageDialog(this, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "비밀번호 재설정",
             JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
       // 비밀번호1,2가 다를 경우

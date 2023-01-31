@@ -325,7 +325,7 @@ public class MemJoin implements ActionListener, FocusListener {
          }
          // 비밀번호 형식이 아닐 경우
          else if (!Pattern.matches(pwCheck, userPw)) {
-            JOptionPane.showMessageDialog(client, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "로그인",
+            JOptionPane.showMessageDialog(client, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "회원가입",
                   JOptionPane.WARNING_MESSAGE, setImage.img_info);
          }
          // 비밀번호, 비밀번호 확인을 입력안한경우
