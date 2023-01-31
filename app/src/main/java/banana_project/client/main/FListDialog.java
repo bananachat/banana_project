@@ -326,6 +326,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                     msg = num + "을(를) 친구 추가합니다";
 
                     // 서버 스레드로 친구 추가 프로토콜과 해당 유저 아이디, 친구 추가할 목록 전송
+                    // if(){}
                     try {
                         main.client.oos.writeObject(
                                 Protocol.ADD_FRIEND +

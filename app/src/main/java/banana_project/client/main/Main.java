@@ -223,7 +223,7 @@ public class Main implements ActionListener, MouseListener {
         this.chatList = cList;
 
         for (int i = 0; i < cList.size(); i++) {
-            dlm.addElement(i + " | " + cList.get(i).getChat_title()); // 번호|타이틀
+            dlm.addElement((i + 1) + " | " + cList.get(i).getChat_title()); // 번호|타이틀
         }
     }
 
@@ -364,7 +364,8 @@ public class Main implements ActionListener, MouseListener {
                 if ("채팅 목록".equals(client.getTitle())) {
                     int index = jl_list.getSelectedIndex();
                     // 채팅방 열림
-                    chatRoom = new ChatRoom(client, userId, userNick, chatList.get(index), title, countList.get(index), true);
+                    chatRoom = new ChatRoom(client, userId, userNick, chatList.get(index), title, countList.get(index),
+                            true);
                     chatRoom.initDisplay();
                 }
             }
@@ -427,8 +428,9 @@ public class Main implements ActionListener, MouseListener {
                     if (result == JOptionPane.YES_OPTION) {
                         // 채팅리스트 "번호|타이틀"
                         // print_chatList() 참조
-                        StringTokenizer selChatTok = new StringTokenizer(selChat, "|");
-                        int chatNum = Integer.parseInt(selChatTok.nextToken()); // 채팅방 번호
+                        StringTokenizer selChatTok = new StringTokenizer(selChat, " | ");
+                        int iNum = Integer.parseInt(selChatTok.nextToken()); // 인덱스번호
+                        int chatNum = chatList.get(iNum - 1).getChat_no(); // 채팅방 번호
                         // 서버로 닉네임 전달 512#채팅방번호
                         try {
                             client.oos.writeObject(Protocol.DEL_CHAT
