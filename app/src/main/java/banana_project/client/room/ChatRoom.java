@@ -12,6 +12,8 @@ import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
 import banana_project.server.thread.Protocol;
+import banana_project.server.vo.ChatListVO;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -70,18 +72,17 @@ public class ChatRoom implements ActionListener, FocusListener {
      * @param client
      * @param userId
      * @param userNick
-     * @param chatNo
-     * @param userList
+     * @param chatListVO cv
      * @param title
      * @param status
      */
-    public ChatRoom(Client client, String userId, String userNick, String chatNo, String userList, String title,
-            int count, Boolean isOk) {
+    public ChatRoom(Client client, String userId, String userNick, ChatListVO cv, String title,
+                    int count, Boolean isOk) {
         this.client = client;
         this.userId = userId;
         this.userNick = userNick;
-        this.chatNo = chatNo;
-        this.userList = userList; // 닉네임, 닉네임 형식
+        this.chatNo = cv.getChat_no() + "";
+        this.userList = cv.getChat_title(); // 닉네임, 닉네임 형식
         this.title = title;
         setUser = new StringTokenizer(userList, ", ");
 

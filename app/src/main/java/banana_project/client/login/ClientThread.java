@@ -194,20 +194,19 @@ public class ClientThread extends Thread {
           // 채팅리스트 존재 502
           case Protocol.PRT_CHATLIST: {
             System.out.println("채팅리스트 존재");
-            List<ChatListVO> chatList = new ArrayList<>();
-            Vector<String> vList = new Vector<>();
-            StringTokenizer cl = null;
+            ArrayList<ChatListVO> chatList = new ArrayList<>();
             ArrayList<Integer> countList = new ArrayList<>();
 
             while (st.hasMoreTokens()) {
               String list = st.nextToken();
               String[] sl = list.split("\\|");
-              vList.add(sl[0] + "|" + sl[1]); // 채팅번호|채팅명
+              ChatListVO cv = new ChatListVO(Integer.parseInt(sl[0]), sl[1]);
+              chatList.add(cv);
               countList.add(Integer.parseInt(sl[2]));
             }
-            System.out.println("채팅리스트 : " + vList);
+            System.out.println("채팅리스트 : " + chatList);
 
-            client.main.print_chatList(vList, countList);
+            client.main.print_chatList(chatList, countList);
           }
             break;
 

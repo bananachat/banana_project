@@ -10,6 +10,8 @@ import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
 import banana_project.client.room.ChatRoom;
 import banana_project.server.thread.Protocol;
+import banana_project.server.vo.ChatListVO;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -238,9 +240,9 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         dlm.clear(); // 친구리스트 초기화
         copy_list.clear(); // 선택한 친구리스트 초기화
         String[] ulist = userList.split(",");
-
+        ChatListVO cv = new ChatListVO(Integer.parseInt(chatNo), userList);
         // 채팅방 열림
-        main.chatRoom = new ChatRoom(main.client, main.userId, main.userNick, chatNo, userList, "채팅 목록", ulist.length, false);
+        main.chatRoom = new ChatRoom(main.client, main.userId, main.userNick, cv, "채팅 목록", ulist.length, false);
         main.chatRoom.initDisplay();
 
         System.out.println("친구검색 다이얼로그 종료");

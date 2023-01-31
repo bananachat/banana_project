@@ -91,8 +91,8 @@ public class ChatListLogic {
                 ChatListVO clVO = new ChatListVO();
                 clVO.setChat_no(rs.getInt(1));
                 //채팅 타이틀이 22자 이상일 경우 타이틀 생략처리
-                if(rs.getString(2).length() > 22)
-                    clVO.setChat_title(rs.getString(2).substring(0, 22) + "...");
+                if(rs.getString(2).length() > 25)
+                    clVO.setChat_title(rs.getString(2).substring(0, 25) + "...");
                 else
                     clVO.setChat_title(rs.getString(2));
                 lChatList.add(clVO);

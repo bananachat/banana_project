@@ -5,6 +5,7 @@ import banana_project.client.login.Client;
 import banana_project.client.mypage.MyPage;
 import banana_project.client.room.ChatRoom;
 import banana_project.server.thread.Protocol;
+import banana_project.server.vo.ChatListVO;
 import banana_project.server.vo.UserVO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -31,6 +32,7 @@ public class Main implements ActionListener, MouseListener {
     // 돌아가기 화면전환용 타이틀
     public String title = "";
 
+    public ArrayList<ChatListVO> chatList = null;
     public ArrayList<Integer> countList = null;
     /**
      * 화면부 선언
@@ -213,14 +215,15 @@ public class Main implements ActionListener, MouseListener {
      * 
      * @param cList
      */
-    public void print_chatList(Vector<String> cList, ArrayList<Integer> countList) {
+    public void print_chatList(ArrayList<ChatListVO> cList, ArrayList<Integer> countList) {
         jl_list.setFont(setFontNJOp.b16);
         jl_list.setEnabled(true);
         dlm.removeAllElements();
         this.countList = countList;
+        this.chatList = cList;
 
         for (int i = 0; i < cList.size(); i++) {
-            dlm.addElement(cList.get(i)); // 번호|타이틀
+            dlm.addElement(i + " | " + cList.get(i).getChat_title()); // 번호|타이틀
         }
     }
 
@@ -359,14 +362,9 @@ public class Main implements ActionListener, MouseListener {
             if (e.getClickCount() == 2) {
                 // 채팅방을 더블클릭 -> 채팅방열기
                 if ("채팅 목록".equals(client.getTitle())) {
-                    selChat = (String) jl_list.getSelectedValue();
                     int index = jl_list.getSelectedIndex();
-                    StringTokenizer selChatTok = new StringTokenizer(selChat, "|");
-                    String chatNum = selChatTok.nextToken(); // 채팅방 번호
-                    String userList = selChatTok.nextToken(); // 채팅방이름(유저리스트)
-                    System.out.println("유저리스트" + userList);
                     // 채팅방 열림
-                    chatRoom = new ChatRoom(client, userId, userNick, chatNum, userList, title, countList.get(index), true);
+                    chatRoom = new ChatRoom(client, userId, userNick, chatList.get(index), title, countList.get(index), true);
                     chatRoom.initDisplay();
                 }
             }
