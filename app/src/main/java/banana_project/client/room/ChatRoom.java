@@ -75,8 +75,8 @@ public class ChatRoom implements ActionListener, FocusListener {
      * @param title
      * @param status
      */
-    public ChatRoom(Client client, String userId, String userNick, String chatNo, String userList, String title, int count,
-            Boolean isOk) {
+    public ChatRoom(Client client, String userId, String userNick, String chatNo, String userList, String title,
+            int count, Boolean isOk) {
         this.client = client;
         this.userId = userId;
         this.userNick = userNick;
@@ -86,7 +86,7 @@ public class ChatRoom implements ActionListener, FocusListener {
         setUser = new StringTokenizer(userList, ", ");
 
         // 채팅방 상단 그룹채팅(참여멤버숫자) 표시
-          if (count > 2) {
+        if (count > 2) {
             jbtn_fNick.setText("그룹채팅(" + count + ")");
             client.setTitle("그룹 채팅");
         }
@@ -257,7 +257,7 @@ public class ChatRoom implements ActionListener, FocusListener {
             }
 
             // 채팅 퇴장 메시지일 경우
-            else if (("- " + chatNick + "님이 나갔습니다. -").equals(chatCont)) {
+            else if (("Protocol.EXIT_MEM").equals(chatCont)) {
                 // jtp text 설정
                 StyledDocument doc = jtp_chat.getStyledDocument();
                 SimpleAttributeSet sas = new SimpleAttributeSet();
@@ -265,7 +265,7 @@ public class ChatRoom implements ActionListener, FocusListener {
                 sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(160, 161, 157));
                 doc.setParagraphAttributes(0, doc.getLength(), sas, false);
                 try {
-                    sd_display.insertString(sd_display.getLength(), chatCont + "\n", sas);
+                    sd_display.insertString(sd_display.getLength(), "- " + chatNick + "님이 나갔습니다. -" + "\n", sas);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -299,16 +299,33 @@ public class ChatRoom implements ActionListener, FocusListener {
      */
     public void recv_msg(String recvNick, String recvMsg) {
         msg = recvNick + ":" + wrapText(recvMsg, recvNick.length());
-        // jtp text 설정
-        StyledDocument doc = jtp_chat.getStyledDocument();
-        SimpleAttributeSet sas = new SimpleAttributeSet();
-        // 폰트 컬러
-        sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(80, 114, 167));
-        doc.setParagraphAttributes(0, doc.getLength(), sas, false);
-        try {
-            sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
-        } catch (Exception e) {
-            e.printStackTrace();
+        // 로그인 유저가 보낸 메시지인 경우
+        if (userNick.equals(recvNick)) {
+            // jtp text 설정
+            StyledDocument doc = jtp_chat.getStyledDocument();
+            SimpleAttributeSet sas = new SimpleAttributeSet();
+            // 폰트 컬러
+            sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(135, 90, 75));
+            doc.setParagraphAttributes(0, doc.getLength(), sas, false);
+            try {
+                sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // 다른 유저가 보낸 메시지인 경우
+        else {
+            // jtp text 설정
+            StyledDocument doc = jtp_chat.getStyledDocument();
+            SimpleAttributeSet sas = new SimpleAttributeSet();
+            // 폰트 컬러
+            sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(80, 114, 167));
+            doc.setParagraphAttributes(0, doc.getLength(), sas, false);
+            try {
+                sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         jtp_chat.setCaretPosition(jtp_chat.getDocument().getLength());
     }
@@ -419,15 +436,7 @@ public class ChatRoom implements ActionListener, FocusListener {
             }
             // 내용을 입력했을 경우
             else {
-                // jtp text 설정
-                StyledDocument doc = jtp_chat.getStyledDocument();
-                SimpleAttributeSet sas = new SimpleAttributeSet();
-                // 폰트 컬러
-                sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(135, 90, 75));
-                doc.setParagraphAttributes(0, doc.getLength(), sas, false);
                 try {
-                    sd_display.insertString(sd_display.getLength(),
-                            userNick + ":" + wrapText(msg, userNick.length()) + "\n", sas);
                     // 대화저장 707#채팅방넘버#아이디#닉네임#메시지
                     client.oos.writeObject(Protocol.SAVE_CHAT
                             + Protocol.seperator + chatNo
@@ -438,7 +447,6 @@ public class ChatRoom implements ActionListener, FocusListener {
                     e2.printStackTrace();
                 }
                 jtf_chat.setText("");
-                jtp_chat.setCaretPosition(jtp_chat.getDocument().getLength());
             }
         }
     }
@@ -476,9 +484,10 @@ public class ChatRoom implements ActionListener, FocusListener {
      * @param args
      */
     public static void main(String[] args) {
-//        Client c = new Client();
-//        ChatRoom cr = new ChatRoom(c, "test@email.com", "test", "1", "banana#test", "타이틀", false);
-//        c.initDisplay();
-//        cr.initDisplay();
+        // Client c = new Client();
+        // ChatRoom cr = new ChatRoom(c, "test@email.com", "test", "1", "banana#test",
+        // "타이틀", false);
+        // c.initDisplay();
+        // cr.initDisplay();
     }
 }

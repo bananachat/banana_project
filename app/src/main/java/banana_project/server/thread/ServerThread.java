@@ -465,16 +465,17 @@ public class ServerThread extends Thread {
             switch (result) {
               // 채팅방 삭제 성공 512#아이디
               case 1: {
+                server.jta_log.append("채팅방 업데이트 DB 체크 시작" + "\n");
                 int result2 = chatListLogic.updChatTitle(Integer.parseInt(chatNum));
-                // 채팅방 타이틀 업데이트 성공
                 switch (result2) {
+                  // 채팅방 타이틀 업데이트 성공
                   case 1 -> {
                     oos.writeObject(Protocol.DEL_CHAT
                         + Protocol.seperator + userId);
                     // 채팅 저장
                     int result3 = chatLogic
                         .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNum)).user_id(userId)
-                            .chat_content("- " + userNick + "님이 나갔습니다. -").build());
+                            .chat_content("Protocol.EXIT_MEM").build());
                     // 저장 성공하면 퇴장메시지 출력
                     if (result3 == 1) {
                       exitBroadCasting(chatNum, "- " + userNick + "님이 나갔습니다. -");

@@ -279,11 +279,9 @@ public class MemJoin implements ActionListener, FocusListener {
          String userNick = jtf_nickName.getText();
          String userPw = jtf_userPw.getText();
          String userPwRe = jtf_userPwRe.getText();
-         // 이름, 핸드폰번호, 아이디, 닉네임, 비밀번호 정규식
+         // 이름, 핸드폰번호, 비밀번호 정규식
          String nameCheck = "^[가-힣]{2,6}$"; // 한글 이름 2~6자
          String hpCheck = "^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$"; // 핸드폰번호 형식
-         String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
-         String nickCheck = "^[a-zA-Z가-힣ㄱ-ㅎ0-9]{2,16}"; // 영문, 한글, 숫자 닉네임 2~10자
          String pwCheck = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$"; // 8~16자 숫자,영문자포함 8~16자 비밀번호
          // 이름 입력 안함
          if ("".equals(userName)) {
@@ -310,24 +308,19 @@ public class MemJoin implements ActionListener, FocusListener {
             JOptionPane.showMessageDialog(client, "이메일을 입력해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
                   setImage.img_info);
          }
-         // 아이디가 형식에 안맞음
-         else if (!Pattern.matches(idCheck, userId)) {
-            JOptionPane.showMessageDialog(client, "example@email.com 형식으로 입력해주세요.", "회원가입",
-                  JOptionPane.WARNING_MESSAGE, setImage.img_info);
+         // 아이디 중복확인을 하지 않았을 경우
+         else if (!idTnF) {
+            JOptionPane.showMessageDialog(client, "아이디 중복확인을 해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
+                  setImage.img_info);
          }
          // 닉네임을 입력안함
          else if ("".equals(userNick)) {
             JOptionPane.showMessageDialog(client, "닉네임을 입력해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
                   setImage.img_info);
          }
-         // 닉네임이 형식에 안맞음
-         else if (!Pattern.matches(nickCheck, userNick)) {
-            JOptionPane.showMessageDialog(client, "닉네임은 2~10자의 영문, 한글, 숫자로 입력해주세요.", "회원가입",
-                  JOptionPane.WARNING_MESSAGE, setImage.img_info);
-         }
-         // 비밀번호, 비밀번호 확인을 입력안한경우
-         else if ("".equals(userPw) || "".equals(userPwRe)) {
-            JOptionPane.showMessageDialog(client, "비밀번호를 입력해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
+         // 닉네임 중복확인을 하지 않았을 경우
+         else if (!nickTnF) {
+            JOptionPane.showMessageDialog(client, "닉네임 중복확인을 해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
                   setImage.img_info);
          }
          // 비밀번호 형식이 아닐 경우
@@ -335,20 +328,15 @@ public class MemJoin implements ActionListener, FocusListener {
             JOptionPane.showMessageDialog(client, "비밀번호는 숫자와 영문자를 포함하여 8~16자로 입력해주세요.", "로그인",
                   JOptionPane.WARNING_MESSAGE, setImage.img_info);
          }
+         // 비밀번호, 비밀번호 확인을 입력안한경우
+         else if ("".equals(userPw) || "".equals(userPwRe)) {
+            JOptionPane.showMessageDialog(client, "비밀번호를 입력해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
+                  setImage.img_info);
+         }
          // 비밀번호 확인 불일치
          else if (!userPw.equals(userPwRe)) {
             JOptionPane.showMessageDialog(client, "비밀번호가 일치하지 않습니다.", "회원가입", JOptionPane.WARNING_MESSAGE,
                   setImage.img_notFound);
-         }
-         // 아이디 중복확인을 하지 않았을 경우
-         else if (!idTnF) {
-            JOptionPane.showMessageDialog(client, "아이디 중복확인을 해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
-                  setImage.img_info);
-         }
-         // 닉네임 중복확인을 하지 않았을 경우
-         else if (!nickTnF) {
-            JOptionPane.showMessageDialog(client, "닉네임 중복확인을 해주세요.", "회원가입", JOptionPane.WARNING_MESSAGE,
-                  setImage.img_info);
          }
          // 그 외의 경우 회원가입 시도
          else {
@@ -380,23 +368,43 @@ public class MemJoin implements ActionListener, FocusListener {
 
       // 아이디 중복확인 버튼을 눌렀을 때
       else if (obj == jbtn_checkId) {
+         // 아이디 정규식
+         String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
          String userId = jtf_userId.getText();
-         try {
-            client.oos.writeObject(Protocol.MAIL_CHK
-                  + Protocol.seperator + userId);
-         } catch (IOException e) {
-            e.printStackTrace();
+         // 아이디가 형식에 안맞음
+         if (!Pattern.matches(idCheck, userId)) {
+            JOptionPane.showMessageDialog(client, "example@email.com 형식으로 입력해주세요.", "회원가입",
+                  JOptionPane.WARNING_MESSAGE, setImage.img_info);
+         }
+         // 형식에 맞으면 db체크
+         else {
+            try {
+               client.oos.writeObject(Protocol.MAIL_CHK
+                     + Protocol.seperator + userId);
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
          }
       }
 
       // 닉네임 중복확인 버튼을 눌렀을 때
       else if (obj == jbtn_checkNick) {
+         // 닉네임 정규식
+         String nickCheck = "^[a-zA-Z가-힣ㄱ-ㅎ0-9]{2,10}"; // 영문, 한글, 숫자 닉네임 2~10자
          String userNick = jtf_nickName.getText();
-         try {
-            client.oos.writeObject(Protocol.NICK_CHK
-                  + Protocol.seperator + userNick);
-         } catch (IOException e) {
-            e.printStackTrace();
+         // 닉네임이 형식에 안맞음
+         if (!Pattern.matches(nickCheck, userNick)) {
+            JOptionPane.showMessageDialog(client, "닉네임은 2~10자의 영문, 한글, 숫자로 입력해주세요.", "회원가입",
+                  JOptionPane.WARNING_MESSAGE, setImage.img_info);
+         }
+         // 형식에 맞으면 db체크
+         else {
+            try {
+               client.oos.writeObject(Protocol.NICK_CHK
+                     + Protocol.seperator + userNick);
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
          }
       }
 
