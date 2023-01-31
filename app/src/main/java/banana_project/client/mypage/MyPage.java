@@ -301,7 +301,7 @@ public class MyPage implements ActionListener {
   public void nick_mchk() {
     nickTnF = true;
     tempNick = jtf_nickName.getText();
-    JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "마이페이지", JOptionPane.WARNING_MESSAGE,
+    JOptionPane.showMessageDialog(client, "닉네임 중복확인이 완료되었습니다.", "마이페이지", JOptionPane.WARNING_MESSAGE,
         setImage.img_confirm);
   }
 

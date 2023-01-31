@@ -202,7 +202,7 @@ public class MemJoin implements ActionListener, FocusListener {
    public void mail_chk() {
       idTnF = true;
       tempId = jtf_userId.getText();
-      JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "회원가입",
+      JOptionPane.showMessageDialog(client, "아이디 중복확인이 완료되었습니다.", "회원가입",
             JOptionPane.WARNING_MESSAGE, setImage.img_confirm);
    }
 
@@ -221,7 +221,7 @@ public class MemJoin implements ActionListener, FocusListener {
    public void nick_chk() {
       nickTnF = true;
       tempNick = jtf_nickName.getText();
-      JOptionPane.showMessageDialog(client, "중복확인이 완료되었습니다.", "회원가입", JOptionPane.WARNING_MESSAGE,
+      JOptionPane.showMessageDialog(client, "닉네임 중복확인이 완료되었습니다.", "회원가입", JOptionPane.WARNING_MESSAGE,
             setImage.img_confirm);
    }
 
