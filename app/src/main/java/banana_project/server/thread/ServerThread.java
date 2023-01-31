@@ -467,20 +467,25 @@ public class ServerThread extends Thread {
               case 1: {
                 server.jta_log.append("채팅방 업데이트 DB 체크 시작" + "\n");
                 int result2 = chatListLogic.updChatTitle(Integer.parseInt(chatNum));
+
                 switch (result2) {
-                  // 채팅방 타이틀 업데이트 성공
                   case 1 -> {
-                    oos.writeObject(Protocol.DEL_CHAT
-                        + Protocol.seperator + userId);
-                    // 채팅 저장
-                    int result3 = chatLogic
-                        .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNum)).user_id(userId)
-                            .chat_content("Protocol.EXIT_MEM").build());
-                    // 저장 성공하면 퇴장메시지 출력
-                    if (result3 == 1) {
-                      exitBroadCasting(chatNum, "- " + userNick + "님이 나갔습니다. -");
-                    }
+                    System.out.println("사용자 존재: O / 채팅방 타이틀 업데이트 성공");
                   }
+                  default -> {
+                    System.out.println("사용자 존재: X / 채팅방 타이틀 업데이트 제외");
+                  }
+                }
+
+                oos.writeObject(Protocol.DEL_CHAT
+                        + Protocol.seperator + userId);
+                // 채팅 저장
+                int result3 = chatLogic
+                        .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNum)).user_id(userId)
+                                .chat_content("Protocol.EXIT_MEM").build());
+                // 저장 성공하면 퇴장메시지 출력
+                if (result3 == 1) {
+                  exitBroadCasting(chatNum, "- " + userNick + "님이 나갔습니다. -");
                 }
               }
                 break;

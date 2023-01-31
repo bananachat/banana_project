@@ -317,6 +317,7 @@ public class ChatListLogic {
     public int updChatTitle(int chatNo) {
         // 리턴값 기본 0
         int result = 0;
+        int seResult = 0;
 
         String userId = "";
         Vector<String> vUserIDs = new Vector<String>();
@@ -357,44 +358,50 @@ public class ChatListLogic {
             }
         }
 
-        for (int i = 0; i < vUserIDs.size() -1; i++) {
-            chatTitle += vUserIDs.get(i) + ", ";
+        if (vUserIDs.size() > 0) {
+            seResult = 1;
         }
-        chatTitle += vUserIDs.get(vUserIDs.size() -1);
 
-        System.out.println("변경된 채팅타이틀 : " + chatTitle);
-
-        String sql2 = "UPDATE tb_chat_list SET chat_title = ? WHERE chat_no = ?";
-        int quResult = 0;
-
-        try {
-            // 오라클 서버와 연결
-            conn = dbMgr.getConnection();
-            pstmt = conn.prepareStatement(sql2);
-
-            pstmt.setString(1, chatTitle);
-            pstmt.setInt(2, chatNo);
-
-            quResult = pstmt.executeUpdate();
-
-            if (quResult == 1) {
-                result = 1;
+        if (seResult == 1) {
+            for (int i = 0; i < vUserIDs.size() -1; i++) {
+                chatTitle += vUserIDs.get(i) + ", ";
             }
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // DB 사용한 자원 반납
+            chatTitle += vUserIDs.get(vUserIDs.size() -1);
+
+            System.out.println("변경된 채팅타이틀 : " + chatTitle);
+
+            String sql2 = "UPDATE tb_chat_list SET chat_title = ? WHERE chat_no = ?";
+            int quResult = 0;
+
             try {
-                dbMgr.freeConnection(conn, pstmt, rs);
-            } catch (Exception e) {
-                // 디버깅
-                e.printStackTrace();
-            }
-        }
+                // 오라클 서버와 연결
+                conn = dbMgr.getConnection();
+                pstmt = conn.prepareStatement(sql2);
 
-        System.out.println("새 채팅방 타이틀 : " + chatTitle);
+                pstmt.setString(1, chatTitle);
+                pstmt.setInt(2, chatNo);
+
+                quResult = pstmt.executeUpdate();
+
+                if (quResult == 1) {
+                    result = 1;
+                }
+            } catch (SQLException se) {
+                se.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                // DB 사용한 자원 반납
+                try {
+                    dbMgr.freeConnection(conn, pstmt, rs);
+                } catch (Exception e) {
+                    // 디버깅
+                    e.printStackTrace();
+                }
+            }
+
+            System.out.println("새 채팅방 타이틀 : " + chatTitle);
+        }
 
         return result;
     }
