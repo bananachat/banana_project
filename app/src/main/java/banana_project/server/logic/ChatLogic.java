@@ -109,6 +109,7 @@ public class ChatLogic {
         try {
             con=dbMgr.getConnection();
             pst=con.prepareStatement(sql.toString());
+            //DB에서 SYSDATE로 자동으로 값을 넣어주기위해 chat_date는 전달하지 않음
 //            pst.setString(1,chatconvo.getChat_date());
             pst.setString(1,chatconvo.getChat_content());
             pst.setString(2,chatconvo.getUser_id());
@@ -125,15 +126,12 @@ public class ChatLogic {
         } finally {//사용반납
             try {
                 dbMgr.freeConnection(con, pst, rs);
-            } catch (Exception e) {
+            } catch (Exception e) {//디버깅
                 e.printStackTrace();
             }
         }//end of finally
         return result;
     }//end of insertChat
-
-    //채팅방을 나가고 싶다.
-
 
     /**
      * 채팅방 나가기
@@ -148,12 +146,14 @@ public class ChatLogic {
         int result= -1;
 
         //flag는 나가면 1 있으면 0
-//        String sql= "update TB_CHAT_USER_LIST  set flag=1 where chat_no=? and user_id=?";///이래도 되나요?
-        String sql= "delete from TB_CHAT_USER_LIST where chat_no=? and user_id=?";//TODO:
+        //String sql= "update TB_CHAT_USER_LIST  set flag=1 where chat_no=? and user_id=?";
+        //플래그값을 주어 채팅방에 존재하지 않는 사람들(flag=1)에게만 업데이트하려했으나
+        // 나간사람 user_id로 구분 후 데이터 삭제로 간단히 수정
+        String sql= "delete from TB_CHAT_USER_LIST where chat_no=? and user_id=?";
         try{
             con=dbMgr.getConnection();
             pst=con.prepareStatement(sql);
-            pst.setInt(1,chatlistvo.getChat_no());////은재고수님께질문-완
+            pst.setInt(1,chatlistvo.getChat_no());
             pst.setString(2,chatlistvo.getUser_id());
 
             result=pst.executeUpdate();
@@ -176,14 +176,16 @@ public class ChatLogic {
         ChatLogic cl=new ChatLogic();
         ChatContentsVO ccvo=new ChatContentsVO();
         ChatUserListVO cuser=new ChatUserListVO();
+        //채팅내용 디비에 저장하기위한 단위테스트용 데이터
 //        ccvo.setChat_no(11);
 //        ccvo.setUser_id("test@domail.com");
 //        ccvo.setChat_content("얘들아 우리 점심 머먹을까?^^");
 //        cuser.setChat_no(11);
 //        cuser.setUser_id("test@domail.com");
 //        int result=cl.insertChat(ccvo);
+        //채팅방 데이터 불러올때에 사용하기��한 단위테스트용 데이터-임의의 11번 채팅방 불러오기
         List<ChatContentsVO> result =cl.ChatCall(11);
-//        int result=cl.delChatContents(cuser);
+//        int result=cl.delChatContents(curser);
         System.out.println(result);
 
 
