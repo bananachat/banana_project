@@ -242,7 +242,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         String[] ulist = userList.split(",");
         ChatListVO cv = new ChatListVO(Integer.parseInt(chatNo), userList);
         // 채팅방 열림
-        main.chatRoom = new ChatRoom(main.client, main.userId, main.userNick, cv, "채팅 목록", ulist.length, false);
+        main.chatRoom = new ChatRoom(main.client, main.userId, main.userNick, cv, "채팅 목록", ulist.length);
         main.chatRoom.initDisplay();
 
         System.out.println("친구검색 다이얼로그 종료");
