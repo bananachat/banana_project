@@ -455,12 +455,20 @@ public class ClientThread extends Thread {
           }
             break;
 
+          // 새로 만든 채팅방의 경우
+          case Protocol.F_CHAT_START: {
+            String chatNo = st.nextToken();
+            // 채팅방번호 담기
+            this.chatNo = chatNo;
+          }
+            break;
+
           // 메시지 출력 701#닉네임#메시지내용
           case Protocol.SEND_MSG: {
             String recvNo = st.nextToken();
             String recvNick = st.nextToken();
             String recvMsg = st.nextToken();
-            // 채팅방 번호가 같은 경우 메시지 전송
+            // 채팅방 번호가 같고 닉네임은 다른 경우 메시지 전송
             if (chatNo.equals(recvNo) && !userNick.equals(recvNick)) {
               client.main.chatRoom.recv_msg(recvNick, recvMsg);
             }

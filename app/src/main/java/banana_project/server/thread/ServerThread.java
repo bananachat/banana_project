@@ -72,6 +72,7 @@ public class ServerThread extends Thread {
    * @param sendMsg
    */
   public void broadCasting(String chatNo, String sendNick, String sendMsg) {
+    server.jta_log.append("메시지 전달 시작" + "\n");
     for (ServerThread serverThread : server.globalList) {
       // 701#채팅방번호#닉네임#메시지
       serverThread.send(Protocol.SEND_MSG
@@ -478,11 +479,11 @@ public class ServerThread extends Thread {
                 }
 
                 oos.writeObject(Protocol.DEL_CHAT
-                        + Protocol.seperator + userId);
+                    + Protocol.seperator + userId);
                 // 채팅 저장
                 int result3 = chatLogic
-                        .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNum)).user_id(userId)
-                                .chat_content("Protocol.EXIT_MEM").build());
+                    .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNum)).user_id(userId)
+                        .chat_content("Protocol.EXIT_MEM").build());
                 // 저장 성공하면 퇴장메시지 출력
                 if (result3 == 1) {
                   exitBroadCasting(chatNum, "- " + userNick + "님이 나갔습니다. -");
@@ -882,6 +883,8 @@ public class ServerThread extends Thread {
               server.jta_log.append("채팅내용 전송 시작" + "\n");
               // this.chatNo = String.valueOf(chatNo);
             } else {
+              oos.writeObject(Protocol.F_CHAT_START
+                  + Protocol.seperator + chatNo);
               server.jta_log.append("result: null" + "\n");
             }
           }

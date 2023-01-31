@@ -92,6 +92,8 @@ public class Protocol {
     public static final int	SAVE_CHAT = 707;    	//대화저장
     public static final int	WRONG_NUM = 708;    	//잘못된 채팅방 번호
     public static final int	SAVE_FAIL = 708;    	//대화저장실패
+    public static final int	F_CHAT_START = 709; 	    //대화방화면 첫 출력(내용없을경우)
+
 
 
     //          [데이터베이스]           //

@@ -151,6 +151,7 @@ public class PwFind implements ActionListener, FocusListener {
       String userName = jtf_userName.getText();
       String userId = jtf_userId.getText();
       String userHp = jtf_userHp.getText();
+      // 아이디, 핸드폰번호 정규식
       String idCheck = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"; // 이메일 형식
       String hpCheck = "^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$";
       // 이름을 입력하지 않았을 경우

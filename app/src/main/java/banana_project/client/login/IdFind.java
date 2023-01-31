@@ -142,7 +142,7 @@ public class IdFind implements ActionListener, FocusListener {
     else if (obj == jbtn_findId || obj == jtf_userName || obj == jtf_userHp) {
       String userName = jtf_userName.getText();
       String userHp = jtf_userHp.getText();
-      // 이름, 핸드폰번호 정규식
+      // 핸드폰번호 정규식
       String hpCheck = "^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$";
       // 이름을 입력하지 않았을 경우
       if ("이름".equals(userName) || "".equals(userName)) {

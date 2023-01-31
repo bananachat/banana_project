@@ -76,8 +76,7 @@ public class ChatRoom implements ActionListener, FocusListener {
      * @param title
      * @param status
      */
-    public ChatRoom(Client client, String userId, String userNick, ChatListVO cv, String title,
-            int count) {
+    public ChatRoom(Client client, String userId, String userNick, ChatListVO cv, String title, int count) {
         this.client = client;
         this.userId = userId;
         this.userNick = userNick;

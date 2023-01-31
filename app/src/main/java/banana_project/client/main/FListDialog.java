@@ -58,9 +58,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.main = main;
         jl_list = new JList(dlm);
 
-        // 임시 리스트 출력
-        // createList();
-
         // 채팅목록일 경우에만 친구검색 후 출력
         if ("채팅 목록".equals(getTitle)) {
             // 친구검색 출력 600#아이디
@@ -72,18 +69,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
             }
         }
     }
-
-    ////////////////////////// [메소드] //////////////////////////
-    // TODO: 현재 임의의 리스트 출력
-    // 초기 친구리스트 배열을 파라미터로 해야한다
-    /**
-     * 친구리스트(JList) 생성
-     */
-    public void createList() {
-        for (int i = 0; i < 20; i++) {
-            dlm.addElement(Integer.toString(i));
-        }
-    } // end of createList()
 
     ////////////////////////// [화면출력] //////////////////////////
 
@@ -224,8 +209,6 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
      * 친구 추가 실패
      */
     public void fail_add_friend() {
-        // 실패 후 필요한 작업 작성
-        // 대충 이런?
         JOptionPane.showMessageDialog(this, "친구 추가에 실패하였습니다.", "친구 추가", JOptionPane.INFORMATION_MESSAGE,
                 setImage.img_delete);
     }

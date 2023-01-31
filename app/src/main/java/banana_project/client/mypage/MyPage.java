@@ -436,7 +436,7 @@ public class MyPage implements ActionListener {
     String pwFirst = jtf_userPw.getText();
     String pwSecond = jtf_userPwRe.getText();
     // 닉네임, 비밀번호 정규식
-    String nickCheck = "^[a-zA-Z가-힣ㄱ-ㅎ0-9]{2,16}"; // 영문, 한글, 숫자 닉네임 2~10자
+    String nickCheck = "^[a-zA-Z가-힣ㄱ-ㅎ0-9]{2,10}"; // 영문, 한글, 숫자 닉네임 2~10자
     String pwCheck = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,16}$"; // 숫자,영문자포함 8~16자 비밀번호
     // 닉네임 중복확인 버튼 눌렀을 때
     if (obj == jbtn_checkNick) {
@@ -541,16 +541,9 @@ public class MyPage implements ActionListener {
 
     // JDg 속 탈퇴하기 버튼 눌렀을 때
     else if (obj == jbtn_realresign || obj == jtf_resignId || obj == jtf_resignPw) {
-      String userId = jtf_resignId.getText();
       String userPw = jtf_resignPw.getText();
-
-      // 아이디가 로그인 아이디와 다를경우
-      if (!userId.equals(dbId)) {
-        JOptionPane.showMessageDialog(jd_resign, "아이디가 일치하지 않습니다.", "회원탈퇴", JOptionPane.WARNING_MESSAGE,
-            setImage.img_notFound);
-      }
       // 비밀번호가 공백일 경우 경고문 띄우기
-      else if (userPw.equals("")) {
+      if (userPw.equals("")) {
         JOptionPane.showMessageDialog(jd_resign, "비밀번호를 입력해주세요.", "회원탈퇴",
             JOptionPane.WARNING_MESSAGE, setImage.img_info);
       }
@@ -563,7 +556,7 @@ public class MyPage implements ActionListener {
         if (result == JOptionPane.YES_OPTION) {
           // 아이디 비밀번호 DB체크
           try {
-            client.oos.writeObject(Protocol.DEL_ACNT + Protocol.seperator + userId + Protocol.seperator + userPw);
+            client.oos.writeObject(Protocol.DEL_ACNT + Protocol.seperator + dbId + Protocol.seperator + userPw);
           } catch (IOException ex) {
             throw new RuntimeException(ex);
           }
