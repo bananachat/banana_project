@@ -424,7 +424,8 @@ public class ChatRoom implements ActionListener, FocusListener {
                 sas.addAttribute(StyleConstants.ColorConstants.Foreground, new Color(135, 90, 75));
                 doc.setParagraphAttributes(0, doc.getLength(), sas, false);
                 try {
-                    sd_display.insertString(sd_display.getLength(), msg + "\n", sas);
+                    sd_display.insertString(sd_display.getLength(),
+                            userNick + ":" + wrapText(msg, userNick.length()) + "\n", sas);
                     // 대화저장 707#채팅방넘버#아이디#닉네임#메시지
                     client.oos.writeObject(Protocol.SAVE_CHAT
                             + Protocol.seperator + chatNo
