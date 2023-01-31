@@ -51,7 +51,7 @@ public class ChatLogic {
 
         sb.append(" select a.ddd , b.user_nickname, a.chat_contents, a.chat_no from ");
         sb.append("         (select to_char(chat_date,'YYYY/MM/DD')  ddd, user_id, chat_contents, chat_no from    ");
-        sb.append("                 tb_chat_contents where chat_no= ? ) a,   ");
+        sb.append("                 tb_chat_contents where chat_no= ? order by chat_date asc) a,   ");
         sb.append("         (SELECT user_id, user_nickname FROM tb_user) b  ");
         sb.append(" where a.user_id = b.user_id ");
 
