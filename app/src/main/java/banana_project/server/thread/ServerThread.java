@@ -597,10 +597,15 @@ public class ServerThread extends Thread {
 
             switch (result) {
               case Protocol.EXIST_FRIEND: { // 607 : EXIST_FRIEND = 친구 검색 존재
-                String findFri = String.valueOf(list.get(1));
+                StringBuilder findFri = new StringBuilder();
+                Vector<String> fslist = (Vector<String>)list.get(1);
+                for(int i = 0; i < fslist.size(); i++){
+                  findFri.append(fslist.get(i));
+                  if(fslist.size() - 1 > i) findFri.append(Protocol.seperator);
+                }
 
                 oos.writeObject(Protocol.EXIST_FRIEND
-                    + Protocol.seperator + findFri); // 607로 전달 (친구 검색 존재)
+                    + Protocol.seperator + findFri.toString()); // 607로 전달 (친구 검색 존재)
               }
                 break;
 
