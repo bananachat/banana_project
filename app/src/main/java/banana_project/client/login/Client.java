@@ -140,9 +140,15 @@ public class Client extends JFrame implements ActionListener, MouseListener, Foc
    */
   public void init() {
     try {
+<<<<<<< HEAD
        socket = new Socket("192.168.10.72", 3000);
       //socket = new Socket("127.0.0.1", 3000);
       //socket = new Socket("192.168.10.70", 3000);
+=======
+      // socket = new Socket("192.168.10.72", 3000);
+      socket = new Socket("127.0.0.1", 3000);
+      // socket = new Socket("192.168.10.70", 3000);
+>>>>>>> 164c8eddb616e69a38e391d5a4dd7cde433d6ca6
       oos = new ObjectOutputStream(socket.getOutputStream()); // 말하기
       ois = new ObjectInputStream(socket.getInputStream()); // 듣기
       clientThread = new ClientThread(this); // 클라이언트 스레드와 연결
