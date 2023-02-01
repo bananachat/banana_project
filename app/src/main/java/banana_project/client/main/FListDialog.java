@@ -23,7 +23,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Vector;
 
-public class FListDialog extends JDialog implements ActionListener, ListSelectionListener, FocusListener, DocumentListener {
+public class FListDialog extends JDialog
+        implements ActionListener, ListSelectionListener, FocusListener, DocumentListener {
     ////////////////////////// [선언부] //////////////////////////
     Main main = null;
     String chatNo = null;
@@ -102,7 +103,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.title = title;
 
         // [North]
-//        jtf_search.addActionListener(this); // jtf_search : 친구 검색
+        // jtf_search.addActionListener(this); // jtf_search : 친구 검색
         jtf_search.addFocusListener(this);
         jtf_search.getDocument().addDocumentListener(this);
         jtf_search.requestFocus(false);
@@ -360,17 +361,23 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
                     msg = num + "와(과) 채팅 시작합니다";
 
-                    String user = main.userNick; // 사용자 ID
-                    num += ", " + user;
-
-                    // 채팅방 만들기 606#아이디#닉네임리스트
-                    try {
-                        main.client.oos.writeObject(
-                                Protocol.CREATE_CHAT +
-                                        Protocol.seperator + main.userId +
-                                        Protocol.seperator + num);
-                    } catch (Exception e3) {
-                        e3.printStackTrace();
+                    // 확인하는 JOP
+                    int result = JOptionPane.showConfirmDialog(this, num + "님과 채팅방을 생성하시겠습니까?", "새 채팅",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_info);
+                    // yes를 눌렀을 때
+                    if (result == JOptionPane.YES_OPTION) {
+                        // num에 로그인 유저도 담아줌
+                        String user = main.userNick; // 사용자 ID
+                        num += ", " + user;
+                        // 채팅방 만들기 606#아이디#닉네임리스트
+                        try {
+                            main.client.oos.writeObject(
+                                    Protocol.CREATE_CHAT +
+                                            Protocol.seperator + main.userId +
+                                            Protocol.seperator + num);
+                        } catch (Exception e3) {
+                            e3.printStackTrace();
+                        }
                     }
                 }
 
@@ -401,7 +408,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
             System.out.println("계정 : " + selValue);
 
             // TODO: jtextfield에 한글 타이핑 시 jlist에 포커스가 제대로 잡히지 않아 null값이 들어가는 증상이 있음
-//            jl_list.requestFocus(true);
+            // jl_list.requestFocus(true);
 
             // 선택한 값 추가
             if (selValue != null) {
@@ -422,7 +429,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
             }
             System.out.println("선택한 리스트 : " + copy_list);
 
-//            jtf_search.requestFocus(false);
+            // jtf_search.requestFocus(false);
         } // end of if (리스트 클릭 이벤트)
     }
 
@@ -451,15 +458,18 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     public void insertUpdate(DocumentEvent e) {
         updateSelFri(e, "inserted into");
     }
+
     @Override
     public void removeUpdate(DocumentEvent e) {
         updateSelFri(e, "removed from");
     }
+
     @Override
     public void changedUpdate(DocumentEvent e) {
     }
+
     public void updateSelFri(DocumentEvent e, String action) {
-//        Document doc = (Document) e.getDocument();
+        // Document doc = (Document) e.getDocument();
         if (!"친구 이름를 입력하세요".equals(jtf_search.getText())) {
             nickname = jtf_search.getText();
 
@@ -490,7 +500,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         }
     }
 
-
+    
     /**
      * 테스트용 메인
      *
