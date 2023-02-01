@@ -563,7 +563,7 @@ public class ServerThread extends Thread {
                 case Protocol.EXIST_FRIEND: { // 607 : EXIST_FRIEND = 친구 검색 존재
                   StringBuilder findFri = new StringBuilder();
                   Vector<String> friendList = (Vector<String>) list.get(1);
-                  for (int i = 1; i < friendList.size(); i++) {
+                  for (int i = 0; i < friendList.size(); i++) {
                     findFri.append(friendList.get(i));
                     if (i != friendList.size() - 1)
                       findFri.append(Protocol.seperator);

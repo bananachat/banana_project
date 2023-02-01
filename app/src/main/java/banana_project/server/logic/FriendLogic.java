@@ -262,7 +262,7 @@ public class FriendLogic {
             System.out.println("사용자 본인을 검색함");
         } else {
             // 친구 조회 호출 쿼리문
-            String sql2 = "SELECT USER_NICKNAME FROM TB_USER WHERE USER_NICKNAME like '%' || ? || '%'";
+            String sql2 = "SELECT USER_NICKNAME FROM TB_USER WHERE USER_NICKNAME like '%' || ? || '%' AND status = 0";
 
             try {
                 // 오라클 서버와 연결
@@ -324,26 +324,56 @@ public class FriendLogic {
         // EXIST_FRIEND = 친구 검색 존재
         protocol = 607;
 
-        int isOk = -1;
+        int isOk = 0;
         int result = 0;
 
         System.out.println("사용자 ID : " + uservo.getUser_id());
         System.out.println("선택한 계정ID : " + selectNick);
 
+        String selectID = "";
+
+        String findID = " SELECT user_id FROM tb_user WHERE user_nickname = ? ";
+
+        try {
+            conn = dbMgr.getConnection();
+            pstmt = conn.prepareStatement(findID);
+
+            pstmt.setString(1, selectNick);
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                selectID = rs.getString(1);
+            }
+
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // DB 사용한 자원 반납
+            try {
+                dbMgr.freeConnection(conn, pstmt, rs);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } // end of findID
+
+        System.out.println("선택한 사용자ID : " + selectID);
+
+
         // 해당 친구가 DB에 없는지 확인
         StringBuilder selQuarry = new StringBuilder();
-        selQuarry.append("SELECT ur.user_nickname FROM    ");
-        selQuarry.append(" (SELECT f_id FROM tb_friends_list WHERE user_id= ? ) fl    ");
-        selQuarry.append("        , (SELECT user_id, user_nickname FROM tb_user WHERE status=0) ur   ");
-        selQuarry.append("WHERE fl.f_id = ur.user_id  ");
-        selQuarry.append("AND ur.user_nickname = ?   ");
+        selQuarry.append("SELECT f_id FROM tb_friends_list  ");
+        selQuarry.append(" WHERE user_id = ? ");
+        selQuarry.append(" AND f_id = ?   ");
 
         try {
             conn = dbMgr.getConnection();
             pstmt = conn.prepareStatement(selQuarry.toString());
 
             pstmt.setString(1, uservo.getUser_id());
-            pstmt.setString(2, selectNick);
+            pstmt.setString(2, selectID);
 
             rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -361,42 +391,12 @@ public class FriendLogic {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        } // end of 친구유무
 
-        System.out.println("select 쿼리 성공유무: " + isOk);
+        System.out.println("친구 존재 유무: " + isOk);
 
-        if (isOk == -1) {
+        if (isOk != 1) {
             // 해당 ID 친구 추가
-            String selectID = "";
-
-            String findID = " SELECT user_id FROM tb_user WHERE user_nickname = ? ";
-
-            try {
-                conn = dbMgr.getConnection();
-                pstmt = conn.prepareStatement(findID);
-
-                pstmt.setString(1, selectNick);
-
-                rs = pstmt.executeQuery();
-
-                while (rs.next()) {
-                    selectID = rs.getString(1);
-                }
-
-            } catch (SQLException se) {
-                se.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                // DB 사용한 자원 반납
-                try {
-                    dbMgr.freeConnection(conn, pstmt, rs);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            System.out.println("선택한 사용자ID : " + selectID);
 
             String sql = "INSERT INTO TB_FRIENDS_LIST (USER_ID, F_ID) VALUES (?, ?)";
 
@@ -427,12 +427,51 @@ public class FriendLogic {
                     e.printStackTrace();
                 }
             }
+        } // end of 친구추가
 
-            String sql2 = "INSERT INTO TB_FRIENDS_LIST (USER_ID, F_ID) VALUES (?, ?)";
+        isOk = 0;
+
+
+        // 선택ID의 친구리스트에 사용자가 DB에 없는지 확인
+        StringBuilder selQuarry2 = new StringBuilder();
+        selQuarry2.append("SELECT f_id FROM tb_friends_list  ");
+        selQuarry2.append(" WHERE user_id = ? ");
+        selQuarry2.append(" AND f_id = ?   ");
+
+        try {
+            conn = dbMgr.getConnection();
+            pstmt = conn.prepareStatement(selQuarry2.toString());
+
+            pstmt.setString(1, selectID);
+            pstmt.setString(2, uservo.getUser_id());
+
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                isOk = 1;
+            }
+
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // DB 사용한 자원 반납
+            try {
+                dbMgr.freeConnection(conn, pstmt, rs);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } // end of 친구유무 (상대방)
+
+        System.out.println("친구 존재 유무: " + isOk);
+
+        // 상대방한테도 친구 추가
+        if (isOk != 1) {
+            String sql = "INSERT INTO TB_FRIENDS_LIST (USER_ID, F_ID) VALUES (?, ?)";
 
             try {
                 conn = dbMgr.getConnection();
-                pstmt = conn.prepareStatement(sql2);
+                pstmt = conn.prepareStatement(sql);
 
                 pstmt.setString(1, selectID);
                 pstmt.setString(2, uservo.getUser_id());
@@ -457,7 +496,7 @@ public class FriendLogic {
                     e.printStackTrace();
                 }
             }
-        }
+        } // end of 친구추가 (상대방)
 
         return protocol;
     } // end of addFriend (친구 추가)
@@ -580,22 +619,24 @@ public class FriendLogic {
         FriendLogic fl = new FriendLogic();
         int r = 0;
 
-        uVO.setUser_id("banana@email.com");
-        String selectNick1 = "banana1";
+        uVO.setUser_id("hong@email.com");
+        String selectNick1 = "원숭이";
         String selectNick2 = "자고싶어2";
         //
         // // 친구추가
-        r = fl.addFriend(uVO, selectNick1);
-        System.out.println(r);
+//        r = fl.addFriend(uVO, selectNick1);
+//        System.out.println(r);
         //
         // // 친구 삭제
         //// r = fl.delFriend(uVO, selectID);
         //// System.out.println(r);
         //
         // // 친구 조회
-        // List<Object> m = new ArrayList<>();
-        // m = fl.findFriend(uVO, selectName2);
-        // // m = fl.findFriend(selectName1);
+         List<Object> m = new ArrayList<>();
+//         m = fl.findFriend(uVO, selectNick1);
+//        System.out.println(m);
+         m = fl.findAllUser("홍길동", selectNick1);
+        System.out.println(m);
         // //
         // // // 친구 리스트 출력
         // List<Object> l = new ArrayList<Object>();
