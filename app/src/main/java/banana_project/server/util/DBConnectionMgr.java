@@ -8,8 +8,13 @@ import java.sql.Statement;
 
 public class DBConnectionMgr {
     public static final String _DRIVER = "oracle.jdbc.driver.OracleDriver";
+<<<<<<< Updated upstream
     public static final String _URL = "jdbc:oracle:thin:@192.168.10.72:1521:orcl11";
     // public static final String _URL = "jdbc:oracle:thin:@127.0.0.1:1521:orcl11";
+=======
+     public static final String _URL = "jdbc:oracle:thin:@192.168.10.72:1521:orcl11";
+//    public static final String _URL = "jdbc:oracle:thin:@127.0.0.1:1521:orcl11";
+>>>>>>> Stashed changes
     // public static final String _URL = "jdbc:oracle:thin:@127.0.0.1:1521:orcl";
 
     public static String _USER = "scott";
