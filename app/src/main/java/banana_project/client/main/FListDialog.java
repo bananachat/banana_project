@@ -335,15 +335,22 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
                         JOptionPane.showMessageDialog(this, "자신을 친구로 추가할 수 없습니다.", "친구 추가",
                                 JOptionPane.INFORMATION_MESSAGE, setImage.img_delete);
                     } else {
-                        // 서버 스레드로 친구 추가 프로토콜과 해당 유저 아이디, 친구 추가할 목록 전송
-                        try {
-                            main.client.oos.writeObject(
-                                    Protocol.ADD_FRIEND +
-                                            Protocol.seperator + main.userId +
-                                            Protocol.seperator + num);
-                        } catch (Exception e2) {
-                            e2.printStackTrace();
+                        // 확인하는 JOP
+                        int result = JOptionPane.showConfirmDialog(this, num + "님을 친구로 추가하시겠습니까?", "친구 추가",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_info);
+                        // yes를 눌렀을 때
+                        if (result == JOptionPane.YES_OPTION) {
+                            // 서버 스레드로 친구 추가 프로토콜과 해당 유저 아이디, 친구 추가할 목록 전송
+                            try {
+                                main.client.oos.writeObject(
+                                        Protocol.ADD_FRIEND +
+                                                Protocol.seperator + main.userId +
+                                                Protocol.seperator + num);
+                            } catch (Exception e2) {
+                                e2.printStackTrace();
+                            }
                         }
+
                     }
                 }
                 // 새 채팅 창일 경우

@@ -549,8 +549,8 @@ public class ServerThread extends Thread {
             int num = st.countTokens();
 
             if (num > 0) {
-                String friend_id = st.nextToken();
-                System.out.println("검색한 사용자 : " + friend_id);
+              String friend_id = st.nextToken();
+              System.out.println("검색한 사용자 : " + friend_id);
 
               // DB등록 및 체크
               server.jta_log.append("main다이얼로그 사용자 검색\n");
@@ -563,26 +563,27 @@ public class ServerThread extends Thread {
                 case Protocol.EXIST_FRIEND: { // 607 : EXIST_FRIEND = 친구 검색 존재
                   StringBuilder findFri = new StringBuilder();
                   Vector<String> friendList = (Vector<String>) list.get(1);
-                  for(int i = 1; i < friendList.size(); i++) {
+                  for (int i = 1; i < friendList.size(); i++) {
                     findFri.append(friendList.get(i));
-                    if(i != friendList.size() - 1) findFri.append(Protocol.seperator);
+                    if (i != friendList.size() - 1)
+                      findFri.append(Protocol.seperator);
                   }
 
                   oos.writeObject(Protocol.EXIST_USER
-                          + Protocol.seperator + findFri); // 611로 전달 (해당 사용자 존재)
+                      + Protocol.seperator + findFri); // 611로 전달 (해당 사용자 존재)
                 }
-                break;
+                  break;
 
                 case Protocol.NF_RESULT: { // 604 : NF_RESULT = 친구 검색 결과가 없음
                   oos.writeObject(Protocol.NF_RESULT); // 610로 전달 (해당 사용자 없음)
                 }
-                break;
+                  break;
 
                 case Protocol.FAIL_CONN: { // 800 : FAIL_CONN = 데이터베이스 접속 실패
                   System.out.println("DB 연결 실패");
                   oos.writeObject(Protocol.NF_RESULT); // 604로 전달 (친구 검색 결과가 없음)
                 }
-                break;
+                  break;
               }
             }
           }
@@ -599,8 +600,8 @@ public class ServerThread extends Thread {
             int num = st.countTokens();
 
             if (num > 0) {
-                String friend_id = st.nextToken();
-                System.out.println("검색한 사용자 : " + friend_id);
+              String friend_id = st.nextToken();
+              System.out.println("검색한 사용자 : " + friend_id);
 
               // DB등록 및 체크
               server.jta_log.append("main다이얼로그 친구 검색\n");
@@ -615,24 +616,25 @@ public class ServerThread extends Thread {
                   Vector<String> fslist = (Vector<String>) list.get(1);
                   for (int i = 0; i < fslist.size(); i++) {
                     findFri.append(fslist.get(i));
-                    if (fslist.size() - 1 > i) findFri.append(Protocol.seperator);
+                    if (fslist.size() - 1 > i)
+                      findFri.append(Protocol.seperator);
                   }
 
                   oos.writeObject(Protocol.EXIST_FRIEND
-                          + Protocol.seperator + findFri.toString()); // 607로 전달 (친구 검색 존재)
+                      + Protocol.seperator + findFri.toString()); // 607로 전달 (친구 검색 존재)
                 }
-                break;
+                  break;
 
                 case Protocol.NF_RESULT: { // 604 : NF_RESULT = 친구 검색 결과가 없음
                   oos.writeObject(Protocol.NF_RESULT); // 604로 전달 (친구 검색 결과가 없음)
                 }
-                break;
+                  break;
 
                 case Protocol.FAIL_CONN: { // 800 : FAIL_CONN = 데이터베이스 접속 실패
                   System.out.println("DB 연결 실패");
                   oos.writeObject(Protocol.NF_RESULT); // 604로 전달 (친구 검색 결과가 없음)
                 }
-                break;
+                  break;
               }
             }
           }
@@ -651,17 +653,16 @@ public class ServerThread extends Thread {
             // DB등록 및 체크
             server.jta_log.append("main다이얼로그 친구 추가\n");
 
-            int result = 0;// 초기값 대충,,,
+            // 초기값
+            int result = 0;
+
+            // 구분자 생성
+            StringTokenizer fSet = new StringTokenizer(friendId, ", ");
 
             // 친구 목록 생성
-            if (friendId.contains(",")) {
-              String[] friendList = friendId.split(",");
-              for (int i = 0; i < friendList.length - 1; i++) {
-                result = friendLogic.addFriend(UserVO.builder().user_id(userId).build(), friendList[i]);
-                server.jta_log.append("result: " + result + "\n");
-              }
-            } else {
-              result = friendLogic.addFriend(UserVO.builder().user_id(userId).build(), friendId);
+            while (fSet.hasMoreTokens()) {
+              String selNick = fSet.nextToken();
+              result = friendLogic.addFriend(UserVO.builder().user_id(userId).build(), selNick);
               server.jta_log.append("result: " + result + "\n");
             }
 
