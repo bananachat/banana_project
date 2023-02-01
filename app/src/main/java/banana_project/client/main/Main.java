@@ -409,6 +409,10 @@ public class Main implements ActionListener, MouseListener {
                             e1.printStackTrace();
                         }
                     }
+                    // no를 눌렀을 때
+                    else if (result == JOptionPane.NO_OPTION) {
+                        selNick = "";
+                    }
                 }
             }
             // 채팅 목록일 경우
@@ -420,16 +424,16 @@ public class Main implements ActionListener, MouseListener {
                 }
                 // 선택한 값이 있을 경우
                 else {
+                    // 채팅리스트 "번호|타이틀"
+                    // print_chatList() 참조
+                    StringTokenizer selChatTok = new StringTokenizer(selChat, " | ");
+                    int iNum = Integer.parseInt(selChatTok.nextToken()); // 인덱스번호
+                    int chatNum = chatList.get(iNum - 1).getChat_no(); // 채팅방 번호
                     // 확인하는 JOP
-                    int result = JOptionPane.showConfirmDialog(client, "채팅방을 삭제하시겠습니까?", "채팅 목록",
+                    int result = JOptionPane.showConfirmDialog(client, iNum + "번 채팅방을 삭제하시겠습니까?", "채팅 목록",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_delete);
                     // yes를 눌렀을 때
                     if (result == JOptionPane.YES_OPTION) {
-                        // 채팅리스트 "번호|타이틀"
-                        // print_chatList() 참조
-                        StringTokenizer selChatTok = new StringTokenizer(selChat, " | ");
-                        int iNum = Integer.parseInt(selChatTok.nextToken()); // 인덱스번호
-                        int chatNum = chatList.get(iNum - 1).getChat_no(); // 채팅방 번호
                         // 서버로 닉네임 전달 512#채팅방번호
                         try {
                             client.oos.writeObject(Protocol.DEL_CHAT
@@ -439,6 +443,10 @@ public class Main implements ActionListener, MouseListener {
                         } catch (Exception e1) {
                             e1.printStackTrace();
                         }
+                    }
+                    // no를 눌렀을 때
+                    else if (result == JOptionPane.NO_OPTION) {
+                        selChat = "";
                     }
                 }
             }

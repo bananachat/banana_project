@@ -351,6 +351,10 @@ public class FListDialog extends JDialog
                                 e2.printStackTrace();
                             }
                         }
+                        // no를 눌렀을 때
+                        else if (result == JOptionPane.NO_OPTION) {
+                            copy_list.clear();
+                        }
 
                     }
                 }
@@ -379,12 +383,16 @@ public class FListDialog extends JDialog
                             e3.printStackTrace();
                         }
                     }
+                    // no를 눌렀을 때
+                    else if (result == JOptionPane.NO_OPTION) {
+                        copy_list.clear();
+                    }
                 }
 
                 // 복사한 친구들 리스트 출력
                 System.out.println("선택한 친구들 : " + num);
 
-                jl_list.removeListSelectionListener(this); // 이벤트 해제
+                // jl_list.removeListSelectionListener(this); // 이벤트 해제
 
                 // JOptionPane.showMessageDialog(this, msg, "info",
                 // JOptionPane.INFORMATION_MESSAGE);
@@ -500,7 +508,6 @@ public class FListDialog extends JDialog
         }
     }
 
-    
     /**
      * 테스트용 메인
      *
