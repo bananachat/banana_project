@@ -362,7 +362,7 @@ public class MemberLogic {
         //반환값 초기화
         Map<String, Object> resultMap = new HashMap<>();
         //회원 정보 SELECT SQL작성
-        String sql = "SELECT user_id, user_pw, user_name, user_hp, user_nickname, salt, fail_cnt FROM TB_USER WHERE user_id = ? AND STATUS = 0";
+        String sql = "SELECT user_id, user_pw, user_nickname, salt, fail_cnt FROM TB_USER WHERE user_id = ? AND STATUS = 0";
         try {
             //DB에서 정보 가져오기
             con = mgr.getConnection();
@@ -385,20 +385,17 @@ public class MemberLogic {
                         //로그인 성공 프로토콜을 반환값에 삽입
                         resultMap.put("result", Protocol.LOGIN_S);
                         UserVO uv = new UserVO();
+                        //회원 정보를 받아와 반환 객체에 저장
+                        uv.setUser_id(rs.getString("user_id"));
+                        uv.setUser_nickname(rs.getString("user_nickname"));
                         //로그인 성공시에 실패 카운트가 0이 아니면 0으로 리셋
                         if (fail_cnt != 0) {
                             uv.setFail_cnt(ConstantsMember.RESET_FAIL_CNT);
                             //DB에 리셋된 실패 카운트 저장
                             updateFailCnt(uv);
                         }
-                        //회원 정보를 받아와 반환 객체에 저장
-                        uservo.setUser_id(rs.getString("user_id"));
-                        uservo.setUser_pw(rs.getString("user_pw"));
-                        uservo.setUser_name(rs.getString("user_name"));
-                        uservo.setUser_hp(rs.getString("user_hp"));
-                        uservo.setUser_nickname(rs.getString("user_nickname"));
                         //반환 객체에 회원정보 넣어줌
-                        resultMap.put("userVO", uservo);
+                        resultMap.put("userVO", uv);
                         //결과 반환
                         return resultMap;
                     } else { //일치하지 않을 경우 로그인 실패
