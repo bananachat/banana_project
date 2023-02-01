@@ -1,10 +1,14 @@
 package banana_project.client.main;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.text.Document;
+
 import banana_project.client.common.SetFontNJOp;
 import banana_project.client.common.SetImg;
 import banana_project.client.login.Client;
@@ -19,12 +23,13 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Vector;
 
-public class FListDialog extends JDialog implements ActionListener, ListSelectionListener, FocusListener {
+public class FListDialog extends JDialog implements ActionListener, ListSelectionListener, FocusListener, DocumentListener {
     ////////////////////////// [선언부] //////////////////////////
     Main main = null;
     String chatNo = null;
     String userList = null;
     String title = null;
+    String nickname = null;
 
     /**
      * 화면부 선언
@@ -58,6 +63,9 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.main = main;
         jl_list = new JList(dlm);
 
+        // 임시 리스트 출력
+        // createList();
+
         // 채팅목록일 경우에만 친구검색 후 출력
         if ("채팅 목록".equals(getTitle)) {
             // 친구검색 출력 600#아이디
@@ -69,6 +77,18 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
             }
         }
     }
+
+    ////////////////////////// [메소드] //////////////////////////
+    // TODO: 현재 임의의 리스트 출력
+    // 초기 친구리스트 배열을 파라미터로 해야한다
+    /**
+     * 친구리스트(JList) 생성
+     */
+    public void createList() {
+        for (int i = 0; i < 20; i++) {
+            dlm.addElement(Integer.toString(i));
+        }
+    } // end of createList()
 
     ////////////////////////// [화면출력] //////////////////////////
 
@@ -82,8 +102,9 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         this.title = title;
 
         // [North]
-        jtf_search.addActionListener(this); // jtf_search : 친구 검색
+//        jtf_search.addActionListener(this); // jtf_search : 친구 검색
         jtf_search.addFocusListener(this);
+        jtf_search.getDocument().addDocumentListener(this);
         jtf_search.requestFocus(false);
         jtf_search.setForeground(Color.GRAY);
         jtf_search.setBounds(20, 20, 228, 35);
@@ -165,7 +186,7 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
 
     /**
      * 친구가 있을 때 메소드
-     * 
+     *
      * @param fList
      */
     public void prt_frdList(Vector<String> fList) {
@@ -209,13 +230,15 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
      * 친구 추가 실패
      */
     public void fail_add_friend() {
+        // 실패 후 필요한 작업 작성
+        // 대충 이런?
         JOptionPane.showMessageDialog(this, "친구 추가에 실패하였습니다.", "친구 추가", JOptionPane.INFORMATION_MESSAGE,
                 setImage.img_delete);
     }
 
     /**
      * 채팅방 생성 성공
-     * 
+     *
      * @param userList
      * @param chatNo
      */
@@ -245,10 +268,10 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
 
-        if (obj == jbtn_search || obj == jtf_search) {
+        if (obj == jbtn_search) {
             // 친구 검색 이벤트 호출
             System.out.println("search 이벤트 호출");
-            String nickname = jtf_search.getText();
+            nickname = jtf_search.getText();
 
             System.out.println("입력값 : \"" + nickname + "\"");
 
@@ -370,22 +393,29 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
             String selValue = (String) jl_list.getSelectedValue();
             System.out.println("계정 : " + selValue);
 
-            // 선택한 값 추가
-            if (copy_list.size() == 0) {
-                // 처음 선택 시
-                copy_list.add(selValue);
-            } else {
-                // 선택한 리스트 중 중복값이 있는지 확인
-                boolean isDup = copy_list.contains(selValue); // 중복 존재 시 true
+            // TODO: jtextfield에 한글 타이핑 시 jlist에 포커스가 제대로 잡히지 않아 null값이 들어가는 증상이 있음
+//            jl_list.requestFocus(true);
 
-                if (isDup) {
-                    System.out.println("중복되는 값이 존재");
-                } else {
-                    System.out.println("새로운 계정 추가");
+            // 선택한 값 추가
+            if (selValue != null) {
+                if (copy_list.size() == 0) {
+                    // 처음 선택 시
                     copy_list.add(selValue);
+                } else {
+                    // 선택한 리스트 중 중복값이 있는지 확인
+                    boolean isDup = copy_list.contains(selValue); // 중복 존재 시 true
+
+                    if (isDup) {
+                        System.out.println("중복되는 값이 존재");
+                    } else {
+                        System.out.println("새로운 계정 추가");
+                        copy_list.add(selValue);
+                    }
                 }
             }
             System.out.println("선택한 리스트 : " + copy_list);
+
+//            jtf_search.requestFocus(false);
         } // end of if (리스트 클릭 이벤트)
     }
 
@@ -409,9 +439,54 @@ public class FListDialog extends JDialog implements ActionListener, ListSelectio
         }
     }
 
+    // 실시간 jtf_search 텍스트 모니터링
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        updateSelFri(e, "inserted into");
+    }
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        updateSelFri(e, "removed from");
+    }
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+    }
+    public void updateSelFri(DocumentEvent e, String action) {
+//        Document doc = (Document) e.getDocument();
+        if (!"친구 이름를 입력하세요".equals(jtf_search.getText())) {
+            nickname = jtf_search.getText();
+
+        }
+
+        System.out.println("실시간 입력값 : \"" + nickname + "\"");
+
+        if (!"".equals(nickname)) {
+            if ("친구 추가".equals(title)) {
+                // 모든 사용자 중에 검색 601#아이디#사용자닉네임
+                try {
+                    this.main.client.oos.writeObject(Protocol.SRCH_USERS
+                            + Protocol.seperator + this.main.userId
+                            + Protocol.seperator + nickname);
+                } catch (Exception ce1) {
+                    ce1.printStackTrace();
+                }
+            } else if ("새 채팅".equals(title)) {
+                // 친구 중에 검색 603#아이디#사용자닉네임
+                try {
+                    this.main.client.oos.writeObject(Protocol.SRCH_FRIEDNDS
+                            + Protocol.seperator + this.main.userId
+                            + Protocol.seperator + nickname);
+                } catch (Exception ce2) {
+                    ce2.printStackTrace();
+                }
+            }
+        }
+    }
+
+
     /**
      * 테스트용 메인
-     * 
+     *
      * @param args
      */
     public static void main(String[] args) {
