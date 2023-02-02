@@ -115,6 +115,8 @@ public class IdFind implements ActionListener, FocusListener {
   public void exist_fid(String UserName, String userId) {
     JOptionPane.showMessageDialog(client,
         UserName + "님의 아이디\n" + userId, "아이디 찾기", JOptionPane.INFORMATION_MESSAGE, setImage.img_add);
+    client.setContentPane(client.jp_login);
+    client.revalidate();
   }
 
   /**
