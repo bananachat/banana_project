@@ -231,8 +231,6 @@ public class FListDialog extends JDialog
      * 친구 추가 실패
      */
     public void fail_add_friend() {
-        // 실패 후 필요한 작업 작성
-        // 대충 이런?
         JOptionPane.showMessageDialog(this, "친구 추가에 실패하였습니다.", "친구 추가", JOptionPane.INFORMATION_MESSAGE,
                 setImage.img_delete);
     }
@@ -332,9 +330,10 @@ public class FListDialog extends JDialog
 
                     msg = num + "을(를) 친구 추가합니다";
                     // 자기 자신을 추가하려고 할 때
-                    if (main.userNick.equals(num)) {
+                    if (main.userNick.equals(num) || num.contains(main.userNick)) {
                         JOptionPane.showMessageDialog(this, "자신을 친구로 추가할 수 없습니다.", "친구 추가",
                                 JOptionPane.INFORMATION_MESSAGE, setImage.img_delete);
+                        copy_list.clear();
                     } else {
                         // 확인하는 JOP
                         int result = JOptionPane.showConfirmDialog(this, num + "님을 친구로 추가하시겠습니까?", "친구 추가",
