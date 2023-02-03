@@ -330,7 +330,7 @@ public class FListDialog extends JDialog
 
                     msg = num + "을(를) 친구 추가합니다";
                     // 자기 자신을 추가하려고 할 때
-                    if (main.userNick.equals(num) || num.contains(main.userNick)) {
+                    if (main.userNick.equals(num)) {
                         JOptionPane.showMessageDialog(this, "자신을 친구로 추가할 수 없습니다.", "친구 추가",
                                 JOptionPane.INFORMATION_MESSAGE, setImage.img_delete);
                         copy_list.clear();
