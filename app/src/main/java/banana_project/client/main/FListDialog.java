@@ -295,20 +295,23 @@ public class FListDialog extends JDialog
             }
         } // end of 친구 검색
 
+        // 추가 버튼을 눌렀을 경우
         else if (obj == jbtn_add) {
             // "친구 추가 | 새 채팅" 이벤트 호출
             System.out.println("jbtn_add 클릭");
             String msg = ""; // 출력할 메시지
             String num = ""; // JList에서 선택한 친구 목록
 
-            // 선택한 친구들 String
+            // 친구 선택을 안했을 경우
             if (copy_list.size() == 0) {
-                // 친구 선택을 안했을 경우
                 System.out.println("선택한 친구가 없음");
                 msg = "친구를 선택하세요";
                 JOptionPane.showMessageDialog(this, msg, "친구 추가", JOptionPane.INFORMATION_MESSAGE,
                         setImage.img_info);
-            } else {
+            }
+
+            // 친구 선택을 했을 경우
+            else {
                 // 1명 선택했을 경우
                 if (copy_list.size() == 1) {
                     num = (copy_list.get(0));
@@ -319,91 +322,72 @@ public class FListDialog extends JDialog
                     for (int i = 0; i < copy_list.size() - 1; i++) {
                         num += (copy_list.get(i) + ", ");
                     }
-                    // num += (copy_list.get(copy_list.size() - 1) + " "); -> ?
                     num += (copy_list.get(copy_list.size() - 1));
                 }
-
-                // 친구 추가 창일 경우
-                if ("친구 추가".equals(title)) {
-                    // if ("친구 추가".equals(main.jbtn_firChan.getText())) {
-                    System.out.println("친구 추가...");
-
-                    msg = num + "을(를) 친구 추가합니다";
-                    // 자기 자신을 추가하려고 할 때
-                    if (main.userNick.equals(num)) {
-                        JOptionPane.showMessageDialog(this, "자신을 친구로 추가할 수 없습니다.", "친구 추가",
-                                JOptionPane.INFORMATION_MESSAGE, setImage.img_delete);
-                        copy_list.clear();
-                    } else {
-                        // 확인하는 JOP
-                        int result = JOptionPane.showConfirmDialog(this, num + "님을 친구로 추가하시겠습니까?", "친구 추가",
-                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_info);
-                        // yes를 눌렀을 때
-                        if (result == JOptionPane.YES_OPTION) {
-                            // 서버 스레드로 친구 추가 프로토콜과 해당 유저 아이디, 친구 추가할 목록 전송
-                            try {
-                                main.client.oos.writeObject(
-                                        Protocol.ADD_FRIEND +
-                                                Protocol.seperator + main.userId +
-                                                Protocol.seperator + num);
-                            } catch (Exception e2) {
-                                e2.printStackTrace();
-                            }
-                        }
-                        // no를 눌렀을 때
-                        else if (result == JOptionPane.NO_OPTION) {
-                            copy_list.clear();
-                        }
-
-                    }
-                }
-                // 새 채팅 창일 경우
-                else if ("새 채팅".equals(title)) {
-                    // } else if ("새 채팅".equals(main.jbtn_firChan.getText())) {
-                    System.out.println("새 채팅...");
-
-                    msg = num + "와(과) 채팅 시작합니다";
-
-                    // 확인하는 JOP
-                    int result = JOptionPane.showConfirmDialog(this, num + "님과 채팅방을 생성하시겠습니까?", "새 채팅",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_info);
-                    // yes를 눌렀을 때
-                    if (result == JOptionPane.YES_OPTION) {
-                        // num에 로그인 유저도 담아줌
-                        String user = main.userNick; // 사용자 ID
-                        num += ", " + user;
-                        // 채팅방 만들기 606#아이디#닉네임리스트
-                        try {
-                            main.client.oos.writeObject(
-                                    Protocol.CREATE_CHAT +
-                                            Protocol.seperator + main.userId +
-                                            Protocol.seperator + num);
-                        } catch (Exception e3) {
-                            e3.printStackTrace();
-                        }
-                    }
-                    // no를 눌렀을 때
-                    else if (result == JOptionPane.NO_OPTION) {
-                        copy_list.clear();
-                    }
-                }
-
-                // 복사한 친구들 리스트 출력
-                System.out.println("선택한 친구들 : " + num);
-
-                // jl_list.removeListSelectionListener(this); // 이벤트 해제
-
-                // JOptionPane.showMessageDialog(this, msg, "info",
-                // JOptionPane.INFORMATION_MESSAGE);
-                System.out.println(msg);
-
-                // dlm.clear(); // 친구리스트 초기화
-                // copy_list.clear(); // 선택한 친구리스트 초기화
-                //
-                // System.out.println("친구검색 다이얼로그 종료");
-                // this.dispose();
             }
+
+            // 친구 추가 창일 경우
+            if ("친구 추가".equals(title)) {
+                System.out.println("친구 추가...");
+
+                msg = num + "을(를) 친구 추가합니다";
+
+                // 확인하는 JOP
+                int result = JOptionPane.showConfirmDialog(this, num + "님을 친구로 추가하시겠습니까?", "친구 추가",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_info);
+                // yes를 눌렀을 때
+                if (result == JOptionPane.YES_OPTION) {
+                    // 서버 스레드로 친구 추가 프로토콜과 해당 유저 아이디, 친구 추가할 목록 전송
+                    try {
+                        main.client.oos.writeObject(
+                                Protocol.ADD_FRIEND +
+                                        Protocol.seperator + main.userId +
+                                        Protocol.seperator + num);
+                    } catch (Exception e2) {
+                        e2.printStackTrace();
+                    }
+                }
+                // no를 눌렀을 때
+                else if (result == JOptionPane.NO_OPTION) {
+                    copy_list.clear();
+                }
+            }
+
+            // 새 채팅 창일 경우
+            else if ("새 채팅".equals(title)) {
+                System.out.println("새 채팅...");
+
+                msg = num + "와(과) 채팅 시작합니다";
+
+                // 확인하는 JOP
+                int result = JOptionPane.showConfirmDialog(this, num + "님과 채팅방을 생성하시겠습니까?", "새 채팅",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, setImage.img_info);
+                // yes를 눌렀을 때
+                if (result == JOptionPane.YES_OPTION) {
+                    // num에 로그인 유저도 담아줌
+                    String user = main.userNick; // 사용자 ID
+                    num += ", " + user;
+                    // 채팅방 만들기 606#아이디#닉네임리스트
+                    try {
+                        main.client.oos.writeObject(
+                                Protocol.CREATE_CHAT +
+                                        Protocol.seperator + main.userId +
+                                        Protocol.seperator + num);
+                    } catch (Exception e3) {
+                        e3.printStackTrace();
+                    }
+                }
+                // no를 눌렀을 때
+                else if (result == JOptionPane.NO_OPTION) {
+                    copy_list.clear();
+                }
+            }
+
+            // 복사한 친구들 리스트 출력
+            System.out.println("선택한 친구들 : " + num);
+            System.out.println(msg);
         } // end of 친구|채팅 추가 이벤트
+
     } // end of ActionPerformed
 
     // JList 클릭 이벤트 호출
@@ -419,24 +403,40 @@ public class FListDialog extends JDialog
 
             // 선택한 값 추가
             if (selValue != null) {
+                // 처음 선택 시
                 if (copy_list.size() == 0) {
-                    // 처음 선택 시
-                    copy_list.add(selValue);
-                } else {
-                    // 선택한 리스트 중 중복값이 있는지 확인
-                    boolean isDup = copy_list.contains(selValue); // 중복 존재 시 true
-
-                    if (isDup) {
-                        System.out.println("중복되는 값이 존재");
-                    } else {
-                        System.out.println("새로운 계정 추가");
+                    // 친구추가 창이고 자기자신을 선택했을 경우
+                    if ("친구 추가".equals(title) && main.userNick.equals(selValue)) {
+                        JOptionPane.showMessageDialog(this, "자신을 친구로 추가할 수 없습니다.", "친구 추가",
+                                JOptionPane.INFORMATION_MESSAGE, setImage.img_delete);
+                        copy_list.clear();
+                    }
+                    // 자신을 선택하지 않았을 경우
+                    else {
                         copy_list.add(selValue);
+                    }
+                } else {
+                    // 친구추가 창이고 자기자신을 선택했을 경우
+                    if ("친구 추가".equals(title) && main.userNick.equals(selValue)) {
+                        JOptionPane.showMessageDialog(this, "자신을 친구로 추가할 수 없습니다.", "친구 추가",
+                                JOptionPane.INFORMATION_MESSAGE, setImage.img_delete);
+                        copy_list.clear();
+                    }
+                    // 자신을 선택하지 않았을 경우
+                    else {
+                        // 선택한 리스트 중 중복값이 있는지 확인
+                        boolean isDup = copy_list.contains(selValue); // 중복 존재 시 true
+
+                        if (isDup) {
+                            System.out.println("중복되는 값이 존재");
+                        } else {
+                            System.out.println("새로운 계정 추가");
+                            copy_list.add(selValue);
+                        }
                     }
                 }
             }
             System.out.println("선택한 리스트 : " + copy_list);
-
-            // jtf_search.requestFocus(false);
         } // end of if (리스트 클릭 이벤트)
     }
 
