@@ -23,29 +23,37 @@
 <br><br>
 
 ## 2. 시작 가이드
-1. 자바와 오라클을 설치해주세요. (개발에는 JDK 17.0.5와 오라클 11g 11.1.0.7.0을 사용했습니다)
+1. 자바와 오라클을 설치해주세요.  
+    (개발에는 JDK 17.0.5와 오라클 11g 11.1.0.7.0을 사용했습니다)
 
-2. DB 테이블을 생성해주세요. - app\src\main\java\banana_project\server\util\oracle_query.sql
+2. DB 테이블을 생성해주세요.  
+    app\src\main\java\banana_project\server\util\oracle_query.sql
 
-3. DB 주소(13번줄)와 USER, PW(17번줄)를 확인해주세요. - app\src\main\java\banana_project\server\util\DBConnectionMgr.java
+3. DB 주소(13번줄)와 USER, PW(17번줄)를 확인해주세요.  
+    app\src\main\java\banana_project\server\util\DBConnectionMgr.java
 
-4. 서버 주소와 포트번호(144번줄)를 확인해주세요. - app\src\main\java\banana_project\client\login\Client.java  
-    만약 포트번호를 변경하신다면 클라이언트(144번줄)와 서버(66번줄)의 포트번호를 모두 변경해주세요.
+4. 클라이언트의 서버 주소와 포트번호(144번줄)를 확인해주세요.  
+    만약 포트번호를 변경하신다면 클라이언트(144번줄)와 서버(66번줄)의 포트번호를 모두 수정해주세요.  
+    서버 : app\src\main\java\banana_project\server\thread\Server.java  
+    클라이언트 : app\src\main\java\banana_project\client\login\Client.java
 
-5. 서버를 실행한 후 클라이언트를 실행해주세요.  
-    서버: app\src\main\java\banana_project\server\thread\Server.java  
-    클라이언트: app\src\main\java\banana_project\client\login\Client.java
+5. 서버를 실행한 후 클라이언트를 실행해주세요.
 <br><br>
 
 ## 3. 주요 기능
 <br><br>
 
 ## 4. 멤버구성
-- [강동현](https://github.com/welsper53) : 친구로직, 채팅 목록 로직, 친구&채팅 목록, 친구&채팅 추가, 스레드(친구&채팅 목록, 친구&채팅 추가)
+- [강동현](https://github.com/welsper53) : 친구 로직, 채팅 목록 로직, 친구&채팅 목록, 친구&채팅 추가, 스레드(친구&채팅 목록, 친구&채팅 추가)
+
 - [김도희](https://github.com/dodoringring) : 채팅방 로직, 회원가입, 채팅방 스레드
-- [목정윤](https://github.com/jungyunmok) : 로그인, 아이디&비밀번호 찾기, 채팅방, 스레드(회원가입, 로그인, 아이디찾기, 채팅방)
+
+- [목정윤](https://github.com/jungyunmok) : 로그인, 아이디&비밀번호 찾기, 채팅방, 스레드(회원가입, 로그인, 아이디 찾기, 채팅방)
+
 - [박소연](https://github.com/Soyeonthdus) : 마이페이지, 마이페이지 스레드
+
 - [송우진](https://github.com/woojinyy) : 채팅방, 비밀번호 재설정 스레드
+
 - [이은재](https://github.com/77EJ77) : 멤버 로직, 로그 로직, 비밀번호 찾기 스레드
 <br><br>
 
