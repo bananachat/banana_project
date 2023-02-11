@@ -29,7 +29,8 @@
 
 3. DB 주소(13번줄)와 USER, PW(17번줄)를 확인해주세요. - app\src\main\java\banana_project\server\util\DBConnectionMgr.java
 
-4. 서버 주소(144번줄)를 확인해주세요. - app\src\main\java\banana_project\client\login\Client.java
+4. 서버 주소와 포트번호(144번줄)를 확인해주세요. - app\src\main\java\banana_project\client\login\Client.java  
+    만약 포트번호를 변경하신다면 클라이언트(144번줄)와 서버(66번줄)의 포트번호를 모두 변경해주세요.
 
 5. 서버를 실행한 후 클라이언트를 실행해주세요.  
     서버: app\src\main\java\banana_project\server\thread\Server.java  
