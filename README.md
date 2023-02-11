@@ -31,17 +31,17 @@
 <br><br><br>
 
 ## 2. 멤버 구성
-- [강동현](https://github.com/welsper53, "welsper53 GitHub") : 친구 로직, 채팅 목록 로직, 친구&채팅 목록, 친구&채팅 추가, 스레드(친구&채팅 목록, 친구&채팅 추가)
+- [강동현](https://github.com/welsper53 "welsper53 GitHub") : 친구 로직, 채팅 목록 로직, 친구&채팅 목록, 친구&채팅 추가, 스레드(친구&채팅 목록, 친구&채팅 추가)
 
-- [김도희](https://github.com/dodoringring, "dodoringring GitHub") : 채팅방 로직, 회원가입, 채팅방 스레드
+- [김도희](https://github.com/dodoringring "dodoringring GitHub") : 채팅방 로직, 회원가입, 채팅방 스레드
 
-- [목정윤](https://github.com/jungyunmok, "jungyunmok GitHub") : 로그인, 아이디&비밀번호 찾기, 채팅방, 스레드(회원가입, 로그인, 아이디 찾기, 채팅방)
+- [목정윤](https://github.com/jungyunmok "jungyunmok GitHub") : 로그인, 아이디&비밀번호 찾기, 채팅방, 스레드(회원가입, 로그인, 아이디 찾기, 채팅방)
 
-- [박소연](https://github.com/Soyeonthdus, "Soyeonthdus GitHub") : 마이페이지, 마이페이지 스레드
+- [박소연](https://github.com/Soyeonthdus "Soyeonthdus GitHub") : 마이페이지, 마이페이지 스레드
 
-- [송우진](https://github.com/woojinyy, "woojinyy GitHub") : 채팅방, 비밀번호 재설정 스레드
+- [송우진](https://github.com/woojinyy "woojinyy GitHub") : 채팅방, 비밀번호 재설정 스레드
 
-- [이은재](https://github.com/77EJ77, "77EJ77 GitHub") : 멤버 로직, 로그 로직, 비밀번호 찾기 스레드
+- [이은재](https://github.com/77EJ77 "77EJ77 GitHub") : 멤버 로직, 로그 로직, 비밀번호 찾기 스레드
 <br><br><br>
 
 ## 3. 실행 방법
@@ -73,7 +73,7 @@
 <br><br><br>
 
 ## 5. PPT 자료
-[바나나톡 PPT 바로가기](https://docs.google.com/presentation/d/1ifeG_DB13EMnl8IcqKHrzOZzpquR1uUyHiAaPD50YjA/edit?usp=sharing, "바나나톡 PPT 바로가기")
+[바나나톡 PPT 바로가기](https://docs.google.com/presentation/d/1ifeG_DB13EMnl8IcqKHrzOZzpquR1uUyHiAaPD50YjA/edit?usp=sharing "바나나톡 PPT 바로가기")
 <br><br><br>
 
 <div align="center">
