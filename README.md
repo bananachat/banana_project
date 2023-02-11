@@ -7,7 +7,7 @@
 <img width=30% src="https://user-images.githubusercontent.com/119314477/216045114-c2d3cb0c-ff53-405e-ae26-ce984480daf8.PNG">
 
 ---
-
+    
 ### 📚USED
 
 <img src="https://img.shields.io/badge/Java-007396?style=flat&logo=Conda-Forge&logoColor=white" />
@@ -18,11 +18,33 @@
 <br><br>
 </div>
 
+## 0. 목차
+1. [프로젝트 소개](#1.-프로젝트-소개)
+2. [멤버 구성](#2.-멤버-구성)
+3. [실행 방법](#3.-실행-방법)
+4. [주요 기능](#4.-주요-기능)
+5. [PPT 자료](#5.-PPT-자료)
+<br><br><br>
+
 ## 1. 프로젝트 소개
 바나나톡은 Java 소켓 통신과 Oracle DB를 이용한 멀티 채팅 프로그램입니다.
-<br><br>
+<br><br><br>
 
-## 2. 시작 가이드
+## 2. 멤버 구성
+- [강동현](https://github.com/welsper53, "welsper53 GitHub") : 친구 로직, 채팅 목록 로직, 친구&채팅 목록, 친구&채팅 추가, 스레드(친구&채팅 목록, 친구&채팅 추가)
+
+- [김도희](https://github.com/dodoringring, "dodoringring GitHub") : 채팅방 로직, 회원가입, 채팅방 스레드
+
+- [목정윤](https://github.com/jungyunmok, "jungyunmok GitHub") : 로그인, 아이디&비밀번호 찾기, 채팅방, 스레드(회원가입, 로그인, 아이디 찾기, 채팅방)
+
+- [박소연](https://github.com/Soyeonthdus, "Soyeonthdus GitHub") : 마이페이지, 마이페이지 스레드
+
+- [송우진](https://github.com/woojinyy, "woojinyy GitHub") : 채팅방, 비밀번호 재설정 스레드
+
+- [이은재](https://github.com/77EJ77, "77EJ77 GitHub") : 멤버 로직, 로그 로직, 비밀번호 찾기 스레드
+<br><br><br>
+
+## 3. 실행 방법
 1. 자바와 오라클을 설치해주세요.  
     (개발에는 JDK 17.0.5와 오라클 11g 11.1.0.7.0을 사용했습니다)
 
@@ -38,28 +60,21 @@
     클라이언트 : app\src\main\java\banana_project\client\login\Client.java
 
 5. 서버를 실행한 후 클라이언트를 실행해주세요.
-<br><br>
+<br><br><br>
 
-## 3. 주요 기능
-<br><br>
-
-## 4. 멤버구성
-- [강동현](https://github.com/welsper53) : 친구 로직, 채팅 목록 로직, 친구&채팅 목록, 친구&채팅 추가, 스레드(친구&채팅 목록, 친구&채팅 추가)
-
-- [김도희](https://github.com/dodoringring) : 채팅방 로직, 회원가입, 채팅방 스레드
-
-- [목정윤](https://github.com/jungyunmok) : 로그인, 아이디&비밀번호 찾기, 채팅방, 스레드(회원가입, 로그인, 아이디 찾기, 채팅방)
-
-- [박소연](https://github.com/Soyeonthdus) : 마이페이지, 마이페이지 스레드
-
-- [송우진](https://github.com/woojinyy) : 채팅방, 비밀번호 재설정 스레드
-
-- [이은재](https://github.com/77EJ77) : 멤버 로직, 로그 로직, 비밀번호 찾기 스레드
-<br><br>
+## 4. 주요 기능
+- 회원가입
+- 아이디, 비밀번호 찾기
+- 로그인
+- 친구, 채팅방 추가
+- 채팅
+- 친구, 채팅방 삭제
+- 회원정보 수정 및 탈퇴
+<br><br><br>
 
 ## 5. PPT 자료
-[바나나톡 PPT 바로가기](https://docs.google.com/presentation/d/1ifeG_DB13EMnl8IcqKHrzOZzpquR1uUyHiAaPD50YjA/edit?usp=sharing)
-<br>
+[바나나톡 PPT 바로가기](https://docs.google.com/presentation/d/1ifeG_DB13EMnl8IcqKHrzOZzpquR1uUyHiAaPD50YjA/edit?usp=sharing, "바나나톡 PPT 바로가기")
+<br><br><br>
 
 <div align="center">
 <img src="https://capsule-render.vercel.app/api?type=Waving&color=FFD700&height=200&section=footer&text=👋Goodbye!&fontSize=50" />
