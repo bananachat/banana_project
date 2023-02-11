@@ -544,7 +544,7 @@ public class MemberLogic {
         //반환 객체 생성 및 초기화
         UserVO user = new UserVO();
         //유저 정보 불러오는 SQL문 작성
-        String sql = "SELECT USER_ID FROM TB_USER WHERE USER_NAME=? AND USER_HP=?";
+        String sql = "SELECT USER_ID FROM TB_USER WHERE USER_NAME=? AND USER_HP=? AND STATUS = 0";
         //DB 실행
         try {
             con = mgr.getConnection();
@@ -589,7 +589,7 @@ public class MemberLogic {
         //반환값 초기화
         int pw_protocol = Protocol.NF_FACNT;
         //회원 정보 읽어오는 SQl문 설정
-        String sql = "SELECT USER_PW FROM TB_USER WHERE USER_NAME=? AND USER_HP=? AND USER_ID=?";
+        String sql = "SELECT USER_PW FROM TB_USER WHERE USER_NAME=? AND USER_HP=? AND USER_ID=? AND STATUS = 0";
         //DB에서 읽어오기
         try {
             con = mgr.getConnection();

@@ -910,27 +910,37 @@ public class ServerThread extends Thread {
             String userId = st.nextToken();
             String userNick = st.nextToken();
             String chatCont = st.nextToken();
+            // 카운트 변수
+            int count = 0;
             server.jta_log.append("채팅 저장 DB 체크 시작" + "\n");
-            int result = chatLogic
-                .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNo)).user_id(userId)
-                    .chat_content(chatCont).build());
-            server.jta_log.append("result: " + result + "\n");
-            // 메시지 저장 및 전달
-            switch (result) {
-              // 저장성공
-              case 1: {
-                // 같은 단톡방에 말 전달하기 701#채팅방넘버#닉네임#메시지
-                // 서버스레드를 다 저장하고 모든 서버스레드에 전달하되 챗넘버가 같은경우에만 메시지전달
-                broadCasting(chatNo, userNick, chatCont);
-                server.jta_log.append("채팅 메시지 저장 성공" + "\n");
+            while (count < 3) {
+              int result = chatLogic
+                  .insertChat(ChatContentsVO.builder().chat_no(Integer.parseInt(chatNo)).user_id(userId)
+                      .chat_content(chatCont).build());
+              server.jta_log.append("result: " + result + "\n");
+              // 메시지 저장 및 전달
+              switch (result) {
+                // 저장성공
+                case 1: {
+                  count = 3;
+                  // 같은 단톡방에 말 전달하기 701#채팅방넘버#닉네임#메시지
+                  // 서버스레드를 다 저장하고 모든 서버스레드에 전달하되 챗넘버가 같은경우에만 메시지전달
+                  broadCasting(chatNo, userNick, chatCont);
+                  server.jta_log.append("채팅 메시지 저장 성공" + count + "\n");
+                }
+                  break;
+                // 저장실패 702
+                case 0, -1: {
+                  server.jta_log.append("채팅 메시지 저장 실패" + count + "\n");
+                  count++;
+                  Thread.sleep(500);
+                  // 3번 시도 후 실패 반환
+                  if (count >= 3) {
+                    oos.writeObject(Protocol.FAIL_MSG);
+                  }
+                }
+                  break;
               }
-                break;
-              // 저장실패 702
-              case 0, -1: {
-                oos.writeObject(Protocol.FAIL_MSG);
-                server.jta_log.append("채팅 메시지 저장 실패" + "\n");
-              }
-                break;
             }
           }
             break;
