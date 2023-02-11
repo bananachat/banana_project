@@ -19,14 +19,21 @@
 </div>
 
 ## 1. 프로젝트 소개
-바나나톡은 Java 소켓통신과 Oracle DB를 이용한 멀티 채팅 프로그램입니다.
+바나나톡은 Java 소켓 통신과 Oracle DB를 이용한 멀티 채팅 프로그램입니다.
 <br><br>
 
-## 2. 설치 방법
-1. 자바17, 오라클 설치
-2. 클론 후 db테이블설치
-3. db, 서버주소 확인
-4. 서버 실행 후 클라이언트 실행
+## 2. 시작 가이드
+1. 자바와 오라클을 설치해주세요. (개발에는 JDK 17.0.5와 오라클 11g 11.1.0.7.0을 사용했습니다)
+
+2. DB 테이블을 생성해주세요. - app\src\main\java\banana_project\server\util\oracle_query.sql
+
+3. DB 주소(13번줄)와 USER, PW(17번줄)를 확인해주세요. - app\src\main\java\banana_project\server\util\DBConnectionMgr.java
+
+4. 서버 주소(144번줄)를 확인해주세요. - app\src\main\java\banana_project\client\login\Client.java
+
+5. 서버를 실행한 후 클라이언트를 실행해주세요.  
+    서버: app\src\main\java\banana_project\server\thread\Server.java  
+    클라이언트: app\src\main\java\banana_project\client\login\Client.java
 <br><br>
 
 ## 3. 주요 기능
